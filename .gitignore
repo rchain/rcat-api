@@ -62,5 +62,5 @@ typings/
 
 
 .envrc
-test.env
+.env.test
 .idea

@@ -1,9 +1,13 @@
-var express = require('express');
-var router = express.Router();
+const homeRouter = require('./home');
+const loginRouter = require('./login');
+const usersRouter = require('./users');
+const statusRouter = require('./status');
+const testRouter = require('./test');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-module.exports = router;
+module.exports = {
+    homeRouter,
+    loginRouter,
+    usersRouter,
+    statusRouter,
+    testRouter
+};
