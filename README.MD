@@ -27,5 +27,6 @@ set DEBUG=myapp:* & npm start
 
 ## Usefull links
 - http://joliv.me/b/2016/10/15/express-api-swagger/
+- http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
 
 

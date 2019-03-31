@@ -54,6 +54,8 @@ const {
     statusRouter,
     loginRouter,
     usersRouter,
+    kycRouter,
+    songsRouter,
     testRouter
 } = require('./routes');
 
@@ -61,6 +63,8 @@ app.use('/', homeRouter);
 app.use('/status', statusRouter);
 app.use('/login', loginRouter);
 app.use('/users', usersRouter);
+app.use('/kyc', kycRouter);
+app.use('/songs', songsRouter);
 app.use('/test', testRouter);
 
 //////////////////////////////////////////

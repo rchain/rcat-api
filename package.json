@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "cross-env NODE_ENV=development nodemon"
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "test": "env-cmd ./.env.test cross-env NODE_ENV=test jest"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -13,6 +14,7 @@
     "cross-env": "^5.2.0",
     "debug": "~2.6.9",
     "dotenv": "^7.0.0",
+    "env-cmd": "^8.0.2",
     "express": "~4.16.0",
     "google-auth-library": "^3.1.2",
     "jsonwebtoken": "^8.5.1",
@@ -23,5 +25,12 @@
     "morgan": "~1.9.0",
     "swagger-jsdoc": "^3.2.8",
     "swagger-ui-express": "^4.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^24.5.0",
+    "superagent": "^5.0.2",
+    "supertest": "^4.0.2"
   }
 }
