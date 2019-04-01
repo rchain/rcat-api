@@ -22,6 +22,8 @@ exports.login = async (req, res) => {
     // if it is valid - proceed, otherwise - return error
     if (!!gmailUserId) {
         const user =  await GmailAccount.login(req.body);
+        console.log('user >>>', user);
+        console.log('user.kyc_account >>>', user.kyc_account);
         if(gmailUserId !== user.gmail_account.gmail_id) {
             return {
                 statusCode: 400,
@@ -43,7 +45,7 @@ exports.login = async (req, res) => {
 
         return {
             token,
-            require_kyc: !!user.kyc_account,
+            require_kyc: !user.kyc_account,
             user
         };
     } else {
