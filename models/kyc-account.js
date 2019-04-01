@@ -35,7 +35,7 @@ const kycAccountSchema = new mongoose.Schema({
     },
 });
 
-kycAccountSchema.statics.save = async function (data, userData) {
+kycAccountSchema.statics.save = async function (data, userData, files) {
     let kycAccount = new KycAccount({
         country_of_residence: data.country_of_residence,
         first_name: data.first_name,
@@ -45,9 +45,9 @@ kycAccountSchema.statics.save = async function (data, userData) {
         identification_type: data.identification_type,
         identification_id_number: data.identification_id_number,
         identification_expiration_date: data.identification_expiration_date,
-        identification_front_image_url: data.identification_front_image_url,
-        identification_back_image_url: data.identification_back_image_url,
-        identification_selfie_image_url: data.identification_selfie_image_url
+        identification_front_image_url: files.identification_front_image.Location,
+        identification_back_image_url: files.identification_back_image.Location,
+        identification_selfie_image_url: files.identification_selfie_image.Location
     });
 
     let user = await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');

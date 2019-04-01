@@ -1,6 +1,24 @@
 const boom = require('boom');
 const router = require('express').Router();
+const Joi = require('joi');
+const validate = require('express-validation');
+
 const gmailController = require('../controllers/gmail-controller');
+
+const requestSchema = {
+    body: {
+        Eea: Joi.string().required(),
+        Paa: Joi.string().required(),
+        U3: Joi.string().required(),
+        ofa: Joi.string().required(),
+        ig: Joi.string().required(),
+        wea: Joi.string().required(),
+    },
+    headers: {
+        gusrid: Joi.string().required(),
+    }
+};
+
 /**
  * @swagger
  * /login/gmail:
@@ -27,7 +45,7 @@ const gmailController = require('../controllers/gmail-controller');
  *       400:
  *         description: Bad Request / Invalid token
  */
-router.post('/gmail', async (req, res, next) => {
+router.post('/gmail', validate(requestSchema), async (req, res, next) => {
     try {
         const data = await gmailController.login(req, res);
         res.send(data);
@@ -58,7 +76,7 @@ router.post('/gmail', async (req, res, next) => {
  *       400:
  *         description: Bad Request / Invalid token
  */
-router.post('/facebook', function(req, res, next) {
+router.post('/facebook', function (req, res, next) {
     res.send(501, {
         status: 'not implemented :('
     });

@@ -17,7 +17,6 @@ const gmailAccountSchema = new mongoose.Schema({
 });
 
 gmailAccountSchema.statics.login = async function (data) {
-    console.log('Gmaill account login enter ...');
     let gmailAccount = new GmailAccount({
         gmail_id: data.Eea,
         first_name: data.ofa,
@@ -27,10 +26,8 @@ gmailAccountSchema.statics.login = async function (data) {
         profile_picture_url: data.Paa
     });
 
-    console.log('Trying to find gmail account in database ...');
     // check if there is a record of this gmail account in database
     const foundByGmailId = await this.findOne({ email: gmailAccount.email });
-    console.log('foundByGmailId >>>', foundByGmailId);
 
     let foundUserByGmail;
     // if there is a gmail record, find corresponding user
@@ -42,9 +39,7 @@ gmailAccountSchema.statics.login = async function (data) {
     if (foundByGmailId && foundUserByGmail) {
         return foundUserByGmail;
     } else {
-        console.log('Trying to create GMAIL USER ...');
         gmailAccount = await this.create(gmailAccount).catch(console.error);
-        console.log('Created gmail account', gmailAccount);
         let userAccount = await User.create({ gmail_account: gmailAccount.id });
         return await User.findOne({ gmailAccount: userAccount.gmailAccount }, '-__v').populate('gmail_account', '-_id -__v');
     }

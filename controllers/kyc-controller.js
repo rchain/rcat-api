@@ -1,21 +1,26 @@
 const User = require('../models/user');
 const KycAccount = require('../models/kyc-account');
 
+const { uploadKycFiles } = require('../services/file-upload');
+
 // Save Kyc account data
 exports.saveKycData = async (req, res) => {
-    console.log('(saveKycData) req.user >>>', req.user);
     let kycAccount = await User.getKycAccountId(req.user);
-    console.log('kycAccount', kycAccount);
 
     if (kycAccount) {
         return 'Kyc account already exists.'
     } else {
-        let data = req.body;
-        let files = req.files;
-
-        // TODO AWS S3 upload
-        console.error('TODO AWS S3 upload');
-
-        return await KycAccount.save(data, req.user);
+        return new Promise((resolve, reject) => {
+            uploadKycFiles(req.files, req.user).then(async (values) => {
+                let data = req.body;
+                let files = [];
+                values.forEach(val => {
+                    files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
+                });
+                resolve(await KycAccount.save(data, req.user, files));
+            }).catch((err) => {
+                resolve(err);
+            });
+        });
     }
 };

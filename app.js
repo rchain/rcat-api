@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: false }));
 // }));
 
 const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerDefinition =  {
+const swaggerDefinition = {
     // Like the one described here: https://swagger.io/specification/#infoObject
     info: {
         title: 'RSong Asset Management API',
@@ -77,6 +77,10 @@ app.use('/songs', songsRouter);
 app.use('/songs', songsRouter);
 app.use('/genres', genresRouter);
 app.use('/test', testRouter);
+
+app.use(function (err, req, res, next) {
+    res.status(400).json(err);
+});
 
 //////////////////////////////////////////
 // Connecting to database
