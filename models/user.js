@@ -13,4 +13,10 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('User', userSchema);
+userSchema.statics.getKycAccountId = async function (userData) {
+    const user = await User.findById(userData.id, '-__v');
+    return user.kyc_account;
+};
+
+const User = mongoose.model('User', userSchema);
+module.exports = User;

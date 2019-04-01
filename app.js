@@ -2,27 +2,36 @@ require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const cookieSession = require('cookie-session');
+// const cookieParser = require('cookie-parser');
+// const cookieSession = require('cookie-session');
+var cors = require('cors');
 
 const app = express();
 
-const { cookieMaxAge } = require('./config/cookie');
+// const { cookieMaxAge } = require('./config/cookie');
+
+const corsOption = {
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    exposedHeaders: ['x-auth-token']
+};
+app.use(cors(corsOption));
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// Cookies
-app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(cookieSession({
-    name    : process.env.COOKIE_NAME,
-    secret  : process.env.COOKIE_SECRET,
-    maxAge  : cookieMaxAge,
-    httpOnly: true,
-    secure  : false,
-    sameSite: 'Lax',
-    domain  : process.env.COOKIE_DOMAIN,
-}));
+// // Cookies
+// app.use(cookieParser(process.env.COOKIE_SECRET));
+// app.use(cookieSession({
+//     name    : process.env.COOKIE_NAME,
+//     secret  : process.env.COOKIE_SECRET,
+//     maxAge  : cookieMaxAge,
+//     httpOnly: true,
+//     secure  : false,
+//     sameSite: 'Lax',
+//     domain  : process.env.COOKIE_DOMAIN,
+// }));
 
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerDefinition =  {
