@@ -12,8 +12,8 @@ const genreSchema = new mongoose.Schema({
 });
 
 genreSchema.statics.save = async (data, userData) => {
-    let title = new Song({
-        title: data.title,
+    let name = new Genre({
+        title: data.name,
     });
 
     // TODO ... impl storing genres
@@ -21,5 +21,5 @@ genreSchema.statics.save = async (data, userData) => {
     return song;
 };
 
-const Song = mongoose.model('Genre', genreSchema);
-module.exports = Song;
+const Genre = mongoose.model('Genre', genreSchema);
+module.exports = Genre;

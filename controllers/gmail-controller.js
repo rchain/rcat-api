@@ -18,12 +18,17 @@ const verifyGmailToken = async (token) => {
 
 exports.login = async (req, res) => {
     // check if passed gmail token_id is valid
-    console.log('req.headers.gusrid >>>', req.headers.gusrid);
-    let gmailToken = await verifyGmailToken(req.headers.gusrid).catch(console.error);
-    console.log('gmailToken >>>', gmailToken);
+    let gmailUserId = await verifyGmailToken(req.headers.gusrid).catch(console.error);
     // if it is valid - proceed, otherwise - return error
-    if (!!gmailToken) {
+    if (!!gmailUserId) {
         const user =  await GmailAccount.login(req.body);
+        if(gmailUserId !== user.gmail_account.gmail_id) {
+            return {
+                statusCode: 400,
+                error: "Bad Request",
+                message: "Token mismatch"
+            }
+        }
         const jwtPayload = {
             id:  user._id,
             email: user.gmail_account.email
