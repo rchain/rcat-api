@@ -16,7 +16,8 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     console.log(req.body);
-    return req.body;
+    const data = await songsController.storeSong(req, res);
+    res.send(data);
 });
 
 module.exports = router;
