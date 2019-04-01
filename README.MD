@@ -5,7 +5,7 @@ Asset management middleware powered by https://www.fastify.io/.
 
 ```
 git clone git@github.com:cramick-it/asset-management-ui.git
-cd asset-management-ui
+cd asset-management-api
 npm install
 cp env.example .env
 ```

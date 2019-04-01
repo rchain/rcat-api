@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "pm2 delete all --silent && pm2 start ./bin/www",
-    "dev": "cross-env NODE_ENV=development nodemon",
+    "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
     "test": "env-cmd ./.env.test cross-env NODE_ENV=test jest"
   },
   "dependencies": {
