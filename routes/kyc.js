@@ -45,7 +45,8 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             kycController.saveKycData(req, res).then(result => {
                 res.send(result);
             }).catch(err => {
-                res.status(400).send(err);
+                const statusCode = err.status_code || 400;
+                res.status(statusCode).send({message: err.message});
             });
         } else {
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
