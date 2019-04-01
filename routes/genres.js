@@ -14,4 +14,9 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+router.post('/', async (req, res, next) => {
+    const data = await genreController.storeGenre(req, res);
+    res.send(data);
+});
+
 module.exports = router;

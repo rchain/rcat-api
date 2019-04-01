@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const { Types } = Schema;
 
 const genreSchema = new mongoose.Schema({
         name: String
@@ -11,14 +10,13 @@ const genreSchema = new mongoose.Schema({
         },
 });
 
-genreSchema.statics.save = async (data, userData) => {
-    let genre = new Genre({
-        name: data.name,
-    });
+genreSchema.statics.store = async (data) => {
+    const searchQuery = {name: data.name};
+    const genreData = {
+        name: data.name
+    };
 
-    // TODO ... impl storing genres
-
-    return genre;
+    return await Genre.findOneAndUpdate(searchQuery, genreData, {new: true, upsert: true, runValidators: true});
 };
 
 const Genre = mongoose.model('Genre', genreSchema);

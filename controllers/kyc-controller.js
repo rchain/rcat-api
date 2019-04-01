@@ -8,7 +8,10 @@ exports.saveKycData = async (req, res) => {
     let kycAccount = await User.getKycAccountId(req.user);
 
     if (kycAccount) {
-        return 'Kyc account already exists.'
+        throw {
+            status_code: 409,
+            message: 'Kyc account already exists.'
+        };
     } else {
         return new Promise((resolve, reject) => {
             uploadKycFiles(req.files, req.user).then(async (values) => {

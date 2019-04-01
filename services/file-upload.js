@@ -69,7 +69,7 @@ const uploadKycFiles = async (files, user) => {
                     resolve({
                         [field]: data
                     });
-                    if (s3Err) throw s3Err
+                    if (s3Err) throw s3Err;
                     resolve(s3Err);
                 });
             });
