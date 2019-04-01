@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const boom = require('boom');
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const kycController = require('../controllers/kyc-controller');
 const multer  = require('multer');
