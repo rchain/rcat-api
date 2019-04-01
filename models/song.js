@@ -7,11 +7,9 @@ const songSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    audio: {
-        url: {
-            type: String,
-            required: true
-        }
+    audio_url: {
+        type: String,
+        required: true
     },
     genres: [
         {
@@ -21,7 +19,6 @@ const songSchema = new mongoose.Schema({
     ],
     main_artist_name: {
         type: String,
-        required: true
     },
     artists: [
         {
@@ -45,18 +42,17 @@ const songSchema = new mongoose.Schema({
     },
 });
 
-songSchema.statics.save = async (data, userData) => {
-    let song = new Song({
+songSchema.statics.store = async (data) => {
+    const searchQuery = {name: data.name};
+    const songData = {
         name: data.name,
         image: {
             url: data.image_url
         },
         status: 'Processing'
-    });
+    };
 
-    // TODO ... impl storing songs
-
-    return song;
+    return await Song.findOneAndUpdate(searchQuery, songData, {new: true, upsert: true, runValidators: true});
 };
 
 const Song = mongoose.model('Song', songSchema);
