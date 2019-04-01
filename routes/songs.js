@@ -5,17 +5,18 @@ const songsController = require('../controllers/song-controller');
 
 router.use(isAuthenticated);
 
-router.get('/', (req, res, next) => {
-    res.send([]);
-});
-
-router.post('/', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
         const songs = await songsController.listAllSongs(req, res);
         res.send(songs);
     } catch (err) {
         throw boom.boomify(err);
     }
+});
+
+router.post('/', async (req, res, next) => {
+    console.log(req.body);
+    return req.body;
 });
 
 module.exports = router;

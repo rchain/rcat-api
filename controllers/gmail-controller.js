@@ -3,7 +3,7 @@ const client = new OAuth2Client(process.env.GMAIL_CLIENT_ID);
 const jwt = require('jsonwebtoken');
 const GmailAccount = require('../models/gmail-account');
 var http = require('http');
-var Cookies = require('cookies');
+// var Cookies = require('cookies');
 
 // call Google's API to check if passed token is valid
 const verifyGmailToken = async (token) => {
@@ -18,6 +18,7 @@ const verifyGmailToken = async (token) => {
 
 exports.login = async (req, res) => {
     // check if passed gmail token_id is valid
+    console.log('req.headers.gusrid >>>', req.headers.gusrid);
     let gmailToken = await verifyGmailToken(req.headers.gusrid).catch(console.error);
     console.log('gmailToken >>>', gmailToken);
     // if it is valid - proceed, otherwise - return error
@@ -30,10 +31,10 @@ exports.login = async (req, res) => {
 
         const jwtOptions = require('../config/jwt-options');
         const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);
-        new Cookies(req,res).set('access_token',token,{
-            httpOnly: true,
-            secure: process.env.HTTPS === 'true'      // for your production environment
-        });
+        // new Cookies(req,res).set('access_token',token,{
+        //     httpOnly: true,
+        //     secure: process.env.HTTPS === 'true'      // for your production environment
+        // });
 
         return {
             token,

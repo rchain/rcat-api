@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 // app.use(cookieSession({
 //     name    : process.env.COOKIE_NAME,
 //     secret  : process.env.COOKIE_SECRET,
-//     maxAge  : cookieMaxAge,
+//     maxAge  : 1000 * 60 * 480,
 //     httpOnly: true,
 //     secure  : false,
 //     sameSite: 'Lax',
