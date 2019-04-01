@@ -29,9 +29,8 @@ const gmailController = require('../controllers/gmail-controller');
  */
 router.post('/gmail', async (req, res, next) => {
     try {
-        const gmailResponse = await gmailController.login(req, res);
-        console.log('gmailResponse >>>', gmailResponse);
-        res.send(gmailResponse);
+        const data = await gmailController.login(req, res);
+        res.send(data);
     } catch (err) {
         throw boom.boomify(err);
     }
