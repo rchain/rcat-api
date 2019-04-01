@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const { Types } = Schema;
 
 const genreSchema = new mongoose.Schema({
-        title: String
+        name: String
     }, {
         timestamps: {
             createdAt: 'created_at',
@@ -12,13 +12,13 @@ const genreSchema = new mongoose.Schema({
 });
 
 genreSchema.statics.save = async (data, userData) => {
-    let name = new Genre({
-        title: data.name,
+    let genre = new Genre({
+        name: data.name,
     });
 
     // TODO ... impl storing genres
 
-    return song;
+    return genre;
 };
 
 const Genre = mongoose.model('Genre', genreSchema);
