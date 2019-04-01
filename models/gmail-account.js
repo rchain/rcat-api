@@ -36,19 +36,17 @@ gmailAccountSchema.statics.login = async function (data) {
     // if there is a gmail record, find corresponding user
     if (foundByGmailId) {
         foundUserByGmail = await User.findOne({ gmail_account: foundByGmailId.id } , '-__v').populate('kyc_account gmail_account', '-_id -__v');
-        console.log('foundUserByGmail >>>>>>> ', foundUserByGmail);
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
     if (foundByGmailId && foundUserByGmail) {
-        console.log('Found gmail account', foundUserByGmail);
         return foundUserByGmail;
     } else {
         console.log('Trying to create GMAIL USER ...');
         gmailAccount = await this.create(gmailAccount).catch(console.error);
         console.log('Created gmail account', gmailAccount);
         let userAccount = await User.create({ gmail_account: gmailAccount.id });
-        return await User.findOne({ gmailAccount: userAccount.gmailAccount }, '-_id -__v').populate('gmail_account', '-_id -__v');
+        return await User.findOne({ gmailAccount: userAccount.gmailAccount }, '-__v').populate('gmail_account', '-_id -__v');
     }
 };
 

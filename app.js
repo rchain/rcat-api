@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
-const mongoose = require('mongoose');
 // const cookieParser = require('cookie-parser');
 // const cookieSession = require('cookie-session');
 var cors = require('cors');
@@ -79,14 +78,6 @@ app.use('/test', testRouter);
 //////////////////////////////////////////
 // Connecting to database
 //////////////////////////////////////////
-if (process.env.TEST !== 'true') {
-    console.log('Trying to connect to mongo db ...');
-    mongoose.connect(process.env.MONGODB_URI).catch(console.error);
-    mongoose.connection
-        .once('open', () => console.log('Connected to mongodb successfully!'))
-        .on('error', (err) => console.error('Connection error:', err));
-} else {
-    console.log('In test mode not running mongo db ...');
-}
+require('./db/mongoose').connect();
 
 module.exports = app;

@@ -4,16 +4,24 @@ const User = require('./user');
 
 const kycAccountSchema = new mongoose.Schema({
     country_of_residence: String,
-    first_name: String,
+    first_name: {
+        type: String,
+        required: true
+    },
     last_name: String,
-    date_of_birth: Date,
+    date_of_birth: {
+        type: Date,
+        required: true
+    },
     gender: {
         type: String,
         enum: ['Male', 'Female'],
+        required: true
     },
     identification_type: {
         type: String,
         enum: ['Passport', 'Driver\'s license', 'ID card'],
+        required: true
     },
     identification_id_number: String,
     identification_expiration_date: Date,

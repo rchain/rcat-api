@@ -3,9 +3,15 @@ const Schema = mongoose.Schema;
 const { Types } = Schema;
 
 const songSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        required: true
+    },
     audio: {
-        url: String
+        url: {
+            type: String,
+            required: true
+        }
     },
     genres: [
         {
@@ -13,7 +19,10 @@ const songSchema = new mongoose.Schema({
             ref: 'Genre'
         }
     ],
-    main_artist_name: String,
+    main_artist_name: {
+        type: String,
+        required: true
+    },
     artists: [
         {
             name: String

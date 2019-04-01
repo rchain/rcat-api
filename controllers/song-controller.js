@@ -21,4 +21,9 @@ const listAllSongs = async(req, res) => {
     return [song1, song2, song3]
 };
 
+const storeSong = async (req, res) => {
+
+};
+
 exports.listAllSongs = listAllSongs;
+exports.storeSong = storeSong;

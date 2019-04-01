@@ -3,6 +3,7 @@ const KycAccount = require('../models/kyc-account');
 
 // Save Kyc account data
 exports.saveKycData = async (req, res) => {
+    console.log('(saveKycData) req.user >>>', req.user);
     let kycAccount = await User.getKycAccountId(req.user);
     console.log('kycAccount', kycAccount);
 

@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
 
         return {
             token,
-            require_kyc: true,
+            require_kyc: !!user.kyc_account,
             user
         };
     } else {
