@@ -62,7 +62,9 @@ const uploadKycFiles = async (files, user) => {
                 s3.upload({
                     Bucket: process.env.AWS_S3_BUCKET_NAME,
                     Key: `${user.id}/${field}`,
-                    Body: Buffer.from(files[field][0].buffer)
+                    Body: Buffer.from(files[field][0].buffer),
+                    acl: 'public-read',
+                    cacheControl: 'max-age=31536000'
                 }, (s3Err, data) => {
                     resolve({
                         [field]: data
