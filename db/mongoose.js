@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const options = {
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: true
 };
 
 const connect = () => {

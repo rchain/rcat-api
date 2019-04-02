@@ -58,7 +58,7 @@ songSchema.statics.store = async (data) => {
         return await Song.findOne(searchQuery);
     } else {
         return await Song.create(data);
-    }
+}
 };
 
 // Pre hook for `findOneAndUpdate`
