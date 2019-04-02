@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const KycAccount = require('../models/kyc-account');
-const mailjet = require('../services/mailjet');
+const sendEmail = require('../services/mailjet');
 
 const { uploadKycFiles } = require('../services/file-upload');
 
@@ -21,15 +21,22 @@ const notifyEmail = () => {
         }]
     };
 
-    mailjet.post("send", {'version': 'v3.1'})
-        .request(emailData)
-        .then((resp) => {
-            console.log('email response', resp);
-        })
-        .catch((err) => {
-            console.log('emil err', err);
-        });
-
+    return new Promise(function(resolve, reject){
+        if(process.env.EMAIL_NOTIFICATIONS_SILENT === 'true') {
+            console.log('SILENT EMAIL', emailData);
+            return resolve('SILENT');
+        }
+        sendEmail.request(emailData)
+            .then((resp) => {
+                console.log('email response', resp);
+                kycRespoonse = resp;
+                resolve(resp);
+            })
+            .catch((err) => {
+                // console.error(err);
+                reject(err);
+            });
+    });
 };
 
 // Save Kyc account data
@@ -43,16 +50,29 @@ exports.saveKycData = async (req, res) => {
         };
     } else {
         return new Promise((resolve, reject) => {
-            uploadKycFiles(req.files, req.user).then(async (values) => {
-                let data = req.body;
-                let files = [];
-                values.forEach(val => {
-                    files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
-                });
-                resolve(await KycAccount.save(req.user, data, files));
-                notifyEmail();
-            }).catch((err) => {
-                resolve(err);
+            uploadKycFiles(req.files, req.user)
+                .then(async (values) => {
+                    let data = req.body;
+                    let files = [];
+                    values.forEach(val => {
+                        files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
+                    });
+                    console.log('BEFORE notifyEmail() ...');
+                    resolve(await KycAccount.save(req.user, data, files));
+                })
+                .then((kycData) => {
+                    notifyEmail()
+                        .then((emialResponse) => {
+                            resolve(kycData);
+                        })
+                        .catch((err) => {
+                            console.error('ERROR sending email');
+                            resolve(kycData);
+                        });
+                })
+                .catch((err) => {
+                console.error('ERROR[uploadKycFiles]', err);
+                reject(err);
             });
         });
     }
