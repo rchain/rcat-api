@@ -37,11 +37,12 @@
 //     }
 // };
 
-const Mailjet = require ('node-mailjet')
+const mailjet = require ('node-mailjet')
     .connect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 
-const sendEmail = Mailjet.post('send', {'version': 'v3.1'});
+const sendEmail = mailjet.post('send', {'version': 'v3.1'});
 
 module.exports = {
+    mailjet,
     sendEmail
 };

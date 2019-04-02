@@ -21,10 +21,10 @@ const notifyEmail = () => {
         }]
     };
 
-    mailjet.sendEmail
+    mailjet.post("send", {'version': 'v3.1'})
         .request(emailData)
         .then((resp) => {
-            console.log('emil response', resp);
+            console.log('email response', resp);
         })
         .catch((err) => {
             console.log('emil err', err);
