@@ -42,4 +42,6 @@ const Mailjet = require ('node-mailjet')
 
 const sendEmail = Mailjet.post('send', {'version': 'v3.1'});
 
-module.exports = sendEmail;
+module.exports = {
+    sendEmail
+};
