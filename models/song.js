@@ -51,11 +51,11 @@ const songSchema = new mongoose.Schema({
             },
             rev_wallet_address: {
                 type: String,
-                required: true
+                // required: true
             },
             rev_email: {
                 type: String,
-                required: true
+                // required: true
             },
             publisher_rights_organization: {
                 type: String
@@ -123,23 +123,60 @@ const songSchema = new mongoose.Schema({
         type: String
     }
 }, {
-    timestamps: {
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-    },
-});
+        timestamps: {
+            createdAt: 'created_at',
+            updatedAt: 'updated_at',
+        },
+    });
 // Required to include to avoid error: Schema hasn't been registered for model \"SongWriter\".\nUse mongoose.model(name, schema)
 require('./genre');
 songSchema.plugin(idvalidator);
 
-songSchema.statics.createSong = async (data) => {
-    const searchQuery = {title: data.title};
-    return await Song.create(searchQuery, data, {new: true, upsert: true});
+songSchema.statics.createSong = async function (userData, data, file) {
+
+    // let kycAccount = new KycAccount({
+    //     country_of_residence: data.country_of_residence,
+    //     first_name: data.first_name,
+    //     last_name: data.last_name,
+    //     date_of_birth: data.date_of_birth,
+    //     gender: data.gender,
+    //     identification_type: data.identification_type,
+    //     identification_id_number: data.identification_id_number,
+    //     identification_expiration_date: data.identification_expiration_date,
+    //     identification_front_image_url: files.identification_front_image.Location,
+    //     identification_back_image_url: files.identification_back_image.Location,
+    //     identification_selfie_image_url: files.identification_selfie_image.Location
+    // });
+
+    // let user = await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
+
+    // // if there is a user - return it, otherwise - create new gmail and user
+    // kycAccount = await this.create(kycAccount).catch(console.error);
+    // await user.updateOne({
+    //     kyc_account: kycAccount.id
+    // });
+    // return await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
+    let song = new Song({
+        title: data.title,
+        song_file_url: file.Location,
+        genres: data.genres,
+        main_artist_name: data.main_artist_name,
+        artists: data.artists,
+        album_art_image_url: data.album_art_image_url,
+        song_writers: data.song_writers,
+        sound_owners: data.sound_owners,
+        collaborators: data.collaborators
+
+    });
+
+    return await this.create(song).catch(console.error);
+
+    // return await this.create(searchQuery, data, { new: true, upsert: true });
 };
 
 
 // Pre hook for `findOneAndUpdate`
-songSchema.pre('findOneAndUpdate', function(next) {
+songSchema.pre('findOneAndUpdate', function (next) {
     this.options.runValidators = true;
     next();
 });

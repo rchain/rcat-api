@@ -4,11 +4,7 @@ const validate = require('express-validation');
 
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const kycController = require('../controllers/kyc-controller');
-const multer = require('multer');
-// const upload = multer({ dest: 'uploads/'});
-// const upload = multer({ storage: multer.memoryStorage() });
-const { validateKycDocuments } = require('../services/file-upload');
-// const singleUpload = upload.single('image');
+const { validateFiles } = require('../services/file-upload');
 
 router.use(isAuthenticated);
 
@@ -30,7 +26,7 @@ const requestSchema = {
 };
 
 // let kycUpload = upload.fields([{ name: 'identification_front_image', maxCount: 1 }, { name: 'identification_back_image', maxCount: 1 }, { name: 'identification_selfie_image', maxCount: 1 }]);
-let fileHandler = validateKycDocuments.fields([
+let fileHandler = validateFiles(/png|jpeg|jpg/).fields([
     { name: 'identification_front_image', maxCount: 1 },
     { name: 'identification_back_image', maxCount: 1 },
     { name: 'identification_selfie_image', maxCount: 1 }

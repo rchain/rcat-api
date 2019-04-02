@@ -49,7 +49,7 @@ exports.saveKycData = async (req, res) => {
                 values.forEach(val => {
                     files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
                 });
-                resolve(await KycAccount.save(data, req.user, files));
+                resolve(await KycAccount.save(req.user, data, files));
                 notifyEmail();
             }).catch((err) => {
                 resolve(err);

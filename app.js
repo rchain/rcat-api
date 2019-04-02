@@ -74,7 +74,6 @@ app.use('/login', loginRouter);
 app.use('/users', usersRouter);
 app.use('/kyc', kycRouter);
 app.use('/songs', songsRouter);
-app.use('/songs', songsRouter);
 app.use('/genres', genresRouter);
 app.use('/test', testRouter);
 
