@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const { Types } = Schema;
 
 const songWriterSchema = new mongoose.Schema({
     name: String,

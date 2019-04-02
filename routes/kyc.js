@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const boom = require('boom');
 const Joi = require('joi');
 const validate = require('express-validation');
 
@@ -52,7 +51,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
     } catch (err) {
-        throw boom.boomify(err);
+        res.code(500).send(err);
     }
 });
 
@@ -72,6 +71,6 @@ const validateRequiredFiles = (requiredFiles, files) => {
     }
 
     return isValid;
-}
+};
 
 module.exports = router;

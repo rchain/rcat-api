@@ -10,7 +10,6 @@
   "dependencies": {
     "aws-sdk": "^2.432.0",
     "axios": "^0.18.0",
-    "boom": "^7.3.0",
     "cors": "^2.8.5",
     "cross-env": "^5.2.0",
     "debug": "~2.6.9",
@@ -31,7 +30,8 @@
     "nodemon": "^1.18.10",
     "path": "^0.12.7",
     "swagger-jsdoc": "^3.2.8",
-    "swagger-ui-express": "^4.0.2"
+    "swagger-ui-express": "^4.0.2",
+    "validator": "^10.11.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

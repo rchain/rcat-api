@@ -1,4 +1,3 @@
-const boom = require('boom');
 const Genre = require('../models/genre');
 
 const listAllGenres = async(req, res) => {

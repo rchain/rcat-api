@@ -1,4 +1,3 @@
-const boom = require('boom');
 const router = require('express').Router();
 const Joi = require('joi');
 const validate = require('express-validation');
@@ -50,7 +49,7 @@ router.post('/gmail', validate(requestSchema), async (req, res, next) => {
         const data = await gmailController.login(req, res);
         res.send(data);
     } catch (err) {
-        throw boom.boomify(err);
+        res.code(500).send(err);
     }
 });
 
