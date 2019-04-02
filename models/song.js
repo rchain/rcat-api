@@ -7,6 +7,7 @@ const songSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        unique: true
     },
     audio_url: {
         type: String,
@@ -32,8 +33,90 @@ const songSchema = new mongoose.Schema({
     },
     song_writers: [
         {
-            type: Types.ObjectId,
-            ref: 'SongWriter'
+            name: {
+                type: String,
+                required: true
+            },
+            percentage_100_total_song: {
+                type: Number,
+                required: true
+            },
+            percentage_100_publisher: {
+                type: Number,
+                required: true
+            },
+            publisher: {
+                type: String,
+                required: true
+            },
+            rev_wallet_address: {
+                type: String,
+                required: true
+            },
+            rev_email: {
+                type: String,
+                required: true
+            },
+            publisher_rights_organization: {
+                type: String
+            },
+            iswc: {
+                type: String
+            }
+        }
+    ],
+    sound_owners: [
+        {
+            name: {
+                type: String,
+                required: true
+            },
+            role: {
+                type: String,
+                required: true
+            },
+            percentage_100: {
+                type: Number,
+                required: true
+            },
+            rev_wallet_address: {
+                type: String,
+                required: true
+            },
+            rev_email: {
+                type: String,
+                required: true
+            },
+            isrc: {
+                type: String
+            }
+        }
+    ],
+    collaborators: [
+        {
+            name: {
+                type: String,
+                required: true
+            },
+            role: {
+                type: String,
+                required: true
+            },
+            percentage_100: {
+                type: Number,
+                required: true
+            },
+            rev_wallet_address: {
+                type: String,
+                required: true
+            },
+            rev_email: {
+                type: String,
+                required: true
+            },
+            isrc: {
+                type: String
+            }
         }
     ],
     status: {
@@ -46,20 +129,14 @@ const songSchema = new mongoose.Schema({
     },
 });
 // Required to include to avoid error: Schema hasn't been registered for model \"SongWriter\".\nUse mongoose.model(name, schema)
-require('./song-writer');
 require('./genre');
 songSchema.plugin(idvalidator);
 
-songSchema.statics.store = async (data) => {
+songSchema.statics.createSong = async (data) => {
     const searchQuery = {title: data.title};
-    let songs = await Song.find(searchQuery);
-    if(songs.length > 0) {
-        await Song.updateOne(searchQuery, data, {new: true, upsert: true, runValidators: true});
-        return await Song.findOne(searchQuery);
-    } else {
-        return await Song.create(data);
-}
+    return await Song.create(searchQuery, data, {new: true, upsert: true});
 };
+
 
 // Pre hook for `findOneAndUpdate`
 songSchema.pre('findOneAndUpdate', function(next) {
