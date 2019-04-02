@@ -35,7 +35,7 @@ const kycAccountSchema = new mongoose.Schema({
     },
 });
 
-kycAccountSchema.statics.save = async function (data, userData, files) {
+kycAccountSchema.statics.save = async function (userData, data, files) {
     let kycAccount = new KycAccount({
         country_of_residence: data.country_of_residence,
         first_name: data.first_name,
