@@ -9,7 +9,7 @@ const songSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    audio_url: {
+    song_file_url: {
         type: String,
         required: true
     },

@@ -10,7 +10,7 @@ router.use(isAuthenticated);
 const requestSchema = {
     body: {
         title: Joi.string().required(),
-        audio_url: Joi.string().required(),
+        song_file_url: Joi.string().required(),
         genres: Joi.array().required().min(1).items(Joi.string().regex(/^[0-9a-fA-F]{24}$/, 'Should be ObjectId')),
         main_artist_name: Joi.string().required(),
         artists: Joi.array().required(),
