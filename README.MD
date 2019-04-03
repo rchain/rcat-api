@@ -26,7 +26,10 @@ set DEBUG=myapp:* & npm start
 
 ## Seeding database
 
-Run `./node_modules/.bin/md-seed run` to seed database.
+Run the following command to seed database:
+```
+./node_modules/.bin/md-seed run
+```
 Add `-d` optionally to drop database before seeding.
 
 ## Docker
