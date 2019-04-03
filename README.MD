@@ -24,9 +24,28 @@ On Windows, use this command:
 set DEBUG=myapp:* & npm start
 ```
 
+## Docker
+
+In order to run the application and mongodb using docker-compose first create the .env file as described before and then run following commans.
+
+```
+docker-compose build
+docker-compose up
+
+```
+
+In order to just build the application image run the following command:
+
+```
+docker build -t asset-management-api-express:latest .
+```
+
+In order to run this image execute:
+```
+docker run asset-management-api-express:latest
+```
+
 
 ## Usefull links
 - http://joliv.me/b/2016/10/15/express-api-swagger/
 - http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
-
-
