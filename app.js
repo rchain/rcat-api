@@ -65,6 +65,7 @@ const {
     kycRouter,
     songsRouter,
     genresRouter,
+    webhooksRouter,
     testRouter
 } = require('./routes');
 
@@ -75,6 +76,7 @@ app.use('/users', usersRouter);
 app.use('/kyc', kycRouter);
 app.use('/songs', songsRouter);
 app.use('/genres', genresRouter);
+app.use('/webhooks', webhooksRouter);
 app.use('/test', testRouter);
 
 app.use(function (err, req, res, next) {
