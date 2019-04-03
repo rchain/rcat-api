@@ -24,6 +24,14 @@ On Windows, use this command:
 set DEBUG=myapp:* & npm start
 ```
 
+## Seeding database
+
+Run the following command to seed database:
+```
+./node_modules/.bin/md-seed run
+```
+Add `-d` optionally to drop database before seeding.
+
 ## Docker
 
 In order to run the application and mongodb using docker-compose first create the .env file. Be sure to change the .env to point to dockerized mongo instance by setting:
