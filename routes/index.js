@@ -5,6 +5,7 @@ const statusRouter = require('./status');
 const kycRouter = require('./kyc');
 const songsRouter = require('./songs');
 const genresRouter = require('./genres');
+const webhooksRouter = require('./webhooks');
 const testRouter = require('./tester');
 
 module.exports = {
@@ -15,5 +16,6 @@ module.exports = {
     kycRouter,
     songsRouter,
     genresRouter,
+    webhooksRouter,
     testRouter
 };

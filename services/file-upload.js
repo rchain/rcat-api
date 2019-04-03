@@ -90,10 +90,13 @@ const uploadSong = async (files, user) => {
             acl: 'public-read',
             cacheControl: 'max-age=31536000'
         }, (s3Err, data) => {
+            console.log('Resolve PASS 111');
             resolve({
                 [fieldName]: data
             });
+            console.log('Resolve PASS 222');
             if (s3Err) throw s3Err; {
+                console.log('Resolve PASS 333');
                 resolve(s3Err);
             }
         });
