@@ -120,7 +120,8 @@ const songSchema = new mongoose.Schema({
         }
     ],
     status: {
-        type: String
+        type: String,
+        enum: ['NEW', 'UPLOADED_FOR_CONVERSION', 'CONVERSION_DONE', 'CONVERTED_UPLOADED_S3', 'RCHAIN_SUBMITED']
     }
 }, {
         timestamps: {
@@ -133,29 +134,6 @@ require('./genre');
 songSchema.plugin(idvalidator);
 
 songSchema.statics.createSong = async function (userData, data, file) {
-
-    // let kycAccount = new KycAccount({
-    //     country_of_residence: data.country_of_residence,
-    //     first_name: data.first_name,
-    //     last_name: data.last_name,
-    //     date_of_birth: data.date_of_birth,
-    //     gender: data.gender,
-    //     identification_type: data.identification_type,
-    //     identification_id_number: data.identification_id_number,
-    //     identification_expiration_date: data.identification_expiration_date,
-    //     identification_front_image_url: files.identification_front_image.Location,
-    //     identification_back_image_url: files.identification_back_image.Location,
-    //     identification_selfie_image_url: files.identification_selfie_image.Location
-    // });
-
-    // let user = await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
-
-    // // if there is a user - return it, otherwise - create new gmail and user
-    // kycAccount = await this.create(kycAccount).catch(console.error);
-    // await user.updateOne({
-    //     kyc_account: kycAccount.id
-    // });
-    // return await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
     let song = new Song({
         title: data.title,
         song_file_url: file.Location,
@@ -165,13 +143,10 @@ songSchema.statics.createSong = async function (userData, data, file) {
         album_art_image_url: data.album_art_image_url,
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
-        collaborators: data.collaborators
-
+        collaborators: data.collaborators,
+        status: 'NEW'
     });
-
     return await this.create(song).catch(console.error);
-
-    // return await this.create(searchQuery, data, { new: true, upsert: true });
 };
 
 

@@ -36,7 +36,8 @@
     "path": "^0.12.7",
     "swagger-jsdoc": "^3.2.8",
     "swagger-ui-express": "^4.0.2",
-    "validator": "^10.11.0"
+    "validator": "^10.11.0",
+    "yargs": "^13.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
