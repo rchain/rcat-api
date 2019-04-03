@@ -9,7 +9,7 @@ router.get('/', async (req, res, next) => {
         const genres = await genreController.listAllGenres(req, res);
         res.send(genres);
     } catch (err) {
-        res.code(500).send(err);
+        res.status(500).send(err);
     }
 });
 
@@ -18,7 +18,7 @@ router.post('/', async (req, res, next) => {
         const data = await genreController.storeGenre(req, res);
         res.send(data);
     } catch (err) {
-        res.code(500).send(err);
+        res.status(500).send(err);
     }
 });
 

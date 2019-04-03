@@ -78,7 +78,6 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
     try {
         if (req.files.song_file) {
             songController.createSong(req, res).then(result => {
-                console.log('aaaaa', result);
                 res.send(result);
             }).catch(err => {
                 const statusCode = err.status_code || 400;
@@ -88,14 +87,8 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
     } catch (err) {
-        res.code(400).send(err);
+        res.status(400).send(err);
     }
-    // try {
-    //     const data = await songsController.createSong(req, res);
-    //     return res.send(data);
-    // } catch (err) {
-    //     return res.status(400).send(err);
-    // }
 });
 
 module.exports = router;

@@ -79,7 +79,7 @@ const uploadKycFiles = async (files, user) => {
     return Promise.all(promises);
 };
 
-const uploadSong = async (files, user) => {
+const uploadSongS3 = async (files, user) => {
     return new Promise((resolve, reject) => {
         const fieldName = Object.keys(files)[0];
         const file = files[fieldName][0];
@@ -90,13 +90,11 @@ const uploadSong = async (files, user) => {
             acl: 'public-read',
             cacheControl: 'max-age=31536000'
         }, (s3Err, data) => {
-            console.log('Resolve PASS 111');
+            console.log('RESOLVINGGGG', data);
             resolve({
                 [fieldName]: data
             });
-            console.log('Resolve PASS 222');
             if (s3Err) throw s3Err; {
-                console.log('Resolve PASS 333');
                 resolve(s3Err);
             }
         });
@@ -106,5 +104,5 @@ const uploadSong = async (files, user) => {
 module.exports = {
     validateFiles,
     uploadKycFiles,
-    uploadSong
-}
+    uploadSongS3
+};

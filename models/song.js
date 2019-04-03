@@ -146,7 +146,7 @@ songSchema.statics.createSong = async function (userData, data, file) {
         collaborators: data.collaborators,
         status: 'NEW'
     });
-    return await this.create(song).catch(console.error);
+    return await this.create(song);
 };
 
 

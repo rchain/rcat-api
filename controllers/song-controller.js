@@ -1,7 +1,11 @@
 const Song = require('../models/song');
 const mailjet = require('../services/mailjet');
 
-const { uploadSong } = require('../services/file-upload');
+const { uploadSongS3 } = require('../services/file-upload');
+const {
+    uploadSongByPath,
+    uploadSongByContent
+} = require('../services/dropbox');
 
 const listAllSongs = async (req, res) => {
     return Song.find({});
@@ -46,12 +50,26 @@ const createSong = async (req, res) => {
     //     res.send(JSON.stringify({error: err, response: response, body: body}));
     // });
     return new Promise((resolve, reject) => {
-        uploadSong(req.files, req.user).then(async (values) => {
+
+        const fieldName = Object.keys(req.files)[0];
+        const fileContent = req.files[fieldName][0];
+        const fileName = req.files[fieldName][0].originalname;
+
+        uploadSongS3(req.files, req.user).then(async (values) => {
             let data = req.body;
             let song = values[Object.keys(values)[0]];
-            resolve(await Song.createSong(req.user, data, song));
+            // resolve(await Song.createSong(req.user, data, song));
+            return uploadSongByContent(fileContent, fileName)
+                .then(async (response) => {
+                    console.log('DROPBOX RESPONSE', response);
+                    const newSong = await Song.createSong(req.user, data, song);
+                    resolve(newSong);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         }).catch((err) => {
-            resolve(err);
+            reject(err);
         });
     });
 };

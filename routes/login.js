@@ -49,7 +49,7 @@ router.post('/gmail', validate(requestSchema), async (req, res, next) => {
         const data = await gmailController.login(req, res);
         res.send(data);
     } catch (err) {
-        res.code(500).send(err);
+        res.status(500).send(err);
     }
 });
 

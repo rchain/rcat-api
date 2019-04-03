@@ -47,7 +47,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
     } catch (err) {
-        res.code(500).send(err);
+        res.status(500).send(err);
     }
 });
 
