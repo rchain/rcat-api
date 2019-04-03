@@ -15,4 +15,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 3001
-CMD pm2 start --no-daemon ./bin/www
+CMD pm2 start --no-daemon node ./bin/www
