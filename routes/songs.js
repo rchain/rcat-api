@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const songController = require('../controllers/song-controller');
 const Song = require('../models/song');
-const path = require('path');
+const { ingest } = require('../services/acquisition');
 const Joi = require('joi');
 const validate = require('express-validation');
 const { validateFiles } = require('../services/file-upload');
@@ -15,7 +15,6 @@ const requestSchema = {
         genres: Joi.array().required().min(1).items(Joi.string().regex(/^[0-9a-fA-F]{24}$/, 'Should be ObjectId')),
         main_artist_name: Joi.string().required(),
         artists: Joi.array(),
-        album_art_image_url: Joi.string().required(),
         song_writers: Joi.array().required().min(1).items(Joi.object({
             name: Joi.string().required(),
             percentage_100_total_song: Joi.number().required().min(0).max(100),
@@ -67,31 +66,44 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-// let fileHandler = validateSong.fields([
-//     { name: 'song_file', maxCount: 1 },
-// ]);
+const fileTypesValidationInfo = {
+    'song_file': /mp3|wma|/,
+    'album_art_image_file': /png|jpeg|jpg/
+};
 
-let fileHandler = validateFiles(/mp3|wma|/).fields([
+let fileHandler = validateFiles(fileTypesValidationInfo).fields([
     { name: 'song_file', maxCount: 1 },
+    { name: 'album_art_image_file', maxCount: 1 }
 ]);
 
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
     try {
-        if (req.files.song_file) {
-            songController.createSong(req, res).then(result => {
-                const acquisitionApiUrl = (path.join(process.env.ACQUISITION_API_ENDPOINT_BASE_URL, '/v1/ingest'));
-                console.log('TODO Send POST request to ' + acquisitionApiUrl);
-                res.send(result);
-            }).catch(err => {
-                const statusCode = err.status_code || 400;
-                res.status(statusCode).send({ message: err.message });
-            });
-        } else {
-            res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
+        const requiredFiles = ['song_file', 'album_art_image_file'];
+        const hasAllFiles = validateRequiredFiles(requiredFiles, req.files);
+        if (!hasAllFiles) {
+            return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
+
+        songController.createSong(req, res).then(async (result) => {
+            ingest(result).then((ingestResult) => {
+                res.send(ingestResult);
+            });
+        }).catch(err => {
+            const statusCode = err.status_code || 400;
+            res.status(statusCode).send({ message: err.message });
+        });
     } catch (err) {
         res.status(400).send(err);
     }
 });
+
+const validateRequiredFiles = (requiredFiles, files) => {
+    for (let i = 0; i < requiredFiles.length; i++) {
+        if (!files[requiredFiles[i]]) {
+            return false;
+        }
+    }
+    return true;
+};
 
 module.exports = router;

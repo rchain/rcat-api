@@ -27,9 +27,10 @@ const s3 = new aws.S3({
 //     region: process.env.AWS_S3_REGION // region of your bucket
 // });
 
-const validateFiles = (fileTypesRegex) => {
+const validateFiles = (fileTypesValidationInfo) => {
     return multer({
         fileFilter: (req, file, cb) => {
+            const fileTypesRegex = fileTypesValidationInfo[file.fieldname];
             const isMimeTypeValid = fileTypesRegex.test(file.mimetype);
             const isExtensionValid = fileTypesRegex.test(path.extname(file.originalname).toLowerCase());
 

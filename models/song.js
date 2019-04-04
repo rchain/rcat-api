@@ -28,9 +28,7 @@ const songSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    album_art_image_url: {
-        type: String
-    },
+    album_art_image_url: String,
     song_writers: [
         {
             name: {

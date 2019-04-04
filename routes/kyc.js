@@ -26,7 +26,13 @@ const requestSchema = {
 };
 
 // let kycUpload = upload.fields([{ name: 'identification_front_image', maxCount: 1 }, { name: 'identification_back_image', maxCount: 1 }, { name: 'identification_selfie_image', maxCount: 1 }]);
-let fileHandler = validateFiles(/png|jpeg|jpg/).fields([
+const fileTypesValidationInfo = {
+    'identification_front_image': /png|jpeg|jpg/,
+    'identification_back_image': /png|jpeg|jpg/,
+    'identification_selfie_image': /png|jpeg|jpg/
+};
+
+let fileHandler = validateFiles(fileTypesValidationInfo).fields([
     { name: 'identification_front_image', maxCount: 1 },
     { name: 'identification_back_image', maxCount: 1 },
     { name: 'identification_selfie_image', maxCount: 1 }
@@ -36,16 +42,16 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
     try {
         const requiredFiles = ['identification_front_image', 'identification_back_image', 'identification_selfie_image'];
         const hasAllFiles = validateRequiredFiles(requiredFiles, req.files);
-        if (hasAllFiles) {
-            kycController.saveKycData(req, res).then(result => {
-                res.send(result);
-            }).catch(err => {
-                const statusCode = err.status_code || 400;
-                res.status(statusCode).send({message: err.message});
-            });
-        } else {
+        if (!hasAllFiles) {
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
+
+        kycController.saveKycData(req, res).then(result => {
+            res.send(result);
+        }).catch(err => {
+            const statusCode = err.status_code || 400;
+            res.status(statusCode).send({message: err.message});
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send(err);
@@ -53,15 +59,12 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
 });
 
 const validateRequiredFiles = (requiredFiles, files) => {
-    isValid = true;
-    // console.log('kyc files', files);
     for (let i = 0; i < requiredFiles.length; i++) {
         if (!files[requiredFiles[i]]) {
-            isValid = false;
-            break;
+            return false;
         }
     }
-    return isValid;
+    return true;
 };
 
 module.exports = router;
