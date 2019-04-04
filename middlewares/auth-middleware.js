@@ -12,9 +12,10 @@ const isAuthenticated = (req, res, next) => {
         const jwtOptions = require('../config/jwt-options');
         jwt.verify(token, process.env.JWT_SECRET, jwtOptions, (err, decoded) => {
             if (err) {
-                return res.json(401, {
+                return res.status(401).json({
                     success: false,
-                    message: 'Token is not valid'
+                    message: 'Token is not valid',
+                    err: err
                 });
             } else {
                 req.user = decoded;
@@ -22,7 +23,7 @@ const isAuthenticated = (req, res, next) => {
             }
         });
     } else {
-        return res.json(401, {
+        return res.status(401).json({
             success: false,
             message: 'Auth token is not supplied'
         });

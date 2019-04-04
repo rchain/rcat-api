@@ -47,25 +47,20 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
     } catch (err) {
+        console.error(err);
         res.status(500).send(err);
     }
 });
 
-
-
 const validateRequiredFiles = (requiredFiles, files) => {
     isValid = true;
-
+    // console.log('kyc files', files);
     for (let i = 0; i < requiredFiles.length; i++) {
         if (!files[requiredFiles[i]]) {
-            console.log('hohohoho');
-            console.log(files);
-            console.log(requiredFiles[i]);
             isValid = false;
             break;
         }
     }
-
     return isValid;
 };
 

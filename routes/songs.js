@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const songController = require('../controllers/song-controller');
 const Song = require('../models/song');
+const path = require('path');
 const Joi = require('joi');
 const validate = require('express-validation');
 const { validateFiles } = require('../services/file-upload');
@@ -78,6 +79,8 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
     try {
         if (req.files.song_file) {
             songController.createSong(req, res).then(result => {
+                const acquisitionApiUrl = (path.join(process.env.ACQUISITION_API_ENDPOINT_BASE_URL, '/v1/ingest'));
+                console.log('TODO Send POST request to ' + acquisitionApiUrl);
                 res.send(result);
             }).catch(err => {
                 const statusCode = err.status_code || 400;
