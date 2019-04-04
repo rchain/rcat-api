@@ -7,10 +7,10 @@ const songSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        unique: true
+        unique: false
     },
-    song_file_url: {
-        type: String,
+    song_dropbox_data: {
+        type: Object,
         required: true
     },
     genres: [
@@ -133,10 +133,10 @@ const songSchema = new mongoose.Schema({
 require('./genre');
 songSchema.plugin(idvalidator);
 
-songSchema.statics.createSong = async function (userData, data, file) {
+songSchema.statics.createSong = async function (userData, data, dbxResponse) {
     let song = new Song({
         title: data.title,
-        song_file_url: file.Location,
+        song_dropbox_data: dbxResponse,
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         artists: data.artists,
@@ -146,15 +146,10 @@ songSchema.statics.createSong = async function (userData, data, file) {
         collaborators: data.collaborators,
         status: 'NEW'
     });
-    return await this.create(song);
+    // return await this.create(song);
+    song = await this.create(song);
+    return await Song.findById(song.id).populate('genres', '-__v -created_at -updated_at');
 };
-
-
-// Pre hook for `findOneAndUpdate`
-songSchema.pre('findOneAndUpdate', function (next) {
-    this.options.runValidators = true;
-    next();
-});
 
 const Song = mongoose.model('Song', songSchema);
 module.exports = Song;
