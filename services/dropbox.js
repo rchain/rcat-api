@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 if(!process.env.DROPBOX_ACCESS_TOKEN) {
     throw new Error('Missing DROPBOX_ACCESS_TOKEN environment var');
 }
