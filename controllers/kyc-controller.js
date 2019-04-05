@@ -39,8 +39,16 @@ const notifyEmail = () => {
     });
 };
 
+const skip = async (req, res) => {
+    const user = await User.findByIdAndUpdate(
+        req.user.id,
+        {$inc: { kyc_skip_count: 1 }}
+    );
+    return user;
+};
+
 // Save Kyc account data
-exports.saveKycData = async (req, res) => {
+const submitKycData = async (req, res) => {
     let kycAccount = await User.getKycAccountId(req.user);
 
     if (kycAccount) {
@@ -53,6 +61,7 @@ exports.saveKycData = async (req, res) => {
             uploadKycFiles(req.files, req.user)
                 .then(async (values) => {
                     let data = req.body;
+                    data.status = 'SUBMITED';
                     let files = [];
                     values.forEach(val => {
                         files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
@@ -76,4 +85,10 @@ exports.saveKycData = async (req, res) => {
             });
         });
     }
+};
+
+
+module.exports = {
+    submitKycData,
+    skip
 };

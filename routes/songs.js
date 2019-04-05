@@ -88,6 +88,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             ingest(result).then((ingestResult) => {
                 res.send(ingestResult);
             });
+            // res.send(result);
         }).catch(err => {
             const statusCode = err.status_code || 400;
             res.status(statusCode).send({ message: err.message });

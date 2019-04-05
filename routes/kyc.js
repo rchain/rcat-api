@@ -12,6 +12,19 @@ router.get('/', function (req, res, next) {
     res.send({});
 });
 
+router.post('/skip', function (req, res, next) {
+    try {
+        kycController.skip(req, res).then((result) => {
+            res.send({
+                kyc_skip_count: result.kyc_skip_count
+            });
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err);
+    }
+});
+
 const requestSchema = {
     body: {
         country_of_residence: Joi.string().required(),
@@ -46,7 +59,8 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
-        kycController.saveKycData(req, res).then(result => {
+        kycController.submitKycData(req, res).then(result => {
+            console.log('TODO Send email about KYC submit request');
             res.send(result);
         }).catch(err => {
             const statusCode = err.status_code || 400;

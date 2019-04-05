@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 const { Types } = Schema;
 
 const userSchema = new mongoose.Schema({
+    kyc_skip_count: {
+        type: Number,
+        default: 0
+    },
     kyc_account: {
         type: Types.ObjectId,
         ref: 'KycAccount',

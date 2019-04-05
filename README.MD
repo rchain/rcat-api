@@ -12,7 +12,7 @@ cp env.example .env
 
 And then fill `.env` file with data.
 
-## Run
+## Run from source
 
 On MacOS or Linux, run the app with this command:
 ```
@@ -32,8 +32,7 @@ Run the following command to seed database:
 ```
 Add `-d` optionally to drop database before seeding.
 
-## Docker
-
+## Docker 
 In order to run the application and mongodb using docker-compose first create the .env file. Be sure to change the .env to point to dockerized mongo instance by setting:
 
 ```
@@ -45,7 +44,6 @@ After that run following commands:
 ```
 docker-compose build
 docker-compose up
-
 ```
 
 In order to just build the application image run the following command:
@@ -59,6 +57,15 @@ In order to run this image execute:
 docker run asset-management-api:latest
 ```
 
+In order to stop all containers execute:
+```
+docker-compose stop
+```
+
+In order to stop and remove all containers execute:
+```
+docker-compose down
+```
 
 ## Usefull links
 - http://joliv.me/b/2016/10/15/express-api-swagger/

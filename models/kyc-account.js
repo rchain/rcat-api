@@ -27,7 +27,11 @@ const kycAccountSchema = new mongoose.Schema({
     identification_expiration_date: Date,
     identification_front_image_url: String,
     identification_back_image_url: String,
-    identification_selfie_image_url: String
+    identification_selfie_image_url: String,
+    status: {
+        type: String,
+        enum: ['SKIPPED', 'SUBMITED', 'APPROVED', 'REJECTED'],
+    }
 }, {
     timestamps: {
         createdAt: 'created_at',
