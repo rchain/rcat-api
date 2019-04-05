@@ -15,12 +15,12 @@ const kycAccountSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['Male', 'Female'],
+        enum: ['male', 'female'],
         required: true
     },
     identification_type: {
         type: String,
-        enum: ['Passport', 'Driver\'s license', 'ID card'],
+        enum: ['passport', 'drivers_licence', 'id_card'],
         required: true
     },
     identification_id_number: String,

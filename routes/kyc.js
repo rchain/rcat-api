@@ -15,6 +15,7 @@ router.get('/', function (req, res, next) {
             res.send(result);
         })
         .catch((err) => {
+            console.log(req.user);
             res.status(400).send(err.toString());
         });
 });
@@ -54,8 +55,8 @@ const requestSchema = {
         first_name: Joi.string().required(),
         last_name: Joi.string().required(),
         date_of_birth: Joi.date().required(),
-        gender: Joi.string().valid('Male', 'Female', 'Gender neutral').required(),
-        identification_type: Joi.string().valid('Passport', 'Driver\'s license', 'ID card').required(),
+        gender: Joi.string().valid('male', 'female', 'gender_neutral').required(),
+        identification_type: Joi.string().valid('passport', 'drivers_licence', 'id_card').required(),
         identification_id_number: Joi.string().required(),
         identification_expiration_date: Joi.date().required(),
     }
