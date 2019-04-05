@@ -19,6 +19,9 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.getKycAccountId = async function (userData) {
     const user = await User.findById(userData.id, '-__v');
+    if(user == null) {
+        throw new Error('User not found');
+    }
     return user.kyc_account;
 };
 

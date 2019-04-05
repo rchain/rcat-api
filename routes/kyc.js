@@ -9,10 +9,20 @@ const { validateFiles } = require('../services/file-upload');
 router.use(isAuthenticated);
 
 router.get('/', function (req, res, next) {
-    res.send({});
+    kycController.getKyc(req, res)
+        .then((result) => {
+            console.log('KYC', result);
+            res.send(result);
+        })
+        .catch((err) => {
+            res.status(400).send(err.toString());
+        });
 });
 
 router.post('/skip', function (req, res, next) {
+
+    console.log('GET /kyc/skip - entering ...');
+
     try {
         kycController.skip(req, res).then((result) => {
             res.send({
@@ -24,19 +34,6 @@ router.post('/skip', function (req, res, next) {
         res.status(500).send(err);
     }
 });
-
-const requestSchema = {
-    body: {
-        country_of_residence: Joi.string().required(),
-        first_name: Joi.string().required(),
-        last_name: Joi.string().required(),
-        date_of_birth: Joi.date().required(),
-        gender: Joi.string().valid('Male', 'Female', 'Gender neutral').required(),
-        identification_type: Joi.string().valid('Passport', 'Driver\'s license', 'ID card').required(),
-        identification_id_number: Joi.string().required(),
-        identification_expiration_date: Joi.date().required(),
-    }
-};
 
 // let kycUpload = upload.fields([{ name: 'identification_front_image', maxCount: 1 }, { name: 'identification_back_image', maxCount: 1 }, { name: 'identification_selfie_image', maxCount: 1 }]);
 const fileTypesValidationInfo = {
@@ -50,6 +47,19 @@ let fileHandler = validateFiles(fileTypesValidationInfo).fields([
     { name: 'identification_back_image', maxCount: 1 },
     { name: 'identification_selfie_image', maxCount: 1 }
 ]);
+
+const requestSchema = {
+    body: {
+        country_of_residence: Joi.string().required(),
+        first_name: Joi.string().required(),
+        last_name: Joi.string().required(),
+        date_of_birth: Joi.date().required(),
+        gender: Joi.string().valid('Male', 'Female', 'Gender neutral').required(),
+        identification_type: Joi.string().valid('Passport', 'Driver\'s license', 'ID card').required(),
+        identification_id_number: Joi.string().required(),
+        identification_expiration_date: Joi.date().required(),
+    }
+};
 
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
     try {

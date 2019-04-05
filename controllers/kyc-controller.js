@@ -39,6 +39,10 @@ const notifyEmail = () => {
     });
 };
 
+const getKyc = async (req, res) => {
+    return await User.getKycAccountId(req.user);
+};
+
 const skip = async (req, res) => {
     const user = await User.findByIdAndUpdate(
         req.user.id,
@@ -90,5 +94,6 @@ const submitKycData = async (req, res) => {
 
 module.exports = {
     submitKycData,
-    skip
+    skip,
+    getKyc
 };
