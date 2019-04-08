@@ -15,13 +15,10 @@ const userSchema = new mongoose.Schema({
         type: Types.ObjectId,
         ref: 'GmailAccount',
     },
-    facebookProvider: {
-        type: {
-            id: String,
-            token: String
-        },
-        select: false
-    }
+    facebook_account: {
+        type: Types.ObjectId,
+        ref: 'FacebookAccount',
+    },
 });
 
 userSchema.statics.getKycAccountId = async function (userData) {
@@ -30,6 +27,33 @@ userSchema.statics.getKycAccountId = async function (userData) {
         throw new Error('User not found');
     }
     return user.kyc_account;
+};
+
+userSchema.statics.upsertFbUser = function(accessToken, refreshToken, profile, cb) {
+    var that = this;
+    return this.findOne({
+        'facebookProvider.id': profile.id
+    }, function(err, user) {
+        // no user was found, lets create a new one
+        if (!user) {
+            var newUser = new that({
+                email: profile.emails[0].value,
+                facebookProvider: {
+                    id: profile.id,
+                    token: accessToken
+                }
+            });
+
+            newUser.save(function(error, savedUser) {
+                if (error) {
+                    console.log(error);
+                }
+                return cb(error, savedUser);
+            });
+        } else {
+            return cb(err, user);
+        }
+    });
 };
 
 const User = mongoose.model('User', userSchema);

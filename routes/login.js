@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const Joi = require('joi');
 const validate = require('express-validation');
+const gmaillController = require('../controllers/gmail-controller');
+const facebookController = require('../controllers/facebook-controller');
 
-const loginController = require('../controllers/login-controller');
-
-const requestSchema = {
+const requestGmailSchema = {
     body: {
         Eea: Joi.string().required(),
         Paa: Joi.string().required(),
@@ -18,18 +18,25 @@ const requestSchema = {
     }
 };
 
-router.post('/gmail', validate(requestSchema), async (req, res, next) => {
+router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
     try {
-        const data = await loginController.loginGmail(req, res);
+        const data = await gmaillController.loginGmail(req, res);
         res.send(data);
     } catch (err) {
         res.status(500).send(err);
     }
 });
 
-router.post('/facebook', async (req, res, next) => {
+const requestFacebookSchema = {
+    body: {},
+    headers: {
+        access_token: Joi.string().required(),
+    }
+};
+
+router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
     try {
-        const data = await loginController.loginFacebook(req, res);
+        const data = await facebookController.loginFacebook(req, res);
         res.send(data);
     } catch (err) {
         res.status(500).send(err);

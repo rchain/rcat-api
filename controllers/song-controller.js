@@ -39,7 +39,13 @@ const createSong = async (req, res) => {
             console.log('song created!!!', song);
             console.log('Pending rename and dropbox upload');
             const songExtension = path.extname(originalFileName);
+
+            //const asset = `${songName}${subtitle}${artistName}${releasedate}${fileFormat}`
             const newFileName = `${song.title}${song.main_artist_name}${song.id}${songExtension}`;
+
+            // const asset = `${songName}${subtitle}${artistName}${releasedate}${fileFormat}`
+            // const newFileName = `${song.title}${song.subtitle}${song.main_artist_name}${songreleasedate}${songExtension}`;
+
             const newFileNameEncoded = crypto.createHash('md5').update(newFileName).digest("hex") + songExtension;
             console.log('originalname', originalFileName);
             console.log('newFileName', newFileName);

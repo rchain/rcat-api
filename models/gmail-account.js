@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const User = require('./user');
-const Kyc = require('./kyc-account');
 
 const gmailAccountSchema = new mongoose.Schema({
     gmail_id: String,

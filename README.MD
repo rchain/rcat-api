@@ -70,3 +70,5 @@ docker-compose down
 ## Usefull links
 - http://joliv.me/b/2016/10/15/express-api-swagger/
 - http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
+- https://medium.com/@rocksinghajay/login-with-facebook-and-google-in-reactjs-990d818d5dab
+- https://codeburst.io/node-js-rest-api-facebook-login-121114ee04d8
