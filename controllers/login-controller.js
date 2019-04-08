@@ -2,6 +2,7 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GMAIL_CLIENT_ID);
 const jwt = require('jsonwebtoken');
 const GmailAccount = require('../models/gmail-account');
+var FacebookTokenStrategy = require('passport-facebook-token');
 var http = require('http');
 // var Cookies = require('cookies');
 
@@ -60,6 +61,48 @@ const verifyFacebookToken = async (req) => {
     const headers = req.headers;
     const authResponse = req.authResponse;
     const userID = authResponse.userID;
+
+
+    passport.use(new FacebookTokenStrategy({
+        clientID: '',
+        clientSecret: ''
+    },
+    function (accessToken, refreshToken, profile, done) {
+        User.upsertFbUser(accessToken, refreshToken, profile, function(err, user) {
+            return done(err, user);
+        });
+    }));
+
+    passport.use(new FacebookTokenStrategy({
+            clientID: FACEBOOK_APP_ID,
+            clientSecret: FACEBOOK_APP_SECRET,
+            fbGraphVersion: 'v3.0'
+        }, function(accessToken, refreshToken, profile, done) {
+                // User.findOrCreate({facebookId: profile.id}, function (error, user) {
+                //     return done(error, user);
+                // });
+                console.log('accessToken >>>>>>>>>>>', accessToken);
+                console.log('refreshToken >>>>>>>>>>', refreshToken);
+                console.log('profile >>>>>>>>>>>>>>>', profile);
+
+                const user = {
+                    "facebook_account" : 'N/A',
+                };
+
+                return done(error, user);
+            }
+    ));
+
+
+    app.post('/auth/facebook/token',
+        passport.authenticate('facebook-token'),
+        function (req, res) {
+            // do something with req.user
+            console.log('(facebook-token) req.user: ', req.user);
+            res.send(req.user? 200 : 401);
+        }
+    );
+
     return 123;
 };
 

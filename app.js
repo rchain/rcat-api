@@ -61,6 +61,7 @@ const {
     homeRouter,
     statusRouter,
     loginRouter,
+    authRouter,
     usersRouter,
     kycRouter,
     songsRouter,
@@ -72,6 +73,7 @@ const {
 app.use('/', homeRouter);
 app.use('/status', statusRouter);
 app.use('/login', loginRouter);
+app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 app.use('/kyc', kycRouter);
 app.use('/songs', songsRouter);

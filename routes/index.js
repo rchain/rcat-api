@@ -1,5 +1,6 @@
 const homeRouter = require('./home');
 const loginRouter = require('./login');
+const authRouter = require('./auth');
 const usersRouter = require('./users');
 const statusRouter = require('./status');
 const kycRouter = require('./kyc');
@@ -11,6 +12,7 @@ const testRouter = require('./tester');
 module.exports = {
     homeRouter,
     loginRouter,
+    authRouter,
     usersRouter,
     statusRouter,
     kycRouter,
