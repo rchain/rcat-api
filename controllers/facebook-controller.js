@@ -18,8 +18,6 @@ const verifyFacebookToken = async (req, res) => {
 };
 
 const loginFacebook = async (req, res) => {
-
-
     const facebookResult = await verifyFacebookToken(req, res);
     const {
         accessToken,

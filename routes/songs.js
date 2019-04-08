@@ -66,6 +66,20 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+router.get('/:id/ack', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const song = await Song.findById(id).populate('genres', '-__v -created_at -updated_at');
+        if (!song) {
+            return res.status(404).send({ message: 'Not found.' });
+        }
+        res.send(song.transformAll());
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+
 const fileTypesValidationInfo = {
     'song_file': /mp3|wma|/,
     'album_art_image_file': /png|jpeg|jpg/
@@ -83,18 +97,6 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         if (!hasAllFiles) {
             return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
-
-        // songController.createSong(req, res).then(async (result) => {
-        //     ingest(result).then((ingestResult) => {
-        //         res.send(ingestResult);
-        //     }).catch((ingestError) => {
-        //         console.log('ingest error!!!', ingestError);
-        //     });
-        //     // res.send(result);
-        // }).catch(err => {
-        //     const statusCode = err.status_code || 400;
-        //     res.status(statusCode).send({ message: err.message });
-        // });
 
         const song = await songController.createSong(req, res);
         res.send(song);
