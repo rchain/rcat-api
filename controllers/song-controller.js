@@ -1,7 +1,7 @@
+const path = require('path');
+const crypto=require('crypto');
 const Song = require('../models/song');
 const mailjet = require('../services/mailjet');
-
-const { uploadSongS3 } = require('../services/file-upload');
 const uploadSongToDropBox = require('../services/dropbox');
 
 const listAllSongs = async (req, res) => {
@@ -9,76 +9,68 @@ const listAllSongs = async (req, res) => {
 };
 
 const createSong = async (req, res) => {
-    // const emailData = {
-    //     //     FromEmail: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
-    //     //     FromName: process.env.KYC_NOTIFY_EMAIL_FROM_NAME,
-    //     //     Subject: 'KYC request submited',
-    //     //     "Html-part": JSON.stringify(song),
-    //     //     Recipients: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS,
-    //     // };
-    //     //
-    //     // const emailData = {
-    //     //     "Messages":[{
-    //     //         "From": {
-    //     //             "Email": process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
-    //     //             "Name": process.env.KYC_NOTIFY_EMAIL_FROM_NAME
-    //     //         },
-    //     //         "To": [{
-    //     //             "Email": process.env.KYC_NOTIFY_EMAIL_RECIPIENT_EMAIL,
-    //     //             "Name": process.env.KYC_NOTIFY_EMAIL_RECIPIENT_NAME
-    //     //         }],
-    //     //         'Subject': 'Test with the NodeJS Mailjet wrapper',
-    //     //         'Text-part': 'Hello NodeJs !',
-    //     //         'Attachments': [{
-    //     //             "Content-Type": "text-plain",
-    //     //             "Filename": "test.txt",
-    //     //             "Content": "VGhpcyBpcyB5b3VyIGF0dGFjaGVkIGZpbGUhISEK", // Base64 for "This is your attached file!!!"
-    //     //         }]
-    //     //     }]
-    // };
-
-    // mailjet.sendEmail(emailToBeSent, function (error, response, body) {
-    //     // If the statusCode is 201 or 200, it is a good thing
-    //     console.log (response.statusCode, error || body);
-    //     // We now go back to the homepage, by telling express to redirect to
-    //     // http://my_web_site/
-    //
-    //     // We send the response to the client !
-    //     res.send(JSON.stringify({error: err, response: response, body: body}));
-    // });
-    return new Promise((resolve, reject) => {
-
+    return new Promise(async (resolve, reject) => {
         const fieldName = Object.keys(req.files)[0];
         const fileContent = req.files[fieldName][0];
-        const fileName = req.files[fieldName][0].originalname;
+        const originalFileName = req.files[fieldName][0].originalname;
 
         // uploadSongS3(req.files, req.user).then(async (values) => {
         //     let data = req.body;
         //     let song = values[Object.keys(values)[0]];
-        //     // resolve(await Song.createSong(req.user, data, song));
-        //     return uploadSongByContent(fileContent, fileName)
-        //         .then(async (response) => {
-        //             console.log('DROPBOX RESPONSE', response);
-        //             const newSong = await Song.createSong(req.user, data, song);
-        //             resolve(newSong);
-        //         })
-        //         .catch((err) => {
-        //             reject(err);
-        //         });
+        //     resolve(await Song.createSong(req.user, data, song));
         // }).catch((err) => {
         //     reject(err);
         // });
 
-        uploadSongToDropBox(fileContent, fileName)
-            .then(async (dbxResponse) => {
-                console.log('DROPBOX RESPONSE', dbxResponse);
-                const newSong = await Song.createSong(req.user, req.body, dbxResponse);
-                resolve(newSong);
-            })
-            .catch((err) => {
-                console.log('DROPBOX ERROR', err);
-                reject(err);
-            });
+        // uploadSongToDropBox(fileContent, fileName)
+        //     .then(async (dbxResponse) => {
+        //         console.log('DROPBOX RESPONSE', dbxResponse);
+        //         const newSong = await Song.createSong(req.user, req.body, dbxResponse);
+        //         resolve(newSong);
+        //     })
+        //     .catch((err) => {
+        //         console.log('DROPBOX ERROR', err);
+        //         reject(err);
+        //     });
+
+        try {
+            const song = await Song.createSong(req.user, req.body);
+            console.log('req.files[fieldName][0]', req.files[fieldName][0]);
+            console.log('song created!!!', song);
+            console.log('Pending rename and dropbox upload');
+            const songExtension = path.extname(originalFileName);
+            const newFileName = `${song.title}${song.main_artist_name}${song.id}${songExtension}`;
+            const newFileNameEncoded = crypto.createHash('md5').update(newFileName).digest("hex") + songExtension;
+            console.log('originalname', originalFileName);
+            console.log('newFileName', newFileName);
+            console.log('newFileNameEncoded', newFileNameEncoded);
+
+            // uploadSongToDropBox(fileContent, fileName)
+            //     .then(async (dbxResponse) => {
+            //         console.log('DROPBOX RESPONSE', dbxResponse);
+            //         const newSong = await Song.createSong(req.user, req.body, dbxResponse);
+            //         resolve(newSong);
+            //     })
+            //     .catch((err) => {
+            //         console.log('DROPBOX ERROR', err);
+            //         reject(err);
+            //     });
+
+            const songUpdated = await Song.findByIdAndUpdate(
+                song._id,
+                {
+                    $set: {
+                        fileName: newFileNameEncoded,
+                        originalFileName: originalFileName,
+                    }
+                }
+            );
+
+            resolve(songUpdated);
+        } catch (err) {
+            console.log('Song creation error!', err);
+            reject(err);
+        }
 
     });
 };

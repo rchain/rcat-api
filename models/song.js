@@ -9,9 +9,10 @@ const songSchema = new mongoose.Schema({
         required: true,
         unique: false
     },
+    fileName: String,
+    originalFileName: String,
     song_dropbox_data: {
-        type: Object,
-        required: true
+        type: Object
     },
     genres: [
         {
@@ -119,7 +120,7 @@ const songSchema = new mongoose.Schema({
     ],
     status: {
         type: String,
-        enum: ['NEW', 'UPLOADED_FOR_CONVERSION', 'CONVERSION_DONE', 'CONVERTED_UPLOADED_S3', 'RCHAIN_SUBMITED']
+        enum: ['NEW', 'UPLOADED_FOR_CONVERSION']
     }
 }, {
         timestamps: {
@@ -127,14 +128,24 @@ const songSchema = new mongoose.Schema({
             updatedAt: 'updated_at',
         },
     });
+
+songSchema.virtual('status_title').get(function () {
+    switch (this.status) {
+        case 'NEW':
+            return 'new';
+        default:
+            return 'unknown';
+    }
+});
+
 // Required to include to avoid error: Schema hasn't been registered for model \"SongWriter\".\nUse mongoose.model(name, schema)
 require('./genre');
 songSchema.plugin(idvalidator);
 
-songSchema.statics.createSong = async function (userData, data, dbxResponse) {
+songSchema.statics.createSong = async function (userData, data) {
     let song = new Song({
         title: data.title,
-        song_dropbox_data: dbxResponse,
+        // song_dropbox_data: dbxResponse,
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         artists: data.artists,

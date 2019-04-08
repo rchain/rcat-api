@@ -15,6 +15,13 @@ const userSchema = new mongoose.Schema({
         type: Types.ObjectId,
         ref: 'GmailAccount',
     },
+    facebookProvider: {
+        type: {
+            id: String,
+            token: String
+        },
+        select: false
+    }
 });
 
 userSchema.statics.getKycAccountId = async function (userData) {

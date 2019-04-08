@@ -84,15 +84,21 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
-        songController.createSong(req, res).then(async (result) => {
-            ingest(result).then((ingestResult) => {
-                res.send(ingestResult);
-            });
-            // res.send(result);
-        }).catch(err => {
-            const statusCode = err.status_code || 400;
-            res.status(statusCode).send({ message: err.message });
-        });
+        // songController.createSong(req, res).then(async (result) => {
+        //     ingest(result).then((ingestResult) => {
+        //         res.send(ingestResult);
+        //     }).catch((ingestError) => {
+        //         console.log('ingest error!!!', ingestError);
+        //     });
+        //     // res.send(result);
+        // }).catch(err => {
+        //     const statusCode = err.status_code || 400;
+        //     res.status(statusCode).send({ message: err.message });
+        // });
+
+        const song = await songController.createSong(req, res);
+        res.send(song);
+
     } catch (err) {
         res.status(400).send(err);
     }

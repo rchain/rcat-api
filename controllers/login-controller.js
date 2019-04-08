@@ -16,7 +16,7 @@ const verifyGmailToken = async (token) => {
     return userid;
 };
 
-exports.login = async (req, res) => {
+const loginGmail = async (req, res) => {
     // check if passed gmail token_id is valid
     let gmailUserId = await verifyGmailToken(req.headers.gusrid).catch(console.error);
     // if it is valid - proceed, otherwise - return error
@@ -53,4 +53,47 @@ exports.login = async (req, res) => {
             message: "Invalid token"
         }
     }
+};
+
+// call Facebook's API to check if passed token is valid
+const verifyFacebookToken = async (req) => {
+    const headers = req.headers;
+    const authResponse = req.authResponse;
+    const userID = authResponse.userID;
+    return 123;
+};
+
+const loginFacebook = async (req, res) => {
+    // check if passed gmail token_id is valid
+    let facebookUserId = await verifyFacebookToken(req).catch(console.error);
+    console.log('facebookUserId', facebookUserId);
+
+    console.log('verifyFacebookToken NOT IMPLEMENTED!');
+    console.log('headers:::', headers);
+    console.log('authResponse:::', authResponse);
+    console.log('authResponse.userID:::', userID);
+
+    const jwtPayload = {
+        id:  userID,
+        email: 'dummy@email.com'
+    };
+
+    const jwtOptions = require('../config/jwt-options');
+    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);
+
+    const user = {
+        "facebook_account" : 'N/A',
+    };
+
+    return {
+        token,
+        require_kyc: !user.kyc_account,
+        user
+    };
+
+};
+
+module.exports = {
+    loginGmail,
+    loginFacebook
 };
