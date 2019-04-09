@@ -5,6 +5,7 @@ const Song = require('../models/song');
 const { ingest } = require('../services/acquisition');
 const Joi = require('joi');
 const validate = require('express-validation');
+const axios = require('axios');
 const { validateFiles } = require('../services/file-upload');
 
 router.use(isAuthenticated);
@@ -100,7 +101,17 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         }
 
         const song = await songController.createSong(req, res);
-        res.send(song);
+        const songForAcq = song.transformAck();
+
+        const postUrl = `${process.env.ACQUISITION_API_ENDPOINT_BASE_URL}/v1/ingest`;
+        console.log(`POSTING to ${postUrl} ...`);
+        return axios.post(postUrl, songForAcq)
+            .then(function (response) {
+                return res.send(response.data);
+            })
+            .catch(function (error) {
+                return res.status(400).send(error.Error);
+            });
 
     } catch (err) {
         res.status(400).send(err);
