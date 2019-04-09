@@ -4,13 +4,11 @@ const sgMail = require('@sendgrid/mail');
 
 
 const notifyKYC = (kycData, files) => {
-    const fullName = kycData.kyc_account.full_name;
-
-    const message = `Person ${fullName} has just submited KYC.`;
+    const fullName = kycData.full_name;
 
     if(process.env.EMAIL_NOTIFICATIONS_SILENT === 'true') {
         console.log('SILENT EMAIL', '...');
-        return resolve('SILENT');
+        return 'SILENT EMAIL';
     }
 
     const images = [files.identification_front_image[0], files.identification_back_image[0], files.identification_selfie_image[0]];
@@ -30,8 +28,8 @@ const notifyKYC = (kycData, files) => {
         to: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
         subject: `${fullName} submited KYC`,
-        text: message,
-        html: message,
+        text: kycData.getDataInfo('\n'),
+        html: kycData.getDataInfo(),
         attachments: attachments,
     };
 

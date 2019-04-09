@@ -30,7 +30,7 @@ const kycAccountSchema = new mongoose.Schema({
     identification_selfie_image_url: String,
     state: {
         type: String,
-        enum: [KycState.SUBMITED, KycState.APPROVED, KycState.REJECTED],
+        enum: [KycState.SUBMITED, KycState.EMAILED, KycState.APPROVED, KycState.REJECTED],
     }
 }, {
     timestamps: {
@@ -66,6 +66,16 @@ kycAccountSchema.statics.save = async function (userData, data, files) {
         kyc_account: kycAccount.id
     });
     return await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
+    // return kycAccount;
+};
+
+kycAccountSchema.methods.getDataInfo = function (separator='<br>') {
+    return `
+       First Name: ${this.first_name}${separator}
+       Last Name: ${this.last_name}${separator}
+       Birthdate: ${this.date_of_birth}${separator}
+       Gender: ${this.gender}${separator}
+    `;
 };
 
 const KycAccount = mongoose.model('KycAccount', kycAccountSchema);

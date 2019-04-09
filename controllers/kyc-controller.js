@@ -2,6 +2,7 @@ const User = require('../models/user');
 const KycAccount = require('../models/kyc-account');
 const { uploadKycFilesToS3 } = require('../services/file-upload');
 const { notifyKYC } = require('../services/email');
+const KycState = require('../helpers/kys-state');
 
 const getKyc = async (req, res) => {
     return await User.getKycAccountId(req.user);
@@ -20,6 +21,8 @@ const submitKycData = async (req, res) => {
     let kycAccount = await User.getKycAccountId(req.user);
 
     if (kycAccount) {
+        console.log('kycAccount.getDataInfo() >>>>>>>>>>>>>>>>>>>>>>>>>>', kycAccount.getDataInfo());
+
         throw {
             status_code: 409,
             message: 'Kyc account already exists.'
@@ -34,18 +37,26 @@ const submitKycData = async (req, res) => {
                     values.forEach(val => {
                         files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
                     });
-                    // resolve(await KycAccount.save(req.user, data, files));
                     return await KycAccount.save(req.user, data, files);
                 })
-                .then((kycData) => {
-                    notifyKYC(kycData, req.files)
-                        .then((emalResponse) => {
-                            console.log('notifyEmail OK!!!!!!!!');
-                            resolve(kycData);
+                .then((kyc) => {
+                    notifyKYC(kyc.kyc_account, req.files)
+                        .then(async (emalResponse) => {
+                            console.log('notifyEmail OK!');
+
+                            const kycUpdated = await KycAccount.findByIdAndUpdate(
+                                kyc.kyc_account._id,
+                                {
+                                    $set: {
+                                        state: KycState.EMAILED
+                                    }
+                                }
+                            );
+                            resolve(kycUpdated);
                         })
                         .catch((err) => {
-                            console.error('notifyEmail ERROR!!!!!', err);
-                            resolve(kycData);
+                            console.error('notifyEmail ERROR!', err);
+                            resolve(kyc);
                         });
                 })
                 .catch((err) => {
