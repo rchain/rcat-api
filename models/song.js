@@ -156,6 +156,8 @@ songSchema.statics.createSong = async function (req) {
     const newFileName = `${data.title}${version}${data.main_artist_name}${data.release_date}${songExtension}`;
     const newFileNameEncoded = crypto.createHash('md5').update(newFileName).digest("hex") + songExtension;
 
+    const albumArtImageUrl = 'https://cdn.pixabay.com/photo/2017/07/29/13/17/green-2551467_960_720.jpg';
+
     let song = new Song({
         title: data.title,
         subtitle: data.subtitle,
@@ -163,7 +165,7 @@ songSchema.statics.createSong = async function (req) {
         main_artist_name: data.main_artist_name,
         release_date: data.release_date,
         artists: data.artists,
-        album_art_image_url: data.album_art_image_url,
+        album_art_image_url: albumArtImageUrl,
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
         collaborators: data.collaborators,
