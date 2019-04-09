@@ -41,7 +41,7 @@ const loginGmail = async (req, res) => {
         const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);
         return {
             token,
-            require_kyc: !user.kyc_account,
+            require_kyc: user.require_kyc,
             user
         };
     } else {

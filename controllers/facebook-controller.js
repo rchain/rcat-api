@@ -59,7 +59,7 @@ const loginFacebook = async (req, res) => {
 
     return {
         token,
-        require_kyc: !user.kyc_account,
+        require_kyc: user.require_kyc,
         user
     };
 

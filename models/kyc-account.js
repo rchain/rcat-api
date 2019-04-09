@@ -39,6 +39,10 @@ const kycAccountSchema = new mongoose.Schema({
     },
 });
 
+kycAccountSchema.virtual('require_kyc').get(function () {
+    return this.state === KycState.NEW;
+});
+
 kycAccountSchema.virtual('full_name').get(function () {
     return `${this.first_name} ${this.last_name}`;
 });

@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     },
 });
 
+userSchema.virtual('require_kyc').get(function () {
+    return !this.kyc_account;
+});
+
 userSchema.statics.getKycAccountById = async function (userId) {
     const user = await User.findById(userId, '-__v').populate('kyc_account', '-__v');
     if(user == null) {
