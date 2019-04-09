@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const { Types } = Schema;
 const idvalidator = require('mongoose-id-validator');
 const SongState = require('../helpers/song-state');
+const Genre = require('./genre');
 
 const songSchema = new mongoose.Schema({
     title: {
@@ -13,8 +14,7 @@ const songSchema = new mongoose.Schema({
         unique: false
     },
     subtitle: {
-        type: String,
-        required: true,
+        type: String
     },
     fileName: String,
     originalFileName: String,
@@ -144,8 +144,8 @@ songSchema.virtual('state_title').get(function () {
 });
 
 // Required to include to avoid error: Schema hasn't been registered for model \"SongWriter\".\nUse mongoose.model(name, schema)
-require('./genre');
-songSchema.plugin(idvalidator);
+// require('./genre');
+// songSchema.plugin(idvalidator);
 
 songSchema.statics.createSong = async function (req) {
     const data = req.body;
@@ -162,7 +162,7 @@ songSchema.statics.createSong = async function (req) {
 
     let song = new Song({
         title: data.title,
-        subtitle: data.subtitle,
+        subtitle: data.song_subtitle,
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         release_date: data.release_date,

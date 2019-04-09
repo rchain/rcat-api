@@ -10,6 +10,7 @@ const createSong = async (req, res) => {
 
         try {
             const song = await Song.createSong(req);
+            const fieldName = Object.keys(req.files)[0];
             const fileContent = req.files[fieldName][0];
             uploadSongToDropBox(fileContent, song.fileName)
                 .then(async (dbxResponse) => {
