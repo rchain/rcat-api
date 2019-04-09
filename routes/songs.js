@@ -15,6 +15,7 @@ const requestSchema = {
         genres: Joi.array().required().min(1).items(Joi.string().regex(/^[0-9a-fA-F]{24}$/, 'Should be ObjectId')),
         main_artist_name: Joi.string().required(),
         artists: Joi.array(),
+        album_art_image_url: 'https://cdn.pixabay.com/photo/2017/07/29/13/17/green-2551467_960_720.jpg',
         song_writers: Joi.array().items(Joi.object({
             name: Joi.string().required(),
             percentage_100_total_song: Joi.number().required().min(0).max(100),
