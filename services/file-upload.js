@@ -44,6 +44,7 @@ const validateFiles = (fileTypesValidationInfo) => {
 const uploadKycFilesToS3 = async (files, user) => {
     let promises = [];
     let fieldNames = Object.keys(files);
+    const cacheControl = `max-age=${60*60*24}`;
     fieldNames.forEach((field, index) => {
         promises[index] =
             new Promise((resolve, reject) => {
@@ -52,7 +53,7 @@ const uploadKycFilesToS3 = async (files, user) => {
                     Key: `${user.id}/kyc/${field}`,
                     Body: Buffer.from(files[field][0].buffer),
                     acl: 'public-read',
-                    cacheControl: 'max-age=31536000'
+                    cacheControl: cacheControl
                 }, (s3Err, data) => {
                     resolve({
                         [field]: data
