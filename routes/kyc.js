@@ -10,8 +10,7 @@ router.use(isAuthenticated);
 router.get('/', function (req, res, next) {
     kycController.getKyc(req, res)
         .then((result) => {
-            console.log('result', result || { empty: true });
-            res.send(result || { empty: true });
+            res.send(result || { "state": "NOT_SUBMITED" });
         })
         .catch((err) => {
             console.log(req.user);
