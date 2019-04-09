@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const Joi = require('joi');
 const validate = require('express-validation');
-
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const kycController = require('../controllers/kyc-controller');
 const { validateFiles } = require('../services/file-upload');
