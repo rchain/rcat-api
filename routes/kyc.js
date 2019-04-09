@@ -69,7 +69,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         }
 
         kycController.submitKycData(req, res).then(result => {
-            console.log('KYC SUBMITED!!!', result);
+            console.log('KYC SUBMITTED!!!', result);
             res.send(result);
         }).catch(err => {
             const statusCode = err.status_code || 400;

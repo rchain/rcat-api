@@ -1,7 +1,7 @@
 class KycState {
     static get NEW() { return 'NEW'; }
     static get EMAILED() { return 'EMAILED'; }
-    static get SUBMITED() { return 'SUBMITED'; }
+    static get SUBMITTED() { return 'SUBMITTED'; }
     static get APPROVED() { return 'APPROVED'; }
     static get REJECTED() { return 'REJECTED'; }
 
@@ -11,7 +11,7 @@ class KycState {
                 return 'new';
             case this.EMAILED:
                 return 'emailed';
-            case this.SUBMITED:
+            case this.SUBMITTED:
                 return 'submited';
             case this.APPROVED:
                 return 'approved';

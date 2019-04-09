@@ -10,6 +10,10 @@ const songSchema = new mongoose.Schema({
         required: true,
         unique: false
     },
+    subtitle: {
+        type: String,
+        required: true,
+    },
     fileName: String,
     originalFileName: String,
     song_dropbox_data: {
@@ -84,11 +88,9 @@ const songSchema = new mongoose.Schema({
             },
             rev_wallet_address: {
                 type: String,
-                required: true
             },
             rev_email: {
                 type: String,
-                required: true
             },
             isrc: {
                 type: String
@@ -111,17 +113,19 @@ const songSchema = new mongoose.Schema({
             },
             rev_wallet_address: {
                 type: String,
-                required: true
             },
             rev_email: {
                 type: String,
-                required: true
             },
             isrc: {
                 type: String
             }
         }
     ],
+    version: {
+        type: Number,
+        default: 1
+    },
     state: {
         type: String,
         enum: [SongState.NEW, SongState.UPLOADED_FOR_CONVERSION]
@@ -141,10 +145,20 @@ songSchema.virtual('state_title').get(function () {
 require('./genre');
 songSchema.plugin(idvalidator);
 
-songSchema.statics.createSong = async function (userData, data) {
+songSchema.statics.createSong = async function (req) {
+    const data = req.body;
+
+    const fieldName = Object.keys(req.files)[0];
+    const originalFileName = req.files[fieldName][0].originalname;
+
+    const version = 1;
+    const songExtension = path.extname(originalFileName);
+    const newFileName = `${data.title}${version}${data.main_artist_name}${data.release_date}${songExtension}`;
+    const newFileNameEncoded = crypto.createHash('md5').update(newFileName).digest("hex") + songExtension;
+
     let song = new Song({
         title: data.title,
-        // song_dropbox_data: dbxResponse,
+        subtitle: data.subtitle,
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         release_date: data.release_date,
@@ -153,6 +167,9 @@ songSchema.statics.createSong = async function (userData, data) {
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
         collaborators: data.collaborators,
+        fileName: newFileNameEncoded,
+        originalFileName: originalFileName,
+        version: version,
         state: 'NEW'
     });
     // return await this.create(song);

@@ -30,7 +30,7 @@ const kycAccountSchema = new mongoose.Schema({
     identification_selfie_image_url: String,
     state: {
         type: String,
-        enum: [KycState.NEW, KycState.EMAILED, KycState.SUBMITED, KycState.APPROVED, KycState.REJECTED],
+        enum: [KycState.NEW, KycState.EMAILED, KycState.SUBMITTED, KycState.APPROVED, KycState.REJECTED],
     }
 }, {
     timestamps: {

@@ -15,7 +15,7 @@ const requestSchema = {
         genres: Joi.array().required().min(1).items(Joi.string().regex(/^[0-9a-fA-F]{24}$/, 'Should be ObjectId')),
         main_artist_name: Joi.string().required(),
         artists: Joi.array(),
-        song_writers: Joi.array().min(1).items(Joi.object({
+        song_writers: Joi.array().items(Joi.object({
             name: Joi.string().required(),
             percentage_100_total_song: Joi.number().required().min(0).max(100),
             percentage_100_publisher: Joi.number().required().min(0).max(100),

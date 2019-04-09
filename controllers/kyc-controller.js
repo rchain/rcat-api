@@ -31,7 +31,7 @@ const submitKycData = async (req, res) => {
             uploadKycFilesToS3(req.files, req.user)
                 .then(async (values) => {
                     let data = req.body;
-                    data.state = 'SUBMITED';
+                    data.state = 'SUBMITTED';
                     let files = [];
                     values.forEach(val => {
                         files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
@@ -58,7 +58,7 @@ const submitKycData = async (req, res) => {
                                 kyc._id,
                                 {
                                     $set: {
-                                        state: KycState.SUBMITED
+                                        state: KycState.SUBMITTED
                                     }
                                 }
                             );
