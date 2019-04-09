@@ -11,7 +11,8 @@ router.use(isAuthenticated);
 router.get('/', function (req, res, next) {
     kycController.getKyc(req, res)
         .then((result) => {
-            res.send(result);
+            console.log('result', result || { empty: true });
+            res.send(result || { empty: true });
         })
         .catch((err) => {
             console.log(req.user);
@@ -29,7 +30,9 @@ router.post('/skip', function (req, res, next) {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).send(err);
+        res.send({
+            kyc_skip_count: -1
+        });
     }
 });
 
