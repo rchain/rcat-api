@@ -15,7 +15,7 @@ const requestSchema = {
         genres: Joi.array().required().min(1).items(Joi.string().regex(/^[0-9a-fA-F]{24}$/, 'Should be ObjectId')),
         main_artist_name: Joi.string().required(),
         artists: Joi.array(),
-        song_writers: Joi.array().required().min(1).items(Joi.object({
+        song_writers: Joi.array().min(1).items(Joi.object({
             name: Joi.string().required(),
             percentage_100_total_song: Joi.number().required().min(0).max(100),
             percentage_100_publisher: Joi.number().required().min(0).max(100),
@@ -25,7 +25,7 @@ const requestSchema = {
             publisher_rights_organization: Joi.string(),
             iswc: Joi.string()
         })),
-        sound_owners: Joi.array().required().min(1).items(Joi.object({
+        sound_owners: Joi.array().items(Joi.object({
             name: Joi.string().required(),
             role: Joi.string().required(),
             percentage_100: Joi.number().required().min(0).max(100),
@@ -33,7 +33,7 @@ const requestSchema = {
             rev_email: Joi.string().email(),
             isrc: Joi.string(),
         })),
-        collaborators: Joi.array().required().min(1).items(Joi.object({
+        collaborators: Joi.array().items(Joi.object({
             name: Joi.string().required(),
             role: Joi.string().required(),
             percentage_100: Joi.number().required().min(0).max(100),
