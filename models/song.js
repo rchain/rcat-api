@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const path = require('path');
+const crypto = require('crypto');
 const Schema = mongoose.Schema;
 const { Types } = Schema;
 const idvalidator = require('mongoose-id-validator');
