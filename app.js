@@ -1,13 +1,12 @@
 require('dotenv').config();
 const express = require('express');
-const logger = require('morgan');
-// const cookieParser = require('cookie-parser');
-// const cookieSession = require('cookie-session');
-var cors = require('cors');
+const cors = require('cors');
+const uuid = require('node-uuid')
+
+const morgan = require('morgan');
 
 const app = express();
 
-// const { cookieMaxAge } = require('./config/cookie');
 
 const corsOption = {
     origin: true,
@@ -16,10 +15,37 @@ const corsOption = {
     exposedHeaders: ['x-auth-token']
 };
 app.use(cors(corsOption));
-
-app.use(logger('dev'));
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+
+///////////////////////////
+// Logging
+///////////////////////////
+
+// const loggerFormat = '(:user-agent) :method :url :status :res[content-length] - :response-time ms';
+const loggerFormat = 'dev';
+
+const assignId = (req, res, next) => {
+    req.id = uuid.v4();
+    next();
+};
+
+app.use(assignId);
+
+app.use(morgan(loggerFormat, {
+    skip: function (req, res) {
+        return res.statusCode < 400
+    },
+    stream: process.stderr
+}));
+
+app.use(morgan(loggerFormat, {
+    skip: function (req, res) {
+        return res.statusCode >= 400
+    },
+    stream: process.stdout
+}));
+
 
 ///////////////////////////
 // Routes

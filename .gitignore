@@ -64,4 +64,6 @@ typings/
 .envrc
 .env.test
 .idea
-uploads
+uploads/
+logs/
+app.log

@@ -21,7 +21,8 @@ const createSong = async (req, res) => {
                             $set: {
                                 song_dropbox_data: dbxResponse
                             }
-                        }
+                        },
+                        {new: true}
                     ).populate('genres', '-__v -created_at -updated_at');
 
                     resolve(songUpdated);

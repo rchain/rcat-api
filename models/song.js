@@ -3,9 +3,9 @@ const path = require('path');
 const crypto = require('crypto');
 const Schema = mongoose.Schema;
 const { Types } = Schema;
-const idvalidator = require('mongoose-id-validator');
+// const idvalidator = require('mongoose-id-validator');
 const SongState = require('../helpers/song-state');
-const Genre = require('./genre');
+// const Genre = require('./genre');
 
 const songSchema = new mongoose.Schema({
     title: {
@@ -264,7 +264,8 @@ songSchema.methods.transformAck = function () {
         originalFileName: this.originalFileName,
         song_dropbox_data: this.song_dropbox_data,
         created_at: this.created_at,
-        updated_at: this.updated_at
+        updated_at: this.updated_at,
+        version: this.version,
     };
 
     return data;
