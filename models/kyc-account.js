@@ -80,7 +80,7 @@ kycAccountSchema.methods.getDataInfo = function (separator='<br>') {
        Last Name: ${this.last_name}${separator}
        Country: ${this.country_of_residence}${separator}
        Gender: ${this.gender}${separator}
-       Gender: ${this.gender}${separator}
+       Birthdate: ${this.date_of_birth}${separator}
        Identification type: ${this.identification_type}${separator}
        Identification id number: ${this.identification_id_number}${separator}
        Identification expiration date: ${this.identification_expiration_date}${separator}

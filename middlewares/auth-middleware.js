@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 // Checks if the user is authenticated and ejects him if he's not
 const isAuthenticated = (req, res, next) => {
@@ -10,7 +11,7 @@ const isAuthenticated = (req, res, next) => {
 
     if (token) {
         const jwtOptions = require('../config/jwt-options');
-        jwt.verify(token, process.env.JWT_SECRET, jwtOptions, (err, decoded) => {
+        jwt.verify(token, process.env.JWT_SECRET, jwtOptions, async (err, decoded) => {
             if (err) {
                 return res.status(401).json({
                     success: false,
@@ -19,6 +20,13 @@ const isAuthenticated = (req, res, next) => {
                 });
             } else {
                 req.user = decoded;
+                const user = await User.findById(req.user.id);
+                if(!user) {
+                    return res.status(401).json({
+                        success: false,
+                        message: 'Authorization invalid'
+                    });
+                }
                 next();
             }
         });

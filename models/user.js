@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         type: Types.ObjectId,
         ref: 'FacebookAccount',
     },
+    admin: {
+        type: Types.Boolean,
+        default: false
+    }
 });
 
 userSchema.virtual('require_kyc').get(function () {

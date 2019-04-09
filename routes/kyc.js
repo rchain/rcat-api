@@ -4,8 +4,23 @@ const validate = require('express-validation');
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const kycController = require('../controllers/kyc-controller');
 const { validateFiles } = require('../services/file-upload');
+const KycAccount = require('../models/kyc-account');
+const User = require('../models/user');
 
 router.use(isAuthenticated);
+
+router.get('/all', async (req, res, next) => {
+    console.log('req.user.id', req.user.id);
+    const user = await User.findById(req.user.id).populate('kyc_account -v');
+    if(!user.admin || user.admin !== true) {
+        return res.status(401).json({
+            success: false,
+            message: 'Unauthorized'
+        });
+    }
+    const kycs = await KycAccount.find();
+    res.send(kycs);
+});
 
 router.get('/', function (req, res, next) {
     kycController.getKyc(req, res)
