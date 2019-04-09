@@ -73,7 +73,7 @@ router.get('/:id/ack', async (req, res, next) => {
         if (!song) {
             return res.status(404).send({ message: 'Not found.' });
         }
-        res.send(song.transformAll());
+        res.send(song.transformAck());
     } catch (err) {
         res.status(400).send(err);
     }

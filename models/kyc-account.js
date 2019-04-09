@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
 const User = require('./user');
+const KycState = require('../helpers/kys-state');
 
 const kycAccountSchema = new mongoose.Schema({
     country_of_residence: String,
@@ -28,9 +28,9 @@ const kycAccountSchema = new mongoose.Schema({
     identification_front_image_url: String,
     identification_back_image_url: String,
     identification_selfie_image_url: String,
-    status: {
+    state: {
         type: String,
-        enum: ['SKIPPED', 'SUBMITED', 'APPROVED', 'REJECTED'],
+        enum: [KycState.SUBMITED, KycState.APPROVED, KycState.REJECTED],
     }
 }, {
     timestamps: {

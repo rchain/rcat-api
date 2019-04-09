@@ -1,7 +1,6 @@
 const path = require('path');
 const crypto=require('crypto');
 const Song = require('../models/song');
-const mailjet = require('../services/mailjet');
 const uploadSongToDropBox = require('../services/dropbox');
 
 const listAllSongs = async (req, res) => {

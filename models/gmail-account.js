@@ -26,17 +26,17 @@ gmailAccountSchema.statics.login = async function (data) {
     });
 
     // check if there is a record of this gmail account in database
-    const foundByGmailId = await this.findOne({ email: gmailAccount.email });
+    const gmailAccountFound = await this.findOne({ email: gmailAccount.email });
 
-    let foundUserByGmail;
+    let userFound;
     // if there is a gmail record, find corresponding user
-    if (foundByGmailId) {
-        foundUserByGmail = await User.findOne({ gmail_account: foundByGmailId.id } , '-__v').populate('kyc_account gmail_account', '-_id -__v');
+    if (gmailAccountFound) {
+        userFound = await User.findOne({ gmail_account: gmailAccountFound.id } , '-__v').populate('kyc_account gmail_account', '-_id -__v');
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
-    if (foundByGmailId && foundUserByGmail) {
-        return foundUserByGmail;
+    if (gmailAccountFound && userFound) {
+        return userFound;
     } else {
         gmailAccount = await this.create(gmailAccount).catch(console.error);
         let userAccount = await User.create({ gmail_account: gmailAccount.id });

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { Types } = Schema;
 const idvalidator = require('mongoose-id-validator');
+const SongState = require('../helpers/song-state');
 
 const songSchema = new mongoose.Schema({
     title: {
@@ -121,9 +122,9 @@ const songSchema = new mongoose.Schema({
             }
         }
     ],
-    status: {
+    state: {
         type: String,
-        enum: ['NEW', 'UPLOADED_FOR_CONVERSION']
+        enum: [SongState.NEW, SongState.UPLOADED_FOR_CONVERSION]
     }
 }, {
         timestamps: {
@@ -132,13 +133,8 @@ const songSchema = new mongoose.Schema({
         },
     });
 
-songSchema.virtual('status_title').get(function () {
-    switch (this.status) {
-        case 'NEW':
-            return 'new';
-        default:
-            return 'unknown';
-    }
+songSchema.virtual('state_title').get(function () {
+    return SongState.title(this.state)
 });
 
 // Required to include to avoid error: Schema hasn't been registered for model \"SongWriter\".\nUse mongoose.model(name, schema)
@@ -157,7 +153,7 @@ songSchema.statics.createSong = async function (userData, data) {
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
         collaborators: data.collaborators,
-        status: 'NEW'
+        state: 'NEW'
     });
     // return await this.create(song);
     song = await this.create(song);
@@ -228,7 +224,7 @@ songSchema.methods.transformCollaborators = function () {
     return result;
 };
 
-songSchema.methods.transformAll = function () {
+songSchema.methods.transformAck = function () {
 
     const songWriters = this.transformSongWriters();
     const soundOwners = this.transformSoundOwners();
@@ -242,7 +238,7 @@ songSchema.methods.transformAll = function () {
         genres: this.genres,
         artists: this.artists,
         staff: [...songWriters, ...soundOwners, ...collaborators],
-        status: this.status,
+        state: this.state,
         fileName: this.fileName,
         originalFileName: this.originalFileName,
         song_dropbox_data: this.song_dropbox_data,
