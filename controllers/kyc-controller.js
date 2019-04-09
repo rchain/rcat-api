@@ -5,7 +5,7 @@ const { notifyKYC } = require('../services/email');
 const KycState = require('../helpers/kys-state');
 
 const getKyc = async (req, res) => {
-    return await User.getKycAccountId(req.user);
+    return await User.getKycAccountById(req.user.id);
 };
 
 const skip = async (req, res) => {
@@ -18,11 +18,10 @@ const skip = async (req, res) => {
 
 // Save Kyc account data
 const submitKycData = async (req, res) => {
-    let kycAccount = await User.getKycAccountId(req.user);
+    let kycAccount = await User.getKycAccountById(req.user.id);
 
     if (kycAccount) {
-        console.log('kycAccount.getDataInfo() >>>>>>>>>>>>>>>>>>>>>>>>>>', kycAccount.getDataInfo());
-
+        console.log('(submitKycData) kycAccount.getDataInfo() >>>>>>>>>>>>>>>>>>>>>>>>>>', kycAccount.getDataInfo());
         throw {
             status_code: 409,
             message: 'Kyc account already exists.'
@@ -40,19 +39,30 @@ const submitKycData = async (req, res) => {
                     return await KycAccount.save(req.user, data, files);
                 })
                 .then((kyc) => {
-                    notifyKYC(kyc.kyc_account, req.files)
+                    notifyKYC(kyc, req.files)
                         .then(async (emalResponse) => {
-                            console.log('notifyEmail OK!');
-
-                            const kycUpdated = await KycAccount.findByIdAndUpdate(
-                                kyc.kyc_account._id,
+                            await KycAccount.findByIdAndUpdate(
+                                kyc._id,
                                 {
                                     $set: {
                                         state: KycState.EMAILED
                                     }
                                 }
                             );
-                            resolve(kycUpdated);
+                            // resolve(await KycAccount.findById(kyc._id));
+                            return await KycAccount.findById(kyc._id);
+                        })
+                        .then(async (kycUpdated) => {
+                            console.log('TODO ... verify kyc');
+                            await KycAccount.findByIdAndUpdate(
+                                kyc._id,
+                                {
+                                    $set: {
+                                        state: KycState.SUBMITED
+                                    }
+                                }
+                            );
+                            resolve(await KycAccount.findById(kyc._id));
                         })
                         .catch((err) => {
                             console.error('notifyEmail ERROR!', err);

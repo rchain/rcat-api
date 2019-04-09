@@ -30,7 +30,7 @@ const kycAccountSchema = new mongoose.Schema({
     identification_selfie_image_url: String,
     state: {
         type: String,
-        enum: [KycState.SUBMITED, KycState.EMAILED, KycState.APPROVED, KycState.REJECTED],
+        enum: [KycState.NEW, KycState.EMAILED, KycState.SUBMITED, KycState.APPROVED, KycState.REJECTED],
     }
 }, {
     timestamps: {
@@ -53,20 +53,21 @@ kycAccountSchema.statics.save = async function (userData, data, files) {
         identification_type: data.identification_type,
         identification_id_number: data.identification_id_number,
         identification_expiration_date: data.identification_expiration_date,
-        identification_front_image_url: files.identification_front_image.Location,
-        identification_back_image_url: files.identification_back_image.Location,
-        identification_selfie_image_url: files.identification_selfie_image.Location
+        identification_front_image_url: (files.identification_front_image && files.identification_front_image.Location) || '',
+        identification_back_image_url: (files.identification_back_image &&files.identification_back_image.Location) || '',
+        identification_selfie_image_url: (files.identification_selfie_image && files.identification_selfie_image.Location) || '',
+        state: KycState.NEW
     });
 
-    let user = await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
+    let user = await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-__v');
 
     // if there is a user - return it, otherwise - create new gmail and user
     kycAccount = await this.create(kycAccount).catch(console.error);
     await user.updateOne({
         kyc_account: kycAccount.id
     });
-    return await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
-    // return kycAccount;
+    // return await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-_id -__v');
+    return kycAccount;
 };
 
 kycAccountSchema.methods.getDataInfo = function (separator='<br>') {

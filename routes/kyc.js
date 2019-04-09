@@ -11,7 +11,6 @@ router.use(isAuthenticated);
 router.get('/', function (req, res, next) {
     kycController.getKyc(req, res)
         .then((result) => {
-            console.log('KYC', result);
             res.send(result);
         })
         .catch((err) => {
@@ -21,9 +20,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/skip', function (req, res, next) {
-
     console.log('GET /kyc/skip - entering ...');
-
     try {
         kycController.skip(req, res).then((result) => {
             res.send({
@@ -71,7 +68,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         }
 
         kycController.submitKycData(req, res).then(result => {
-            console.log('TODO Send email about KYC submit request');
+            console.log('KYC SUBMITED!!!', result);
             res.send(result);
         }).catch(err => {
             const statusCode = err.status_code || 400;

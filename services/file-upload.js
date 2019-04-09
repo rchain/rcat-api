@@ -1,6 +1,18 @@
 const multer = require('multer');
 const aws = require('aws-sdk');
 const path = require('path');
+const fetch = require('isomorphic-fetch'); // or another library of choice.
+const Dropbox = require('dropbox').Dropbox;
+
+const config = { accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch: fetch };
+const dbx = new Dropbox(config);
+
+if(!process.env.DROPBOX_ACCESS_TOKEN) {
+    throw new Error('Missing DROPBOX_ACCESS_TOKEN environment var');
+}
+if(!process.env.DROPBOX_UPLOAD_PATH) {
+    throw new Error('Missing DROPBOX_UPLOAD_PATH environment var');
+}
 
 const s3 = new aws.S3({
     // Your SECRET ACCESS KEY from AWS should go here,
@@ -54,7 +66,7 @@ const uploadKycFilesToS3 = async (files, user) => {
     return Promise.all(promises);
 };
 
-const uploadSongS3 = async (files, user) => {
+const uploadSongToS3 = async (files, user) => {
     return new Promise((resolve, reject) => {
         const fieldName = Object.keys(files)[0];
         const file = files[fieldName][0];
@@ -76,8 +88,17 @@ const uploadSongS3 = async (files, user) => {
     });
 };
 
+const uploadSongToDropBox = (fileContent, originalFileName) => {
+    console.log('originalFileName >>>>', originalFileName);
+    const fileName = originalFileName;
+    const destination = path.join(process.env.DROPBOX_UPLOAD_PATH || '/', fileName);
+    console.log(`Trying to upload file to dropbox ${destination}`);
+    return  dbx.filesUpload({ path: destination, contents: fileContent});
+};
+
 module.exports = {
     validateFiles,
     uploadKycFilesToS3,
-    uploadSongS3
+    uploadSongToS3,
+    uploadSongToDropBox
 };
