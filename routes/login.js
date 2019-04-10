@@ -27,14 +27,23 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
     }
 });
 
-const requestFacebookSchema = {
-    body: {},
-    headers: {
-        access_token: Joi.string().required(),
-    }
-};
+// const requestFacebookSchema = {
+//     body: {},
+//     headers: {
+//         access_token: Joi.string().required(),
+//     }
+// };
+//
+// router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
+//     try {
+//         const data = await facebookController.loginFacebook(req, res);
+//         res.send(data);
+//     } catch (err) {
+//         res.status(500).send(err);
+//     }
+// });
 
-router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
+router.post('/facebook', async (req, res, next) => {
     try {
         const data = await facebookController.loginFacebook(req, res);
         res.send(data);
