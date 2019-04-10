@@ -32,7 +32,6 @@ const validateFiles = (fileTypesValidationInfo) => {
             const fileTypesRegex = fileTypesValidationInfo[file.fieldname];
             const isMimeTypeValid = fileTypesRegex.test(file.mimetype);
             const isExtensionValid = fileTypesRegex.test(path.extname(file.originalname).toLowerCase());
-
             if (isMimeTypeValid && isExtensionValid) {
                 return cb(null, true);
             }

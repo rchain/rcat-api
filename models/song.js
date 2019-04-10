@@ -34,11 +34,12 @@ const songSchema = new mongoose.Schema({
     release_date: {
         type: Date
     },
-    artists: {
-        type: [String],
-        required: true,
-        trim: true,
-    },
+    artists: [
+        {
+            type: String,
+            trim: true,
+        }
+    ],
     album_art_image_url: String,
     song_writers: [
         {
@@ -60,11 +61,9 @@ const songSchema = new mongoose.Schema({
             },
             rev_wallet_address: {
                 type: String,
-                // required: true
             },
             rev_email: {
                 type: String,
-                // required: true
             },
             publisher_rights_organization: {
                 type: String
