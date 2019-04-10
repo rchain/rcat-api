@@ -9,9 +9,7 @@ const SongState = require('../helpers/song-state');
 
 const songSchema = new mongoose.Schema({
     title: {
-        type: String,
-        required: true,
-        unique: false
+        type: String
     },
     subtitle: {
         type: String
@@ -29,15 +27,13 @@ const songSchema = new mongoose.Schema({
     ],
     main_artist_name: {
         type: String,
-        required: true
     },
     release_date: {
         type: Date
     },
     artists: [
         {
-            type: String,
-            trim: true,
+            name: String,
         }
     ],
     album_art_image_url: String,
@@ -45,19 +41,15 @@ const songSchema = new mongoose.Schema({
         {
             name: {
                 type: String,
-                required: true
             },
             percentage_100_total_song: {
                 type: Number,
-                required: true
             },
             percentage_100_publisher: {
                 type: Number,
-                required: true
             },
             publisher: {
                 type: String,
-                required: true
             },
             rev_wallet_address: {
                 type: String,
@@ -77,15 +69,12 @@ const songSchema = new mongoose.Schema({
         {
             name: {
                 type: String,
-                required: true
             },
             role: {
                 type: String,
-                required: true
             },
             percentage_100: {
                 type: Number,
-                required: true
             },
             rev_wallet_address: {
                 type: String,
@@ -102,15 +91,12 @@ const songSchema = new mongoose.Schema({
         {
             name: {
                 type: String,
-                required: true
             },
             role: {
                 type: String,
-                required: true
             },
             percentage_100: {
                 type: Number,
-                required: true
             },
             rev_wallet_address: {
                 type: String,
@@ -134,7 +120,6 @@ const songSchema = new mongoose.Schema({
     owner: {
         user_id: {
             type: String,
-            required: true
         }
     },
 }, {
