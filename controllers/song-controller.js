@@ -2,7 +2,7 @@ const Song = require('../models/song');
 const { uploadSongToDropBox } = require('../services/file-upload');
 
 const listAllSongs = async (req, res) => {
-    return Song.find({});
+    return Song.find({ owner: { user_id: req.user.id } });
 };
 
 const createSong = async (req, res) => {

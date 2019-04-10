@@ -131,7 +131,13 @@ const songSchema = new mongoose.Schema({
     state: {
         type: String,
         enum: [SongState.NEW, SongState.UPLOADED_FOR_CONVERSION]
-    }
+    },
+    owner: {
+        user_id: {
+            type: String,
+            required: true
+        }
+    },
 }, {
         timestamps: {
             createdAt: 'created_at',
@@ -174,7 +180,10 @@ songSchema.statics.createSong = async function (req) {
         fileName: newFileNameEncoded,
         originalFileName: originalFileName,
         version: version,
-        state: 'NEW'
+        state: 'NEW',
+        owner: {
+            user_id: req.user.id
+        }
     });
     // return await this.create(song);
     song = await this.create(song);
@@ -266,6 +275,7 @@ songSchema.methods.transformAck = function () {
         created_at: this.created_at,
         updated_at: this.updated_at,
         version: this.version,
+        owner: this.owner
     };
 
     return data;
