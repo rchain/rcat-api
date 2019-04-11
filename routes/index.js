@@ -3,6 +3,7 @@ const loginRouter = require('./login');
 const logoutRouter = require('./logout');
 const authRouter = require('./auth');
 const usersRouter = require('./users');
+const meRouter = require('./me');
 const statusRouter = require('./status');
 const kycRouter = require('./kyc');
 const songsRouter = require('./songs');
@@ -16,6 +17,7 @@ module.exports = {
     logoutRouter,
     authRouter,
     usersRouter,
+    meRouter,
     statusRouter,
     kycRouter,
     songsRouter,

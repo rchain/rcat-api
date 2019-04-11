@@ -173,12 +173,13 @@ songSchema.statics.createSong = async function (req) {
     song = await this.create(song);
     return await Song.findById(song.id).populate('genres', '-__v -created_at -updated_at');
 };
+
 songSchema.methods.transformSongWriters = function () {
     let result = [];
     for(var i = 0; i < this.song_writers.length; i++) {
         result.push({
             type: 'song_writer',
-            _id: this.song_writers[i]._id,
+            id: this.song_writers[i]._id,
             name: this.song_writers[i].name,
             publisher: this.song_writers[i].publisher,
             percentages: [
@@ -201,7 +202,7 @@ songSchema.methods.transformSoundOwners = function () {
     for(var i = 0; i < this.sound_owners.length; i++) {
         result.push({
             type: 'sound_owner',
-            _id: this.sound_owners[i]._id,
+            id: this.sound_owners[i]._id,
             name: this.sound_owners[i].name,
             role: this.sound_owners[i].role,
             percentages: [
@@ -222,7 +223,7 @@ songSchema.methods.transformCollaborators = function () {
     for(var i = 0; i < this.collaborators.length; i++) {
         result.push({
             type: 'collaborator',
-            _id: this.collaborators[i]._id,
+            id: this.collaborators[i]._id,
             name: this.collaborators[i].name,
             role: this.collaborators[i].role,
             percentages: [
@@ -238,28 +239,77 @@ songSchema.methods.transformCollaborators = function () {
     return result;
 };
 
-songSchema.methods.transformAck = function () {
+songSchema.methods.transformForAcquisition = function (user) {
+
+    const appVersionTag = '0.1.0';
+
+    const timestasmp = + new Date();
 
     const songWriters = this.transformSongWriters();
     const soundOwners = this.transformSoundOwners();
     const collaborators = this.transformCollaborators();
 
+    const header = {
+        application: 'artist.rsong.io',
+        version: appVersionTag,
+        api_key: '',
+        timestamp: timestasmp
+    };
+
+    const userInfo = {
+        id: user.id,
+        oauth_info: {
+            source: user.auth_provider,
+            bag: [
+                {key: 'email', value: user.email},
+                {key: 'name', value: user.name}
+            ]
+        },
+        rsong_io_generated_id: this.id
+    };
+
     const data = {
-        _id: this._id,
+        header: header,
         title: this.title,
-        main_artist_name: this.main_artist_name,
+        sub_title: this.subtitle,
+        user: userInfo,
         release_date: this.release_date,
         genres: this.genres,
-        artists: this.artists,
-        staff: [...songWriters, ...soundOwners, ...collaborators],
-        state: this.state,
-        fileName: this.fileName,
-        originalFileName: this.originalFileName,
-        song_dropbox_data: this.song_dropbox_data,
-        created_at: this.created_at,
-        updated_at: this.updated_at,
-        version: this.version,
-        owner: this.owner
+        staff: [
+            {
+                type: 'artist',
+                name: this.main_artist_name,
+                main: true
+            },
+            ...this.artists.map((art) => {
+                return {
+                    type: 'artist',
+                    name: art.name,
+                    main: false
+                };
+            }),
+            ...songWriters,
+            ...soundOwners,
+            ...collaborators
+        ],
+        assets: [
+            {
+                provider: 'dropbox',
+                file_type: 'audio',
+                name: this.originalFileName,
+                hashed_name: this.fileName,
+                uri: this.song_dropbox_data.path_display,
+                timestamp: this.song_dropbox_data.server_modified
+            },
+            {
+                provider: 'gcs',
+                file_type: 'img',
+                name: 'TODO-some-image.jpg',
+                hashed_name: 'TODO-hashed-name.jpg',
+                uri: 'TODO-google-cloud-storage-bucket-uri',
+                timestamp: timestasmp
+            }
+        ]
     };
 
     return data;

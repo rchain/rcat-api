@@ -34,7 +34,9 @@ const loginGmail = async (req, res) => {
         }
         const jwtPayload = {
             id:  user._id,
-            email: user.gmail_account.email
+            email: user.gmail_account.email,
+            name: user.full_name,
+            auth_provider: 'gmail'
         };
 
         const jwtOptions = require('../config/jwt-options');

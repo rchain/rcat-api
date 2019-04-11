@@ -51,7 +51,9 @@ const loginFacebook = async (req, res) => {
 
     const jwtPayload = {
         id:  user._id,
-        email: user.facebook_account.email
+        email: user.facebook_account.email,
+        name: user.full_name,
+        auth_provider: 'facebook'
     };
 
     const jwtOptions = require('../config/jwt-options');

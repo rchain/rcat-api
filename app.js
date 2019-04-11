@@ -57,6 +57,7 @@ const {
     logoutRouter,
     authRouter,
     usersRouter,
+    meRouter,
     kycRouter,
     songsRouter,
     genresRouter,
@@ -70,6 +71,7 @@ app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
+app.use('/me', meRouter);
 app.use('/kyc', kycRouter);
 app.use('/songs', songsRouter);
 app.use('/genres', genresRouter);

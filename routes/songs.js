@@ -26,8 +26,8 @@ const requestSchema = {
                 rev_wallet_address: Joi.string().token().allow(''), // TODO VConditional in func of (rev email)
                 rev_email: Joi.string().email().allow(''), // TODO VConditional in func of (rev wallet),
                 publisher_rights_organization: Joi.string(),
-                iswc: Joi.string()
-            }).or('rev_wallet_address', 'rev_email')
+                iswc: Joi.string().allow('')
+            })
         ),
         sound_owners: Joi.array().items(Joi.object({
             name: Joi.string().required(),
@@ -35,7 +35,7 @@ const requestSchema = {
             percentage_100: Joi.number().required().min(0).max(100),
             rev_wallet_address: Joi.string().token().allow(''),
             rev_email: Joi.string().email().allow(''),
-            isrc: Joi.string(),
+            isrc: Joi.string().allow(''),
         })),
         collaborators: Joi.array().items(Joi.object({
             name: Joi.string().required(),
@@ -43,7 +43,7 @@ const requestSchema = {
             percentage_100: Joi.number().required().min(0).max(100),
             rev_wallet_address: Joi.string().token().allow(''),
             rev_email: Joi.string().email().allow(''),
-            isrc: Joi.string(),
+            isrc: Joi.string().allow(''),
         })),
     }
 };
@@ -77,7 +77,8 @@ router.get('/:id/ack', async (req, res, next) => {
         if (!song) {
             return res.status(404).send({ message: 'Not found.' });
         }
-        res.send(song.transformAck());
+
+        res.send(song.transformForAcquisition(req.user));
     } catch (err) {
         res.status(400).send(err);
     }
@@ -103,7 +104,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         }
 
         const song = await songController.createSong(req, res);
-        const songForAcq = song.transformAck();
+        const songForAcq = song.transformForAcquisition(req.user);
 
         const postUrl = `${process.env.ACQUISITION_API_ENDPOINT_BASE_URL}/v1/ingest`;
         console.log(`POSTING to ${postUrl} ...`);
