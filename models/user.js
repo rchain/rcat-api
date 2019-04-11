@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.virtual('require_kyc').get(function () {
-    return !this.kyc_account;
+    return !this.kyc_account || this.kyc_account.require_kyc;
 });
 
 userSchema.statics.getKycAccountById = async function (userId) {

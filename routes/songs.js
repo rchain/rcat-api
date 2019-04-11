@@ -17,30 +17,32 @@ const requestSchema = {
         genres: Joi.array().required().min(1).items(Joi.string().regex(/^[0-9a-fA-F]{24}$/, 'Should be ObjectId')),
         main_artist_name: Joi.string().required(),
         artists: Joi.array(),
-        song_writers: Joi.array().items(Joi.object({
-            name: Joi.string().required(),
-            percentage_100_total_song: Joi.number().required().min(0).max(100),
-            percentage_100_publisher: Joi.number().required().min(0).max(100),
-            publisher: Joi.string().required(),
-            rev_wallet_address: Joi.string().token(), // TODO VConditional in func of (rev email)
-            rev_email: Joi.string().email(), // TODO VConditional in func of (rev wallet),
-            publisher_rights_organization: Joi.string(),
-            iswc: Joi.string()
-        })),
+        song_writers: Joi.array().items(
+            Joi.object({
+                name: Joi.string().required(),
+                percentage_100_total_song: Joi.number().required().min(0).max(100),
+                percentage_100_publisher: Joi.number().required().min(0).max(100),
+                publisher: Joi.string(),
+                rev_wallet_address: Joi.string().token().allow(''), // TODO VConditional in func of (rev email)
+                rev_email: Joi.string().email().allow(''), // TODO VConditional in func of (rev wallet),
+                publisher_rights_organization: Joi.string(),
+                iswc: Joi.string()
+            }).or('rev_wallet_address', 'rev_email')
+        ),
         sound_owners: Joi.array().items(Joi.object({
             name: Joi.string().required(),
             role: Joi.string().required(),
             percentage_100: Joi.number().required().min(0).max(100),
-            rev_wallet_address: Joi.string().token(),
-            rev_email: Joi.string().email(),
+            rev_wallet_address: Joi.string().token().allow(''),
+            rev_email: Joi.string().email().allow(''),
             isrc: Joi.string(),
         })),
         collaborators: Joi.array().items(Joi.object({
             name: Joi.string().required(),
             role: Joi.string().required(),
             percentage_100: Joi.number().required().min(0).max(100),
-            rev_wallet_address: Joi.string().token(),
-            rev_email: Joi.string().email(),
+            rev_wallet_address: Joi.string().token().allow(''),
+            rev_email: Joi.string().email().allow(''),
             isrc: Joi.string(),
         })),
     }
@@ -107,6 +109,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         console.log(`POSTING to ${postUrl} ...`);
         return axios.post(postUrl, songForAcq)
             .then(function (response) {
+                console.log('POST /songs response', response.data);
                 return res.send(response.data);
             })
             .catch(function (error) {
