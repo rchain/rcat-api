@@ -67,3 +67,4 @@ typings/
 uploads/
 logs/
 app.log
+env.json

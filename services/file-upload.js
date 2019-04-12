@@ -4,12 +4,13 @@ const aws = require('aws-sdk');
 const path = require('path');
 const fetch = require('isomorphic-fetch'); // or another library of choice.
 const Dropbox = require('dropbox').Dropbox;
+const envJson = require('../env');
 
 // const Promise = require('bluebird');
-// const {Storage} = require('@google-cloud/storage');
+const {Storage} = require('@google-cloud/storage');
 // const GoogleCloudStorage = Promise.promisifyAll(require('@google-cloud/storage'));
 // const GoogleCloudStorage = require('@google-cloud/storage');
-const {google} = require('googleapis');
+// const {google} = require('googleapis');
 
 
 const config = { accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch: fetch };
@@ -116,46 +117,28 @@ const uploadSongToDropBox = async (file, fileName) => {
 
 // https://console.cloud.google.com/cloudshell/editor
 const uploadAlbumArtImage = async(file, fileName) => {
-    // const storage = new Storage();
-    // const bucketName = 'rsongassetmanagamentdev';
+
+    const gcsConf = envJson.gcs;
+    // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%', gcsConf);
+
+    const storageOptions = {
+        projectId: 'rsong-dev',
+        credentials: {
+            client_email: gcsConf.client_email,
+            private_key: gcsConf.private_key
+        }
+    };
+    const storage = new Storage(storageOptions);
 
     const BUCKET_NAME = process.env.GCS_BUCKET_NAME;
-
-    const oauth2Client = new google.auth.OAuth2(
-        process.env.GCS_CLIENT_ID,
-        process.env.GCS_CLIENT_SECRET,
-        process.env.GCS_OAUTH2_CALLBACK
-    );
-
-    console.log('oauth2Client >>>>>>', oauth2Client);
-
     return new Promise(async (resolve, reject) => {
         try {
-            // const gcsResponse = await storage.bucket(BUCKET_NAME)
-            //     .file(fileName)
-            //     .save(fileContent);
-
-            // Each API may support multiple version. With this sample, we're getting
-            // v3 of the blogger API, and using an API key to authenticate.
-            const drive = google.drive({
-                version: 'v3',
-                auth: oauth2Client
-            });
-
-            console.log('file >>>>>', file);
-            const gcsResponse = await drive.files.create({
-                requestBody: {
-                    name: fileName,
-                    mimeType: file.mimetype
-                },
-                media: {
-                    mimeType: file.mimetype,
-                    body: file.buffer.toString()
-                }
-            });
-
+            console.log('gcsResponse >>>>  BEFORE BUCKET_NAME', BUCKET_NAME);
+            const gcsResponse = await storage.bucket(BUCKET_NAME)
+                .file(fileName)
+                .save(file.buffer);
             console.log('gcsResponse >>>>', gcsResponse);
-            // console.log(`${filename} uploaded to ${bucketName}.`);
+            console.log(`${fileName} uploaded to ${BUCKET_NAME}.`);
             resolve(gcsResponse);
         } catch (err) {
             console.error('GoogleCloudStorage ERROR', err);
