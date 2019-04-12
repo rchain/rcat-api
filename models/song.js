@@ -16,7 +16,11 @@ const songSchema = new mongoose.Schema({
     },
     fileName: String,
     originalFileName: String,
+    mimetype: String,
     song_dropbox_data: {
+        type: Object
+    },
+    img_art_gcs_data: {
         type: Object
     },
     genres: [
@@ -137,11 +141,10 @@ songSchema.virtual('state_title').get(function () {
 // require('./genre');
 // songSchema.plugin(idvalidator);
 
-songSchema.statics.createSong = async function (req) {
+songSchema.statics.createSong = async function (req, fileSong, fileImage) {
     const data = req.body;
 
-    const fieldName = Object.keys(req.files)[0];
-    const originalFileName = req.files[fieldName][0].originalname;
+    const originalFileName = fileSong.originalname;
 
     const version = 1;
     const songExtension = path.extname(originalFileName);
@@ -156,13 +159,14 @@ songSchema.statics.createSong = async function (req) {
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         release_date: data.release_date,
-        artists: data.artists,
+        artists: data.artists.map((name) => {name}),
         album_art_image_url: albumArtImageUrl,
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
         collaborators: data.collaborators,
         fileName: newFileNameEncoded,
         originalFileName: originalFileName,
+        mimetype: fileSong.mimetype,
         version: version,
         state: 'NEW',
         owner: {

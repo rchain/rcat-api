@@ -38,7 +38,7 @@ const connect = () => {
         // mongoose.connect(process.env.MONGODB_URI, {server:{auto_reconnect:true}});
         setTimeout(() => {
             mongoose.connect(process.env.MONGODB_URI, options);
-        }, 10000);
+        }, 5000);
     });
 
     console.log('Trying to connect to mongo db ...');

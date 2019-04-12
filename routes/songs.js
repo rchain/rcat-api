@@ -50,7 +50,7 @@ const requestSchema = {
 
 router.get('/', async (req, res, next) => {
     try {
-        const songs = await songController.listAllSongs(req, res);
+        const songs = await songController.listAllSongs({ owner: { user_id: req.user.id } }, req, res);
         res.send(songs);
     } catch (err) {
         res.status(400).send(err);
@@ -86,8 +86,14 @@ router.get('/:id/ack', async (req, res, next) => {
 
 
 const fileTypesValidationInfo = {
-    'song_file': /mp3|wma|flac/,
-    'album_art_image_file': /png|jpeg|jpg/
+    'song_file': {
+        ext: /mp3|wma|flac/,
+        mime: /audio\/mpeg/
+    },
+    'album_art_image_file': {
+        ext: /png|jpeg|jpg/,
+        mime: /png|jpeg|jpg/
+    }
 };
 
 let fileHandler = validateFiles(fileTypesValidationInfo).fields([
@@ -103,6 +109,8 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
+        // console.log('req.files ######## ', req.files);
+        {}
         const song = await songController.createSong(req, res);
         const songForAcq = song.transformForAcquisition(req.user);
 

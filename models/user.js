@@ -25,10 +25,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-userSchema.virtual('full_name').get(function () {
-    return (this.kyc_account && this.kyc_account.full_name) || '';
-});
-
 userSchema.virtual('require_kyc').get(function () {
     return !this.kyc_account || this.kyc_account.require_kyc;
 });

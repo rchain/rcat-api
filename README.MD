@@ -73,3 +73,4 @@ docker-compose down
 - https://framp.me/joi-tester/
 - http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
 - https://medium.com/@rocksinghajay/login-with-facebook-and-google-in-reactjs-990d818d5dab
+- https://medium.com/@iwozzy/easily-host-images-with-node-and-google-cloud-storage-29fb14e2cdb8
