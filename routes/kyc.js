@@ -51,9 +51,9 @@ router.post('/skip', function (req, res, next) {
 
 // let kycUpload = upload.fields([{ name: 'identification_front_image', maxCount: 1 }, { name: 'identification_back_image', maxCount: 1 }, { name: 'identification_selfie_image', maxCount: 1 }]);
 const fileTypesValidationInfo = {
-    'identification_front_image': /png|jpeg|jpg/,
-    'identification_back_image': /png|jpeg|jpg/,
-    'identification_selfie_image': /png|jpeg|jpg/
+    'identification_front_image': { ext: /png|jpeg|jpg/, mime: /png|jpeg|jpg/ },
+    'identification_back_image':  { ext: /png|jpeg|jpg/, mime: /png|jpeg|jpg/ },
+    'identification_selfie_image':  { ext: /png|jpeg|jpg/, mime: /png|jpeg|jpg/ }
 };
 
 let fileHandler = validateFiles(fileTypesValidationInfo).fields([
@@ -83,12 +83,9 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
-        kycController.submitKycData(req, res).then(result => {
+        await kycController.submitKycData(req, res).then(result => {
             console.log('KYC SUBMITTED!!!', result);
             res.send(result);
-        }).catch(err => {
-            const statusCode = err.status_code || 400;
-            res.status(statusCode).send({message: err.message});
         });
     } catch (err) {
         console.error(err);

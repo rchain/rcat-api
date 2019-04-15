@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const KycAccount = require('../models/kyc-account');
 const { uploadKycFilesToS3 } = require('../services/file-upload');
-const { notifyKYC } = require('../services/email');
+const { notifyAdminAboutKycSubmited, notifyUserAboutKycSubmitted } = require('../services/email');
 const KycState = require('../helpers/kys-state');
 
 const getKyc = async (req, res) => {
@@ -27,52 +27,43 @@ const submitKycData = async (req, res) => {
             message: 'Kyc account already exists.'
         };
     } else {
-        return new Promise((resolve, reject) => {
-            uploadKycFilesToS3(req.files, req.user)
-                .then(async (values) => {
-                    let data = req.body;
-                    data.state = 'SUBMITTED';
-                    let files = [];
-                    values.forEach(val => {
-                        files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
-                    });
-                    return await KycAccount.save(req.user, data, files);
-                })
-                .then((kyc) => {
-                    notifyKYC(kyc, req.files)
-                        .then(async (emalResponse) => {
-                            await KycAccount.findByIdAndUpdate(
-                                kyc._id,
-                                {
-                                    $set: {
-                                        state: KycState.EMAILED
-                                    }
-                                }
-                            );
-                            // resolve(await KycAccount.findById(kyc._id));
-                            return await KycAccount.findById(kyc._id);
-                        })
-                        .then(async (kycUpdated) => {
-                            console.log('TODO ... verify kyc');
-                            await KycAccount.findByIdAndUpdate(
-                                kyc._id,
-                                {
-                                    $set: {
-                                        state: KycState.SUBMITTED
-                                    }
-                                }
-                            );
-                            resolve(await KycAccount.findById(kyc._id));
-                        })
-                        .catch((err) => {
-                            console.error('notifyEmail ERROR!', err);
-                            resolve(kyc);
-                        });
-                })
-                .catch((err) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const values = await uploadKycFilesToS3(req.files, req.user)
+                let data = req.body;
+                data.state = 'SUBMITTED';
+                let files = [];
+                values.forEach(val => {
+                    files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
+                });
+                console.log('data >>>>>>', data);
+                console.log('files >>>>>>', files);
+                const kyc = await KycAccount.save(req.user, data, files);
+
+
+                try {
+                    await notifyAdminAboutKycSubmited(kyc, req.files);
+                    console.log('Email sent to KYC Admin');
+                    await notifyUserAboutKycSubmitted(kyc, req.files);
+                    console.log('Email sent to user who has submited kyc');
+                } catch (err) {
+                    console.error('notifyEmail ERROR!', err);
+                    resolve(kyc);
+                }
+
+                const kycUpdated = await KycAccount.findByIdAndUpdate(
+                    kyc._id,
+                    {
+                        $set: {
+                            state: KycState.SUBMITTED
+                        }
+                    }
+                );
+                resolve(kycUpdated);
+            } catch (err) {
                 console.error('ERROR[uploadKycFilesToS3]', err);
                 reject(err);
-            });
+            }
         });
     }
 };

@@ -39,6 +39,8 @@ const s3 = new aws.S3({
 const validateFiles = (fileTypesValidationInfo) => {
     return multer({
         fileFilter: (req, file, cb) => {
+            console.log('file >>>>>>', file);
+            console.log('fileTypesValidationInfo >>>>>>', fileTypesValidationInfo);
             const fileTypesRegex = fileTypesValidationInfo[file.fieldname].ext;
             const mimeTypesRegex = fileTypesValidationInfo[file.fieldname].mime;
             const extension = path.extname(file.originalname).toLowerCase().replace('.', '');
@@ -75,7 +77,7 @@ const uploadKycFilesToS3 = async (files, user) => {
             });
     });
 
-    return Promise.all(promises);
+    return await Promise.all(promises);
 };
 
 // const uploadSongToS3 = async (files, user) => {
