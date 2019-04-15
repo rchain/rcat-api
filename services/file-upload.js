@@ -4,17 +4,6 @@ const aws = require('aws-sdk');
 const path = require('path');
 const fetch = require('isomorphic-fetch'); // or another library of choice.
 const Dropbox = require('dropbox').Dropbox;
-const envJson = require('../env');
-
-// const Promise = require('bluebird');
-const {Storage} = require('@google-cloud/storage');
-// const GoogleCloudStorage = Promise.promisifyAll(require('@google-cloud/storage'));
-// const GoogleCloudStorage = require('@google-cloud/storage');
-// const {google} = require('googleapis');
-
-
-const config = { accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch: fetch };
-const dbx = new Dropbox(config);
 
 if(!process.env.DROPBOX_ACCESS_TOKEN) {
     throw new Error('Missing DROPBOX_ACCESS_TOKEN environment var');
@@ -28,6 +17,12 @@ if(!process.env.GCS_BUCKET_NAME) {
 if(!process.env.GCS_PROJECT_ID) {
     throw new Error('Missing GCS_PROJECT_ID environment var');
 }
+
+const gcsConf = require('../env.gcs');
+const {Storage} = require('@google-cloud/storage');
+
+const config = { accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch: fetch };
+const dbx = new Dropbox(config);
 
 const s3 = new aws.S3({
     // Your SECRET ACCESS KEY from AWS should go here,
@@ -113,7 +108,6 @@ const uploadSongToDropBox = async (file, song) => {
 
 // https://console.cloud.google.com/cloudshell/editor
 const uploadAlbumArtImage = async(file, song) => {
-    const gcsConf = envJson.gcs;
 
     const storageOptions = {
         projectId: process.env.GCS_PROJECT_ID,

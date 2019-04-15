@@ -32,6 +32,14 @@ Run the following command to seed database:
 ```
 Add `-d` optionally to drop database before seeding.
 
+## Google Cloud
+
+In order to connect with google cloud need to setup following 2 vars in `.env` file:
+- GCS_BUCKET_NAME
+- GCS_PROJECT_ID
+
+and also required to donwload google cloud json credentials into root ewith name `env.gcs.json`.
+
 ## Docker 
 In order to run the application and mongodb using docker-compose first create the .env file. Be sure to change the .env to point to dockerized mongo instance by setting:
 
