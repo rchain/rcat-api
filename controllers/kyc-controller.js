@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const KycAccount = require('../models/kyc-account');
-const { uploadKycFilesToS3 } = require('../services/file-upload');
+const { uploadKycFilesToGcs } = require('../services/file-upload');
 const { notifyAdminAboutKycSubmited, notifyUserAboutKycSubmitted } = require('../services/email');
 const KycState = require('../helpers/kys-state');
 
@@ -29,7 +29,8 @@ const submitKycData = async (req, res) => {
     } else {
         return new Promise(async (resolve, reject) => {
             try {
-                const values = await uploadKycFilesToS3(req.files, req.user)
+                const values = await uploadKycFilesToGcs(req.files, req.user);
+                console.log('values >>>>>>', values);
                 let data = req.body;
                 data.state = 'SUBMITTED';
                 let files = [];

@@ -65,7 +65,7 @@ const createSong = async (req, res) => {
         ///////////////////////////////////////
         // GOOGLE CLOUD STORAGE & UPDATE #2
         ///////////////////////////////////////
-        const gcsResponse = await uploadAlbumArtImage(fileImage, song);
+        const gcsResponse = await uploadAlbumArtImage(fileImage, song, req.user);
         try {
             await Song.findByIdAndUpdate(
                 song._id,

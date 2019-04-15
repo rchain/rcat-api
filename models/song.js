@@ -359,7 +359,7 @@ songSchema.methods.transformForAcquisition = function (user) {
                 hashed_name: this.asset_img_art.fileNameFull,
                 bucket: this.asset_img_art.gcs_data.bucket,
                 projectId: this.asset_img_art.gcs_data.projectId,
-                file_name: this.asset_img_art.gcs_data.fileName,
+                uri: this.asset_img_art.gcs_data.fileName,
                 timestamp: timestasmp
             }
         ]

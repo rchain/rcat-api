@@ -54,6 +54,45 @@ const validateFiles = (fileTypesValidationInfo) => {
     });
 };
 
+const uploadKycFilesToGcs = async (files, user) => {
+    let promises = [];
+    let fieldNames = Object.keys(files);
+    fieldNames.forEach((field, index) => {
+
+        const storage = new Storage(getGcsStorageOptions());
+        const BUCKET_NAME = process.env.GCS_BUCKET_NAME;
+        const file = files[field][0];
+        const originalFileName = file.originalname;
+        const fileName = `${user.id}/kyc/${field}`;
+
+        promises[index] =
+            new Promise(async (resolve, reject) => {
+                storage.bucket(BUCKET_NAME)
+                    .file(fileName)
+                    .save(file.buffer, {
+                        metadata: {
+                            'Cache-Control': getGcsMetaCacheControl()
+                        }
+                    })
+                    .then((resp) => {
+                        console.log(`${fileName} uploaded to ${BUCKET_NAME}.v resp::: `, resp);
+                        resolve({
+                            projectId: getGcsStorageOptions().projectId,
+                            bucket: BUCKET_NAME,
+                            fileName: fileName,
+                            originalFileName: originalFileName
+                        });
+                    })
+                    .catch((dbxError) => {
+                        console.error('GCS UPLOAD ERROR!', dbxError);
+                        reject(dbxError);
+                    });
+            });
+    });
+
+    return await Promise.all(promises);
+};
+
 const uploadKycFilesToS3 = async (files, user) => {
     let promises = [];
     let fieldNames = Object.keys(files);
@@ -107,33 +146,37 @@ const uploadSongToDropBox = async (file, song) => {
     return  await dbx.filesUpload({ path: destination, contents: file.buffer, mode: 'overwrite'});
 };
 
-
-// https://console.cloud.google.com/cloudshell/editor
-const uploadAlbumArtImage = async(file, song) => {
-
-    const storageOptions = {
+const getGcsStorageOptions = () => {
+    return {
         projectId: process.env.GCS_PROJECT_ID,
         credentials: {
             client_email: gcsConf.client_email,
             private_key: gcsConf.private_key
         }
     };
-    const storage = new Storage(storageOptions);
+};
+
+const getGcsMetaCacheControl = () => { `max-age=${60*60*24}` };
+
+// https://console.cloud.google.com/cloudshell/editor
+const uploadAlbumArtImage = async(file, song, user) => {
+
+    const storage = new Storage(getGcsStorageOptions());
     const BUCKET_NAME = process.env.GCS_BUCKET_NAME;
-    const fileName = song.asset_img_art.fileNameFull;
+    const fileName = `${user.id}/song/${song.asset_img_art.fileNameFull}`;
     const originalFileName = song.asset_img_art.originalFileName;
     return new Promise(async (resolve, reject) => {
         storage.bucket(BUCKET_NAME)
             .file(fileName)
             .save(file.buffer, {
                 metadata: {
-                    'Cache-Control': 'max-age=3600'
+                    'Cache-Control': getGcsMetaCacheControl()
                 }
             })
             .then((resp) => {
                 console.log(`${fileName} uploaded to ${BUCKET_NAME}.v resp::: `, resp);
                 resolve({
-                    projectId: storageOptions.projectId,
+                    projectId: getGcsStorageOptions().projectId,
                     bucket: BUCKET_NAME,
                     fileName: fileName,
                     originalFileName: originalFileName
@@ -148,7 +191,7 @@ const uploadAlbumArtImage = async(file, song) => {
 
 module.exports = {
     validateFiles,
-    uploadKycFilesToS3,
+    uploadKycFilesToGcs,
     uploadAlbumArtImage,
     uploadSongToDropBox
 };
