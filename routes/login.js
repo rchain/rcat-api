@@ -46,8 +46,10 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
 router.post('/facebook', async (req, res, next) => {
     try {
         const data = await facebookController.loginFacebook(req, res);
+        console.log('Facebook login ...');
         res.send(data);
     } catch (err) {
+        console.error('Fascebook login ERROR', err);
         res.status(500).send(err);
     }
 });

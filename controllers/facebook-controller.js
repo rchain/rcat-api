@@ -34,12 +34,18 @@ const loginFacebook = async (req, res) => {
         photos
     } = profile;
 
-    const user = await FacebookAccount.login({
+    console.log('userData >>>', userData);
+    console.log('emails >>>', emails);
+
+    const facebookLoginData = {
         facebookId: facebookId,
         displayName: displayName,
         email: emails[0].value,
         profile_picture_url: photos[0].value
-    });
+    };
+    console.log('facebookLoginData >>>', facebookLoginData);
+    const user = await FacebookAccount.login(facebookLoginData);
+    console.log('user >>>', user);
 
     if(facebookId !== user.facebook_account.facebook_id) {
         return {
@@ -52,9 +58,11 @@ const loginFacebook = async (req, res) => {
     const jwtPayload = {
         id:  user._id,
         email: user.facebook_account.email,
-        name: user.full_name,
+        name: displayName,
         auth_provider: 'facebook'
     };
+
+    console.log('jwtPayload >>>>', jwtPayload);
 
     const jwtOptions = require('../config/jwt-options');
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);
