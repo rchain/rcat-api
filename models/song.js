@@ -315,7 +315,6 @@ songSchema.methods.transformForAcquisition = function (user) {
         rsong_io_generated_id: this.id
     };
 
-    console.log('this.artists >>>>>', this.artists);
     const artists = this.artists.map((art) => {
         return {
             type: 'artist',

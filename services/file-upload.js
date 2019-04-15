@@ -22,6 +22,12 @@ if(!process.env.DROPBOX_ACCESS_TOKEN) {
 if(!process.env.DROPBOX_UPLOAD_PATH) {
     throw new Error('Missing DROPBOX_UPLOAD_PATH environment var');
 }
+if(!process.env.GCS_BUCKET_NAME) {
+    throw new Error('Missing GCS_BUCKET_NAME environment var');
+}
+if(!process.env.GCS_PROJECT_ID) {
+    throw new Error('Missing GCS_PROJECT_ID environment var');
+}
 
 const s3 = new aws.S3({
     // Your SECRET ACCESS KEY from AWS should go here,
@@ -41,12 +47,6 @@ const validateFiles = (fileTypesValidationInfo) => {
             const fileTypesRegex = fileTypesValidationInfo[file.fieldname].ext;
             const mimeTypesRegex = fileTypesValidationInfo[file.fieldname].mime;
             const extension = path.extname(file.originalname).toLowerCase().replace('.', '');
-            // console.log('=========================');
-            // console.log('mimeTypesRegex', mimeTypesRegex);
-            // console.log('fileTypesRegex', fileTypesRegex);
-            // console.log('mimetype', file.mimetype);
-            // console.log('extension', extension);
-            // console.log('=========================');
             const isMimeTypeValid = mimeTypesRegex.test(file.mimetype);
             const isExtensionValid = fileTypesRegex.test(extension);
             if (isMimeTypeValid && isExtensionValid) {
@@ -106,24 +106,17 @@ const uploadKycFilesToS3 = async (files, user) => {
 // };
 
 const uploadSongToDropBox = async (file, song) => {
-    // console.log('file >>>>>>>', file);
-    // console.log('fileName >>>>>>>', song.asset_sound.fileNameFull);
-    // console.log('process.env.DROPBOX_UPLOAD_PATH >>>>>>>', process.env.DROPBOX_UPLOAD_PATH);
-    // const destination = path.join(process.env.DROPBOX_UPLOAD_PATH || '/', song.asset_sound.fileNameFull);
     const destination = process.env.DROPBOX_UPLOAD_PATH;
-    // console.log('Trying to upload file to dropbox .... destination:::: ', destination);
     return  await dbx.filesUpload({ path: destination, contents: file.buffer, mode: 'overwrite'});
 };
 
 
 // https://console.cloud.google.com/cloudshell/editor
 const uploadAlbumArtImage = async(file, song) => {
-
     const gcsConf = envJson.gcs;
-    // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%', gcsConf);
 
     const storageOptions = {
-        projectId: 'rsong-dev',
+        projectId: process.env.GCS_PROJECT_ID,
         credentials: {
             client_email: gcsConf.client_email,
             private_key: gcsConf.private_key
@@ -136,9 +129,13 @@ const uploadAlbumArtImage = async(file, song) => {
     return new Promise(async (resolve, reject) => {
         storage.bucket(BUCKET_NAME)
             .file(fileName)
-            .save(file.buffer)
-            .then(() => {
-                console.log(`${fileName} uploaded to ${BUCKET_NAME}.`);
+            .save(file.buffer, {
+                metadata: {
+                    'Cache-Control': 'max-age=3600'
+                }
+            })
+            .then((resp) => {
+                console.log(`${fileName} uploaded to ${BUCKET_NAME}.v resp::: `, resp);
                 resolve({
                     projectId: storageOptions.projectId,
                     bucket: BUCKET_NAME,
