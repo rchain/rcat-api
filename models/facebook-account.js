@@ -29,7 +29,7 @@ facebookAccountSchema.statics.login = async function (data) {
     let userFound;
     // if there is a gmail record, find corresponding user
     if (facebookAccountFound) {
-        userFound = await User.findOne({ facebook_account: facebookAccountFound.id } , '-__v').populate('kyc_account facebook_account', '-_id -__v');
+        userFound = await User.findOne({ facebook_account: facebookAccountFound.id } , '-__v').populate('kyc_account facebook_account', '-__v');
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
@@ -38,8 +38,7 @@ facebookAccountSchema.statics.login = async function (data) {
     } else {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
         let userAccount = await User.create({ facebook_account: facebookAccount.id });
-        const user = await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-_id -__v');
-        return user;
+        return await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');
     }
 };
 

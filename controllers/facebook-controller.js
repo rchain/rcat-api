@@ -34,9 +34,6 @@ const loginFacebook = async (req, res) => {
         photos
     } = profile;
 
-    console.log('userData >>>', userData);
-    console.log('emails >>>', emails);
-
     const facebookLoginData = {
         facebookId: facebookId,
         displayName: displayName,
