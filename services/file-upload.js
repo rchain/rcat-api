@@ -105,18 +105,19 @@ const uploadKycFilesToS3 = async (files, user) => {
 //     });
 // };
 
-const uploadSongToDropBox = async (file, fileName) => {
-    console.log('file >>>>>>>', file);
-    console.log('fileName >>>>>>>', fileName);
-    console.log('process.env.DROPBOX_UPLOAD_PATH >>>>>>>', process.env.DROPBOX_UPLOAD_PATH);
-    const destination = path.join(process.env.DROPBOX_UPLOAD_PATH || '/', fileName);
-    console.log('Trying to upload file to dropbox .... destination:::: ', destination);
-    return  await dbx.filesUpload({ path: destination, contents: file.buffer});
+const uploadSongToDropBox = async (file, song) => {
+    // console.log('file >>>>>>>', file);
+    // console.log('fileName >>>>>>>', song.asset_sound.fileNameFull);
+    // console.log('process.env.DROPBOX_UPLOAD_PATH >>>>>>>', process.env.DROPBOX_UPLOAD_PATH);
+    // const destination = path.join(process.env.DROPBOX_UPLOAD_PATH || '/', song.asset_sound.fileNameFull);
+    const destination = process.env.DROPBOX_UPLOAD_PATH;
+    // console.log('Trying to upload file to dropbox .... destination:::: ', destination);
+    return  await dbx.filesUpload({ path: destination, contents: file.buffer, mode: 'overwrite'});
 };
 
 
 // https://console.cloud.google.com/cloudshell/editor
-const uploadAlbumArtImage = async(file, fileName) => {
+const uploadAlbumArtImage = async(file, song) => {
 
     const gcsConf = envJson.gcs;
     // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%', gcsConf);
@@ -129,21 +130,26 @@ const uploadAlbumArtImage = async(file, fileName) => {
         }
     };
     const storage = new Storage(storageOptions);
-
     const BUCKET_NAME = process.env.GCS_BUCKET_NAME;
+    const fileName = song.asset_img_art.fileNameFull;
+    const originalFileName = song.asset_img_art.originalFileName;
     return new Promise(async (resolve, reject) => {
-        try {
-            console.log('gcsResponse >>>>  BEFORE BUCKET_NAME', BUCKET_NAME);
-            const gcsResponse = await storage.bucket(BUCKET_NAME)
-                .file(fileName)
-                .save(file.buffer);
-            console.log('gcsResponse >>>>', gcsResponse);
-            console.log(`${fileName} uploaded to ${BUCKET_NAME}.`);
-            resolve(gcsResponse);
-        } catch (err) {
-            console.error('GoogleCloudStorage ERROR', err);
-            reject(err);
-        }
+        storage.bucket(BUCKET_NAME)
+            .file(fileName)
+            .save(file.buffer)
+            .then(() => {
+                console.log(`${fileName} uploaded to ${BUCKET_NAME}.`);
+                resolve({
+                    projectId: storageOptions.projectId,
+                    bucket: BUCKET_NAME,
+                    fileName: fileName,
+                    originalFileName: originalFileName
+                });
+            })
+            .catch((dbxError) => {
+                console.error('GCS UPLOAD ERROR!', dbxError);
+                reject(dbxError);
+            });
     });
 };
 

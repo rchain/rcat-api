@@ -109,12 +109,15 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
-        // console.log('req.files ######## ', req.files);
-        {}
         const song = await songController.createSong(req, res);
+        // return res.send(song);
+
         const songForAcq = song.transformForAcquisition(req.user);
+        return res.send(songForAcq);
 
         const postUrl = `${process.env.ACQUISITION_API_ENDPOINT_BASE_URL}/v1/ingest`;
+        // return res.send({postUrl: postUrl});
+
         console.log(`POSTING to ${postUrl} ...`);
         return axios.post(postUrl, songForAcq)
             .then(function (response) {

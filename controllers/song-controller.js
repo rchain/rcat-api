@@ -19,54 +19,69 @@ const listAllSongs = async (conditions, req, res) => {
 const createSong = async (req, res) => {
     return new Promise(async (resolve, reject) => {
 
+        ///////////////////////////////////////
+        // CREATE
+        ///////////////////////////////////////
+        let song;
         try {
-            // console.log('=================================');
-            // console.log('req.files >>>>> ', req.files);
-            // console.log('Object.keys(req.files) >>>>>>>>>>', Object.keys(req.files));
-            // console.log('=================================');
-
-            // console.log('Object.keys(req.files) >>>>>>>>', Object.keys(req.files));
             const songFieldName = Object.keys(req.files)[0];
             const imageFieldName = Object.keys(req.files)[1];
-            const fileSong = req.files[songFieldName][0];
-            const fileImage = req.files[imageFieldName][0];
-            // console.log('fileSong >>>>>>>>', fileSong);
-            // console.log('fileImage >>>>>>>>', fileImage);
-            const song = await Song.createSong(req, fileSong, fileImage);
+            fileSong = req.files[songFieldName][0];
+            fileImage = req.files[imageFieldName][0];
+
+            song = await Song.createSong(req, fileSong, fileImage);
             // console.log('song CRATED!!!!', song);
-            const dbxResponse = uploadSongToDropBox(fileSong, song.fileName);
-            console.log('DROPBOX DROPBOX DROPBOX DROPBOX DROPBOX DROPBOX DROPBOX DROPBOX DROPBOX DROPBOX ');
+        } catch (createError) {
+            console.error('ERROR CREATIN SONG!!!', createError);
+            return reject(createError);
+        }
+
+        ///////////////////////////////////////
+        // DROPBOX $ UPDATE #1
+        ///////////////////////////////////////
+        let dbxResponse;
+        try {
+            dbxResponse = await uploadSongToDropBox(fileSong, song);
             console.log('DROPBOX RESPONSE', dbxResponse);
+        } catch (dbxError) {
+            console.error('ERROR UPLOADING TO DROPBOX!!!', dbxError);
+            return reject(dbxError);
+        }
+
+        try {
             await Song.findByIdAndUpdate(
                 song._id,
                 {
                     $set: {
-                        song_dropbox_data: dbxResponse
+                        "asset_sound.dropbox_data": dbxResponse
                     }
-                },
-                {new: true}
-            ).populate('genres', '-__v -created_at -updated_at');
+                }
+            );
+        } catch (updateError) {
+            console.error('ERROR UPDATING#1 SONG!!!', updateError);
+            reject(updateError);
+        }
 
-            const gcsResponse = uploadAlbumArtImage(fileImage, 'TODO-impl-me.jpg');
-            console.log('GOOGLE CLOUD STORAGE GOOGLE CLOUD STORAGE GOOGLE CLOUD STORAGE GOOGLE CLOUD STORAGE ');
-            console.log('GoogleCloudStorage RESPONSE', gcsResponse);
-
-            const songUpdated = await Song.findByIdAndUpdate(
+        ///////////////////////////////////////
+        // GOOGLE CLOUD STORAGE & UPDATE #2
+        ///////////////////////////////////////
+        const gcsResponse = await uploadAlbumArtImage(fileImage, song);
+        try {
+            await Song.findByIdAndUpdate(
                 song._id,
                 {
                     $set: {
-                        img_art_gcs_data: gcsResponse
+                        // "asset_img_art.gcs_data": gcsResponse
+                        "asset_img_art.gcs_data": gcsResponse
                     }
-                },
-                {new: true}
-            ).populate('genres', '-__v -created_at -updated_at');
-
-            resolve(songUpdated);
-        } catch (err) {
-            console.log('Song creation error!', err);
-            reject(err);
+                }
+            );
+        } catch (updateError) {
+            console.error('ERROR UPDATING#2 SONG!!!', updateError);
+            reject(updateError);
         }
 
+        resolve(await Song.findById(song._id).populate('genres'));
     });
 };
 

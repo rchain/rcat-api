@@ -17,12 +17,6 @@ const songSchema = new mongoose.Schema({
     fileName: String,
     originalFileName: String,
     mimetype: String,
-    song_dropbox_data: {
-        type: Object
-    },
-    img_art_gcs_data: {
-        type: Object
-    },
     genres: [
         {
             type: Types.ObjectId,
@@ -113,6 +107,40 @@ const songSchema = new mongoose.Schema({
             }
         }
     ],
+    asset_sound: {
+        fileNameFull: String,
+        fileNameOnly: String,
+        fileNameExtension: String,
+        originalFileName: String,
+        mimetype: String,
+        size: Number,
+        version: String,
+        dropbox_data: {
+            id: String,
+            name: String,
+            path_lower: String,
+            path_display: String,
+            client_modified: String,
+            server_modified: String,
+            rev: String,
+            size: String
+        }
+    },
+    asset_img_art: {
+        fileNameFull: String,
+        fileNameOnly: String,
+        fileNameExtension: String,
+        originalFileName: String,
+        mimetype: String,
+        size: Number,
+        version: String,
+        gcs_data: {
+            projectId: String,
+            bucket: String,
+            fileName: String,
+            originalFileName: String
+        }
+    },
     version: {
         type: Number,
         default: 1
@@ -144,14 +172,12 @@ songSchema.virtual('state_title').get(function () {
 songSchema.statics.createSong = async function (req, fileSong, fileImage) {
     const data = req.body;
 
-    const originalFileName = fileSong.originalname;
+    const songVersion = 1;
+    const songExtension = path.extname(fileSong.originalname);
+    const newSongFileName = `${data.title}${songVersion}${data.main_artist_name}${data.release_date}${songExtension}`;
+    const newSongFileNameWithoutExtEncoded = crypto.createHash('md5').update(newSongFileName).digest("hex");
 
-    const version = 1;
-    const songExtension = path.extname(originalFileName);
-    const newFileName = `${data.title}${version}${data.main_artist_name}${data.release_date}${songExtension}`;
-    const newFileNameEncoded = crypto.createHash('md5').update(newFileName).digest("hex") + songExtension;
-
-    const albumArtImageUrl = 'https://cdn.pixabay.com/photo/2017/07/29/13/17/green-2551467_960_720.jpg';
+    console.log('data.artists >>>>>>>>>>>>>>>>>', data.artists);
 
     let song = new Song({
         title: data.title,
@@ -159,15 +185,32 @@ songSchema.statics.createSong = async function (req, fileSong, fileImage) {
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         release_date: data.release_date,
-        artists: data.artists.map((name) => {name}),
-        album_art_image_url: albumArtImageUrl,
+        artists: data.artists.map((name) => {
+            return {name: name};
+        }),
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
         collaborators: data.collaborators,
-        fileName: newFileNameEncoded,
-        originalFileName: originalFileName,
-        mimetype: fileSong.mimetype,
-        version: version,
+        asset_sound: {
+            fileNameFull: newSongFileNameWithoutExtEncoded + songExtension,
+            fileNameOnly: newSongFileNameWithoutExtEncoded,
+            fileNameExtension: songExtension,
+            originalFileName: fileSong.originalname,
+            mimetype: fileSong.mimetype,
+            size: 0,
+            version: songVersion,
+            dropbox_data: {}
+        },
+        asset_img_art: {
+            fileNameFull: newSongFileNameWithoutExtEncoded + path.extname(fileImage.originalname),
+            fileNameOnly: newSongFileNameWithoutExtEncoded,
+            fileNameExtension: path.extname(fileImage.originalname),
+            originalFileName: fileImage.originalname,
+            mimetype: fileImage.mimetype,
+            size: 0,
+            version: 1,
+            gcs_data: {}
+        },
         state: 'NEW',
         owner: {
             user_id: req.user.id
@@ -272,6 +315,27 @@ songSchema.methods.transformForAcquisition = function (user) {
         rsong_io_generated_id: this.id
     };
 
+    console.log('this.artists >>>>>', this.artists);
+    const artists = this.artists.map((art) => {
+        return {
+            type: 'artist',
+            name: art.name,
+            main: false
+        };
+    });
+
+    const staff = [
+        {
+            type: 'artist',
+            name: this.main_artist_name,
+            main: true
+        },
+        ...artists,
+        ...songWriters,
+        ...soundOwners,
+        ...collaborators
+    ];
+
     const data = {
         header: header,
         title: this.title,
@@ -279,38 +343,24 @@ songSchema.methods.transformForAcquisition = function (user) {
         user: userInfo,
         release_date: this.release_date,
         genres: this.genres,
-        staff: [
-            {
-                type: 'artist',
-                name: this.main_artist_name,
-                main: true
-            },
-            ...this.artists.map((art) => {
-                return {
-                    type: 'artist',
-                    name: art.name,
-                    main: false
-                };
-            }),
-            ...songWriters,
-            ...soundOwners,
-            ...collaborators
-        ],
+        staff: staff,
         assets: [
             {
                 provider: 'dropbox',
                 file_type: 'audio',
                 name: this.originalFileName,
                 hashed_name: this.fileName,
-                uri: this.song_dropbox_data.path_display,
-                timestamp: this.song_dropbox_data.server_modified
+                uri: this.asset_sound.dropbox_data.path_display,
+                timestamp: this.asset_sound.dropbox_data.server_modified
             },
             {
                 provider: 'gcs',
                 file_type: 'img',
-                name: 'TODO-some-image.jpg',
-                hashed_name: 'TODO-hashed-name.jpg',
-                uri: 'TODO-google-cloud-storage-bucket-uri',
+                name: this.asset_img_art.originalFileName,
+                hashed_name: this.asset_img_art.fileNameFull,
+                bucket: this.asset_img_art.gcs_data.bucket,
+                projectId: this.asset_img_art.gcs_data.projectId,
+                file_name: this.asset_img_art.gcs_data.fileName,
                 timestamp: timestasmp
             }
         ]
