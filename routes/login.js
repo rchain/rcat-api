@@ -23,6 +23,7 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
         const data = await gmaillController.loginGmail(req, res);
         res.send(data);
     } catch (err) {
+        console.error('Google login ERROR', err);
         res.status(500).send(err);
     }
 });
@@ -39,7 +40,7 @@ router.post('/facebook', validate(requestFacebookSchema), async (req, res, next)
         const data = await facebookController.loginFacebook(req, res);
         res.send(data);
     } catch (err) {
-        console.error('Fascebook login ERROR', err);
+        console.error('Facebook login ERROR', err);
         res.status(500).send(err);
     }
 });

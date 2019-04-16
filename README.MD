@@ -77,6 +77,7 @@ docker-compose down
 
 ## Usefull links
 - https://console.developers.google.com
+- https://myaccount.google.com/permissions?pli=1
 - https://developers.facebook.com/apps
 - https://framp.me/joi-tester/
 - http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/

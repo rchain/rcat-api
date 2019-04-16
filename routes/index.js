@@ -1,7 +1,6 @@
 const homeRouter = require('./home');
 const loginRouter = require('./login');
 const logoutRouter = require('./logout');
-const authRouter = require('./auth');
 const usersRouter = require('./users');
 const meRouter = require('./me');
 const statusRouter = require('./status');
@@ -15,7 +14,6 @@ module.exports = {
     homeRouter,
     loginRouter,
     logoutRouter,
-    authRouter,
     usersRouter,
     meRouter,
     statusRouter,

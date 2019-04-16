@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const FacebookAccount = require('../models/facebook-account');
-
+const User = require('../models/user');
 const passport = require('passport');
 const { facebookTokenStrategy } = require('../services/facebook');
 passport.use(facebookTokenStrategy);
@@ -79,6 +79,22 @@ const loginFacebook = async (req, res) => {
 
 };
 
+const updateUserEmail = async (req, res) => {
+    const user = await User.findById(req.user.id);
+    console.log('USER FOUND!!!', user);
+    console.log('USER FOUND!!! user.facebook_account', user.facebook_account);
+    await FacebookAccount.findByIdAndUpdate(
+        user.facebook_account._id,
+        {
+            $set: {
+                email: req.body.email
+            }
+        }
+    );
+    return await User.findById(user._id).populate('facebook_account');
+};
+
 module.exports = {
-    loginFacebook
+    loginFacebook,
+    updateUserEmail
 };

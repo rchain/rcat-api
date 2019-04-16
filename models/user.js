@@ -23,10 +23,21 @@ const userSchema = new mongoose.Schema({
         type: Types.Boolean,
         default: false
     }
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
+    },
 });
 
 userSchema.virtual('require_kyc').get(function () {
     return !this.kyc_account || this.kyc_account.require_kyc;
+});
+
+userSchema.virtual('name').get(function () {
+    return (this.kyc_account && this.kyc_account.full_name) || '';
 });
 
 userSchema.statics.getKycAccountById = async function (userId) {

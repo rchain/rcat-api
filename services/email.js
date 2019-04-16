@@ -11,6 +11,8 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
         return 'SILENT EMAIL';
     }
 
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+    console.log('files >>>>>>>>>>>>>>>>>>>>>>>>>>>>>', files);
     const images = [files.identification_front_image[0], files.identification_back_image[0], files.identification_selfie_image[0]];
 
     const attachments = images.map((img) => {

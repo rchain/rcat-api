@@ -33,9 +33,11 @@ const kycAccountSchema = new mongoose.Schema({
         enum: [KycState.NEW, KycState.EMAILED, KycState.SUBMITTED, KycState.APPROVED, KycState.REJECTED],
     }
 }, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
     timestamps: {
         createdAt: 'created_at',
-        updatedAt: 'updated_at',
+        updatedAt: 'updated_at'
     },
 });
 
