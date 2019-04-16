@@ -25,11 +25,21 @@ const loginGmail = async (req, res) => {
     // if it is valid - proceed, otherwise - return error
     if (!!gmailUserId) {
         const user =  await GmailAccount.login(req.body);
+
+        if(!user.gmail_account) {
+            console.error('Missing Gmail Account!!!', user);
+            return {
+                statusCode: 400,
+                error: 'Bad Request',
+                message: 'Missing Gmail Account'
+            }
+        }
+
         if(gmailUserId !== user.gmail_account.gmail_id) {
             return {
                 statusCode: 400,
-                error: "Bad Request",
-                message: "Token mismatch"
+                error: 'Bad Request',
+                message: 'Token mismatch'
             }
         }
         const jwtPayload = {

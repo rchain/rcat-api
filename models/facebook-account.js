@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('./user');
+const { randomIntInc } = require('../helpers/random');
 
 const facebookAccountSchema = new mongoose.Schema({
     facebook_id: String,
@@ -37,7 +38,13 @@ facebookAccountSchema.statics.login = async function (data) {
         return userFound;
     } else {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
-        let userAccount = await User.create({ facebook_account: facebookAccount.id });
+        let userAccount = await User.create({
+            facebook_account: facebookAccount.id ,
+            verification: {
+                verified: false,
+                code: randomIntInc(100000, 999999)
+            }
+        });
         return await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');
     }
 };

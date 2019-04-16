@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         type: Types.ObjectId,
         ref: 'FacebookAccount',
     },
+    verification: {
+        verified: Boolean,
+        code: String
+    },
     admin: {
         type: Types.Boolean,
         default: false

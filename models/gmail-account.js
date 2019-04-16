@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('./user');
+const { randomIntInc } = require('../helpers/random');
 
 const gmailAccountSchema = new mongoose.Schema({
     gmail_id: String,
@@ -31,7 +32,7 @@ gmailAccountSchema.statics.login = async function (data) {
     let userFound;
     // if there is a gmail record, find corresponding user
     if (gmailAccountFound) {
-        userFound = await User.findOne({ gmail_account: gmailAccountFound.id } , '-__v').populate('kyc_account gmail_account', '-_id -__v');
+        userFound = await User.findOne({ gmail_account: gmailAccountFound.id } , '-__v').populate('kyc_account gmail_account', '-__v');
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
@@ -39,8 +40,14 @@ gmailAccountSchema.statics.login = async function (data) {
         return userFound;
     } else {
         gmailAccount = await this.create(gmailAccount).catch(console.error);
-        let userAccount = await User.create({ gmail_account: gmailAccount.id });
-        return await User.findOne({ gmailAccount: userAccount.gmailAccount }, '-__v').populate('gmail_account', '-_id -__v');
+        let userAccount = await User.create({
+            gmail_account: gmailAccount.id,
+            verification: {
+                verified: false,
+                code: randomIntInc(100000, 999999)
+            }
+        });
+        return await User.findOne({ gmailAccount: userAccount.gmailAccount }, '-__v').populate('kyc_account gmail_account', '-__v');
     }
 };
 
