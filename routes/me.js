@@ -13,4 +13,14 @@ router.get('/', (req, res, next) => {
   }
 });
 
+router.post('/', (req, res, next) => {
+  try {
+    console.log('req.body >>>', req.body);
+    return res.send(req.body);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
 module.exports = router;
