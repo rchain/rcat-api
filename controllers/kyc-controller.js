@@ -30,15 +30,12 @@ const submitKycData = async (req, res) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const values = await uploadKycFilesToGcs(req.files, req.user);
-                console.log('values >>>>>>', values);
                 let data = req.body;
                 data.state = 'SUBMITTED';
                 let files = [];
                 values.forEach(val => {
                     files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
                 });
-                console.log('data >>>>>>', data);
-                console.log('files >>>>>>', files);
                 const kyc = await KycAccount.save(req.user, data, files);
 
 

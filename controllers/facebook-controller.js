@@ -40,9 +40,17 @@ const loginFacebook = async (req, res) => {
         email: emails[0].value,
         profile_picture_url: photos[0].value
     };
-    console.log('facebookLoginData >>>', facebookLoginData);
     const user = await FacebookAccount.login(facebookLoginData);
-    console.log('user >>>', user);
+    console.log('(Facebook login) user >>>', user);
+
+    if(!user.facebook_account) {
+        console.error('Missing facebook account on user:::', user);
+        return {
+            statusCode: 400,
+            error: "Bad Request",
+            message: "Missing facebook account"
+        }
+    }
 
     if(facebookId !== user.facebook_account.facebook_id) {
         return {
@@ -59,15 +67,8 @@ const loginFacebook = async (req, res) => {
         auth_provider: 'facebook'
     };
 
-    console.log('jwtPayload >>>>', jwtPayload);
-
     const jwtOptions = require('../config/jwt-options');
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);
-
-    function validateEmail(email) {
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    }
 
     return {
         token,

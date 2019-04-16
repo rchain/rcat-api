@@ -42,8 +42,6 @@ const loginGmail = async (req, res) => {
         const jwtOptions = require('../config/jwt-options');
         const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);
 
-        // const login = await Login.create({});
-
         return {
             token,
             require_kyc: user.require_kyc,
