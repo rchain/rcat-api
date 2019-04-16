@@ -37,17 +37,20 @@ gmailAccountSchema.statics.login = async function (data) {
 
     // if there is a user - return it, otherwise - create new gmail and user
     if (gmailAccountFound && userFound) {
+        console.log('Returning FOUND user::: ', userFound);
         return userFound;
     } else {
         gmailAccount = await this.create(gmailAccount).catch(console.error);
-        let userAccount = await User.create({
-            gmail_account: gmailAccount.id,
+        const userAccount = await User.create({
+            gmail_account: gmailAccount,
             verification: {
                 verified: false,
                 code: randomIntInc(100000, 999999)
             }
         });
-        return await User.findOne({ gmailAccount: userAccount.gmailAccount }, '-__v').populate('kyc_account gmail_account', '-__v');
+        const newUser = await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
+        console.log('Returning NEW user::: ', newUser);
+        return newUser;
     }
 };
 
