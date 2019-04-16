@@ -39,8 +39,8 @@ const s3 = new aws.S3({
 const validateFiles = (fileTypesValidationInfo) => {
     return multer({
         fileFilter: (req, file, cb) => {
-            console.log('file >>>>>>', file);
-            console.log('fileTypesValidationInfo >>>>>>', fileTypesValidationInfo);
+            // console.log('file >>>>>>', file);
+            // console.log('fileTypesValidationInfo >>>>>>', fileTypesValidationInfo);
             const fileTypesRegex = fileTypesValidationInfo[file.fieldname].ext;
             const mimeTypesRegex = fileTypesValidationInfo[file.fieldname].mime;
             const extension = path.extname(file.originalname).toLowerCase().replace('.', '');
@@ -49,7 +49,11 @@ const validateFiles = (fileTypesValidationInfo) => {
             if (isMimeTypeValid && isExtensionValid) {
                 return cb(null, true);
             }
-            cb(`Error: File ${file.fieldname} upload only supports the following file types: ${fileTypesRegex}`);
+            if (!isMimeTypeValid) {
+                cb(`Error: File ${file.fieldname} upload only supports the following mime types: ${mimeTypesRegex}`);
+            } else {
+                cb(`Error: File ${file.fieldname} upload only supports the following file types: ${fileTypesRegex}`);
+            }
         }
     });
 };

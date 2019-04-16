@@ -47,6 +47,7 @@ const loginGmail = async (req, res) => {
         return {
             token,
             require_kyc: user.require_kyc,
+            require_email: false,
             user
         };
     } else {

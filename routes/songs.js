@@ -10,6 +10,7 @@ const { validateFiles } = require('../services/file-upload');
 
 router.use(isAuthenticated);
 
+
 const requestSchema = {
     body: {
         title: Joi.string().required(),
@@ -88,7 +89,7 @@ router.get('/:id/ack', async (req, res, next) => {
 const fileTypesValidationInfo = {
     'song_file': {
         ext: /mp3|wma|flac/,
-        mime: /audio\/mpeg/
+        mime: /audio\/mpeg|mp3/
     },
     'album_art_image_file': {
         ext: /png|jpeg|jpg/,
@@ -102,6 +103,7 @@ let fileHandler = validateFiles(fileTypesValidationInfo).fields([
 ]);
 
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
+
     try {
         const requiredFiles = ['song_file', 'album_art_image_file'];
         const hasAllFiles = validateRequiredFiles(requiredFiles, req.files);
@@ -109,6 +111,23 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
+        req.body.song_writers.forEach((songWriter) => {
+            if((!songWriter.rev_wallet_address || songWriter.rev_wallet_address.trim() == '') && (!songWriter.rev_email || songWriter.rev_email.trim() == '')) {
+                return res.status(400).send('Song writer requires wallet address or email');
+            }
+        });
+
+        req.body.sound_owners.forEach((songWriter) => {
+            if((!songWriter.rev_wallet_address || songWriter.rev_wallet_address.trim() == '') && (!songWriter.rev_email || songWriter.rev_email.trim() == '')) {
+                return res.status(400).send('Sound owner requires wallet address or email');
+            }
+        });
+
+        req.body.collaborators.forEach((songWriter) => {
+            if((!songWriter.rev_wallet_address || songWriter.rev_wallet_address.trim() == '') && (!songWriter.rev_email || songWriter.rev_email.trim() == '')) {
+                return res.status(400).send('Collaborator requires wallet address or email');
+            }
+        });
         const song = await songController.createSong(req, res);
         // return res.send(song);
 

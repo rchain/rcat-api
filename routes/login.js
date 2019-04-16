@@ -27,26 +27,16 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
     }
 });
 
-// const requestFacebookSchema = {
-//     body: {},
-//     headers: {
-//         access_token: Joi.string().required(),
-//     }
-// };
-//
-// router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
-//     try {
-//         const data = await facebookController.loginFacebook(req, res);
-//         res.send(data);
-//     } catch (err) {
-//         res.status(500).send(err);
-//     }
-// });
+const requestFacebookSchema = {
+    body: {},
+    headers: {
+        access_token: Joi.string().required(),
+    }
+};
 
-router.post('/facebook', async (req, res, next) => {
+router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
     try {
         const data = await facebookController.loginFacebook(req, res);
-        console.log('Facebook login ...');
         res.send(data);
     } catch (err) {
         console.error('Fascebook login ERROR', err);
