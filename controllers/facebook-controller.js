@@ -24,7 +24,7 @@ const loginFacebook = async (req, res) => {
         refreshToken,
         profile
     } = facebookResult;
-    console.log('profile', profile);
+    console.log('(Facebook login) profile', profile);
 
     const {
         id: facebookId,
@@ -41,7 +41,7 @@ const loginFacebook = async (req, res) => {
         profile_picture_url: photos[0].value
     };
     const user = await FacebookAccount.login(facebookLoginData);
-    console.log('(Facebook login) user >>>', user);
+    console.log('(Facebook login) user', user);
 
     if(!user.facebook_account) {
         console.error('Missing facebook account on user:::', user);
