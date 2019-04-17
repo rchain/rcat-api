@@ -1,7 +1,7 @@
 // using SendGrid's v3 Node.js Library
 // https://github.com/sendgrid/sendgrid-nodejs
 const sgMail = require('@sendgrid/mail');
-
+const User = require('../models/user');
 
 const notifyAdminAboutKycSubmited = (kyc, files) => {
     const fullName = kyc.full_name;
@@ -13,7 +13,12 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
 
     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     console.log('files >>>>>>>>>>>>>>>>>>>>>>>>>>>>>', files);
-    const images = [files.identification_front_image[0], files.identification_back_image[0], files.identification_selfie_image[0]];
+    let images;
+    if(files.identification_back_image) {
+        images = [files.identification_front_image[0], files.identification_back_image[0], files.identification_selfie_image[0]];
+    } else {
+        images = [files.identification_front_image[0], files.identification_selfie_image[0]];
+    }
 
     const attachments = images.map((img) => {
         return {
@@ -39,7 +44,7 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
 
 };
 
-const notifyUserAboutKycSubmitted = (kyc) => {
+const notifyUserAboutKycSubmitted = async (kyc, req) => {
     const fullName = kyc.full_name;
 
     if(process.env.EMAIL_NOTIFICATIONS_SILENT === 'true') {
@@ -55,8 +60,16 @@ const notifyUserAboutKycSubmitted = (kyc) => {
     `;
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const user = await User.findById(req.user.id).populate('gmail_account facebook_account');
+    let userEmail = 'NOT_AVAILABLE';
+    if(user.gmail_account) {
+        userEmail = user.gmail_account.email;
+    } else if(user.facebook_account) {
+        userEmail = user.facebook_account.email;
+    }
+    console.log(`Trying to send email to user ${userEmail} ...`);
     const msg = {
-        to: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS,
+        to: userEmail,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
         subject: `You have sucesfully submited KYC`,
         text: emailText,

@@ -21,7 +21,7 @@ const submitKycData = async (req, res) => {
     console.log('BEFOREEEEE User.getKycAccountById() ...');
     let kycAccount = await User.getKycAccountById(req.user.id);
 
-    if (kycAccount) {
+    if (kycAccount && kycAccount.isSubmitted()) {
         console.log('(submitKycData) kycAccount.getDataInfo() >>>>>>>>>>>>>>>>>>>>>>>>>>', kycAccount.getDataInfo());
         throw {
             status_code: 409,
@@ -42,13 +42,16 @@ const submitKycData = async (req, res) => {
 
 
                 try {
+                    console.log('START =============== Email sent to KYC Admin');
                     await notifyAdminAboutKycSubmited(kyc, req.files);
-                    console.log('Email sent to KYC Admin');
-                    await notifyUserAboutKycSubmitted(kyc, req.files);
-                    console.log('Email sent to user who has submited kyc');
+                    console.log('END ================= Email sent to KYC Admin');
+                    console.log('START *************** Email sent to user who has submited kyc');
+                    console.log('req.user', req.user);
+                    await notifyUserAboutKycSubmitted(kyc, req);
+                    console.log('END ***************** Email sent to user who has submited kyc');
                 } catch (err) {
                     console.error('notifyEmail ERROR!', err);
-                    resolve(kyc);
+                    return reject(err);
                 }
 
                 const kycUpdated = await KycAccount.findByIdAndUpdate(

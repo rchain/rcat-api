@@ -15,7 +15,7 @@ const kycAccountSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['male', 'female'],
+        enum: ['male', 'female', 'gender_neutral'],
         required: true
     },
     identification_type: {
@@ -87,6 +87,10 @@ kycAccountSchema.methods.getDataInfo = function (separator='<br>') {
        Identification id number: ${this.identification_id_number}${separator}
        Identification expiration date: ${this.identification_expiration_date}${separator}
     `;
+};
+
+kycAccountSchema.methods.isSubmitted = function () {
+    return this.state === KycState.SUBMITTED;
 };
 
 const KycAccount = mongoose.model('KycAccount', kycAccountSchema);

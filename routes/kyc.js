@@ -98,10 +98,12 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.send(result);
         });
     } catch (err) {
-        if(err.response.data) {
+        if(err.response && err.response.data) {
             console.error(err.response.data);
             return res.status(500).send(err.response.data);
         }
+        console.log('ERROR! ERROR! ERROR! ERROR! ERROR! ERROR! ');
+        console.log(err);
         res.status(500).send(err);
     }
 });
