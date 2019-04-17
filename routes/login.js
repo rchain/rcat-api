@@ -21,7 +21,11 @@ const requestGmailSchema = {
 router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
     try {
         const data = await gmaillController.loginGmail(req, res);
-        res.send(data);
+        if(data.statusCode) {
+            return res.status(data.statusCode).send(data);
+        }
+        // res.send(data);
+        setTimeout(() => {res.send(data);}, 5000);
     } catch (err) {
         console.error('Google login ERROR', err);
         res.status(500).send(err);
@@ -38,7 +42,11 @@ const requestFacebookSchema = {
 router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
     try {
         const data = await facebookController.loginFacebook(req, res);
-        res.send(data);
+        if(data.statusCode) {
+            return res.status(data.statusCode).send(data);
+        }
+        // res.send(data);
+        setTimeout(() => {res.send(data);}, 5000);
     } catch (err) {
         console.error('Facebook login ERROR', err);
         res.status(500).send(err);

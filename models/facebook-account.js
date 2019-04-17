@@ -42,7 +42,8 @@ facebookAccountSchema.statics.login = async function (data) {
             facebook_account: facebookAccount.id ,
             verification: {
                 verified: false,
-                code: randomIntInc(100000, 999999)
+                code: randomIntInc(100000, 999999),
+                counter: 0
             }
         });
         return await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');

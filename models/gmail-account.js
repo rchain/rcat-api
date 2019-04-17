@@ -45,7 +45,8 @@ gmailAccountSchema.statics.login = async function (data) {
             gmail_account: gmailAccount,
             verification: {
                 verified: false,
-                code: randomIntInc(100000, 999999)
+                code: randomIntInc(100000, 999999),
+                counter: 0
             }
         });
         const newUser = await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');

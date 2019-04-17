@@ -4,6 +4,7 @@ const validate = require('express-validation');
 const Joi = require('joi');
 const User = require('../models/user');
 const facebookController = require('../controllers/facebook-controller');
+const userController = require('../controllers/user-controller');
 
 router.use(isAuthenticated);
 
@@ -32,5 +33,23 @@ router.post('/', validate(requestSchemaMe), async (req, res, next) => {
     res.status(500).send(err);
   }
 });
+
+const requestSchemaMeVerifySms = {
+  body: {
+    code: Joi.number().required().min(100000).max(999999)
+  }
+};
+router.post('/verify-sms', validate(requestSchemaMeVerifySms), async (req, res, next) => {
+  try {
+    console.log('(POST /me/verify-sms) req.body >>>', req.body);
+    const user = await userController.verifySmsCode(req, res);
+    return res.send(user);
+  } catch (err) {
+    console.error('ERROR POST /me', err);
+    res.status(500).send(err);
+  }
+});
+
+
 
 module.exports = router;
