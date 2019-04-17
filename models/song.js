@@ -185,9 +185,7 @@ songSchema.statics.createSong = async function (req, fileSong, fileImage) {
         genres: data.genres,
         main_artist_name: data.main_artist_name,
         release_date: data.release_date,
-        artists: data.artists.map((name) => {
-            return {name: name};
-        }),
+        artists: data.artists,
         song_writers: data.song_writers,
         sound_owners: data.sound_owners,
         collaborators: data.collaborators,
