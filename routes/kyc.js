@@ -69,7 +69,7 @@ const requestSchema = {
         last_name: Joi.string().required(),
         date_of_birth: Joi.date().required(),
         gender: Joi.string().valid('male', 'female', 'gender_neutral').required(),
-        identification_type: Joi.string().valid('passport', 'drivers_license', 'id_card').required(),
+        identification_type: Joi.string().valid('passport', 'drivers_licence', 'id_card').required(),
         identification_id_number: Joi.string().required(),
         identification_expiration_date: Joi.date().required(),
     }
@@ -77,7 +77,7 @@ const requestSchema = {
 
 const requiredKycFiles = {
     passport: ['identification_front_image', 'identification_selfie_image'],
-    drivers_license: ['identification_front_image', 'identification_back_image', 'identification_selfie_image'],
+    drivers_licence: ['identification_front_image', 'identification_back_image', 'identification_selfie_image'],
     id_card: ['identification_front_image', 'identification_back_image', 'identification_selfie_image']
 };
 
