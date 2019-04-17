@@ -69,3 +69,4 @@ logs/
 app.log
 env.json
 env.gcs.json
+.env.*
