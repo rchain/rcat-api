@@ -41,6 +41,10 @@ userSchema.virtual('require_kyc').get(function () {
     return !this.kyc_account || this.kyc_account.require_kyc;
 });
 
+userSchema.virtual('require_kyc').get(function () {
+    return !this.kyc_account || this.kyc_account.require_kyc;
+});
+
 userSchema.virtual('full_name').get(function () {
     return (this.kyc_account && this.kyc_account.full_name) || (this.gmail_account && this.gmail_account.full_name) || (this.facebook_account && this.facebook_account.full_name) || '';
 });

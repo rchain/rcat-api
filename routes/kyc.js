@@ -69,26 +69,38 @@ const requestSchema = {
         last_name: Joi.string().required(),
         date_of_birth: Joi.date().required(),
         gender: Joi.string().valid('male', 'female', 'gender_neutral').required(),
-        identification_type: Joi.string().valid('passport', 'drivers_licence', 'id_card').required(),
+        identification_type: Joi.string().valid('passport', 'drivers_license', 'id_card').required(),
         identification_id_number: Joi.string().required(),
         identification_expiration_date: Joi.date().required(),
     }
 };
 
+const requiredKycFiles = {
+    passport: ['identification_front_image', 'identification_selfie_image'],
+    drivers_license: ['identification_front_image', 'identification_back_image', 'identification_selfie_image'],
+    id_card: ['identification_front_image', 'identification_back_image', 'identification_selfie_image']
+};
+
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
+
     try {
-        const requiredFiles = ['identification_front_image', 'identification_back_image', 'identification_selfie_image'];
+        // const requiredFiles = ['identification_front_image', 'identification_back_image', 'identification_selfie_image'];
+        const requiredFiles = requiredKycFiles[req.body.identification_type];
         const hasAllFiles = validateRequiredFiles(requiredFiles, req.files);
         if (!hasAllFiles) {
             res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);
         }
 
+        console.log('(route kyc) BEFORE kycController.submitKycData ...');
         await kycController.submitKycData(req, res).then(result => {
             console.log('KYC SUBMITTED!!!', result);
             res.send(result);
         });
     } catch (err) {
-        console.error(err);
+        if(err.response.data) {
+            console.error(err.response.data);
+            return res.status(500).send(err.response.data);
+        }
         res.status(500).send(err);
     }
 });

@@ -20,7 +20,7 @@ const kycAccountSchema = new mongoose.Schema({
     },
     identification_type: {
         type: String,
-        enum: ['passport', 'drivers_licence', 'id_card'],
+        enum: ['passport', 'drivers_license', 'id_card'],
         required: true
     },
     identification_id_number: String,

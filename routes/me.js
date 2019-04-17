@@ -5,12 +5,24 @@ const Joi = require('joi');
 const User = require('../models/user');
 const facebookController = require('../controllers/facebook-controller');
 const userController = require('../controllers/user-controller');
+const _ = require('lodash');
 
 router.use(isAuthenticated);
 
 router.get('/', async (req, res, next) => {
   try {
-    return res.send(await User.findById(req.user.id).populate('facebook_account kyc_account gmail_account'));
+    const user = await User.findById(req.user.id).populate('facebook_account kyc_account gmail_account');
+    const kyc = _.assign(user.kyc_account || {state: 'NOT_SUBMITED'}, {skip_count: user.kyc_skip_count});
+    const result = {
+      id: user._id,
+      full_name: user.full_name,
+      verification: user.verification,
+      require_kyc: user.require_kyc,
+      kyc: kyc,
+      gmail_account: user.gmail_account,
+      facebook_account: user.facebook_account
+    };
+    return res.send(result);
   } catch (err) {
     console.error('ERROR GET /me', err);
     res.status(500).send(err);

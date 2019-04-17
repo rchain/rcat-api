@@ -18,6 +18,7 @@ const skip = async (req, res) => {
 
 // Save Kyc account data
 const submitKycData = async (req, res) => {
+    console.log('BEFOREEEEE User.getKycAccountById() ...');
     let kycAccount = await User.getKycAccountById(req.user.id);
 
     if (kycAccount) {
@@ -27,6 +28,7 @@ const submitKycData = async (req, res) => {
             message: 'Kyc account already exists.'
         };
     } else {
+        console.log('No kyc account ... creating new one ...');
         return new Promise(async (resolve, reject) => {
             try {
                 const values = await uploadKycFilesToGcs(req.files, req.user);
