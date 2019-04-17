@@ -19,8 +19,10 @@ const isAuthenticated = (req, res, next) => {
                     err: err
                 });
             } else {
+                console.log('(middleware) decoded >>>>>>', decoded);
                 req.user = decoded;
                 const user = await User.findById(req.user.id);
+                console.log('(middleware) user >>>>>>', user);
                 if(!user) {
                     return res.status(401).json({
                         success: false,

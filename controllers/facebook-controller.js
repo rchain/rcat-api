@@ -64,8 +64,10 @@ const loginFacebook = async (req, res) => {
         id:  user._id,
         email: user.facebook_account.email,
         name: displayName,
-        auth_provider: 'facebook'
+        auth_provider: 'facebook',
+        provider_id: facebookId
     };
+    console.log('jwtPayload >>>>>>', jwtPayload);
 
     const jwtOptions = require('../config/jwt-options');
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, jwtOptions);

@@ -25,16 +25,21 @@ facebookAccountSchema.statics.login = async function (data) {
     });
 
     // check if there is a record of this gmail account in database
-    const facebookAccountFound = await this.findOne({ email: facebookAccount.email });
+    // const facebookAccountFound = await this.findOne({ email: facebookAccount.email });
+    let facebookAccountFound = await this.findOne({ facebook_id: data.facebookId });
+    if(!facebookAccountFound) {
+        facebookAccountFound = await this.findOne({ email: facebookAccount.email });
+    }
 
     let userFound;
-    // if there is a gmail record, find corresponding user
+    // if there is a facebook record, find corresponding user
     if (facebookAccountFound) {
         userFound = await User.findOne({ facebook_account: facebookAccountFound.id } , '-__v').populate('kyc_account facebook_account', '-__v');
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
     if (facebookAccountFound && userFound) {
+        console.log('Returning FOUND user::: ', userFound);
         return userFound;
     } else {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
@@ -46,7 +51,10 @@ facebookAccountSchema.statics.login = async function (data) {
                 counter: 0
             }
         });
-        return await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');
+
+        const newUser = await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');
+        console.log('Returning NEW user::: ', newUser);
+        return newUser
     }
 };
 

@@ -27,7 +27,10 @@ gmailAccountSchema.statics.login = async function (data) {
     });
 
     // check if there is a record of this gmail account in database
-    const gmailAccountFound = await this.findOne({ email: gmailAccount.email });
+    let gmailAccountFound = await this.findOne({ gmail_id: data.Eea });
+    if(!gmailAccountFound) {
+        gmailAccountFound = await this.findOne({ email: gmailAccount.email });
+    }
 
     let userFound;
     // if there is a gmail record, find corresponding user
