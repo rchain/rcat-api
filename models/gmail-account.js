@@ -28,7 +28,7 @@ gmailAccountSchema.statics.login = async function (data) {
 
     // check if there is a record of this gmail account in database
     let gmailAccountFound = await this.findOne({ gmail_id: data.Eea });
-    if(!gmailAccountFound) {
+    if(!gmailAccountFound || gmailAccountFound.isNew) {
         gmailAccountFound = await this.findOne({ email: gmailAccount.email });
     }
 

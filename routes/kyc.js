@@ -84,6 +84,7 @@ const requiredKycFiles = {
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
 
     try {
+        console.log('identification_type: ', req.body.identification_type);
         // const requiredFiles = ['identification_front_image', 'identification_back_image', 'identification_selfie_image'];
         const requiredFiles = requiredKycFiles[req.body.identification_type];
         const hasAllFiles = validateRequiredFiles(requiredFiles, req.files);

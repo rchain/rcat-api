@@ -27,7 +27,7 @@ facebookAccountSchema.statics.login = async function (data) {
     // check if there is a record of this gmail account in database
     // const facebookAccountFound = await this.findOne({ email: facebookAccount.email });
     let facebookAccountFound = await this.findOne({ facebook_id: data.facebookId });
-    if(!facebookAccountFound) {
+    if(!facebookAccountFound || facebookAccountFound.isNew) {
         facebookAccountFound = await this.findOne({ email: facebookAccount.email });
     }
 
@@ -39,7 +39,7 @@ facebookAccountSchema.statics.login = async function (data) {
 
     // if there is a user - return it, otherwise - create new gmail and user
     if (facebookAccountFound && userFound) {
-        console.log('Returning FOUND user::: ', userFound);
+        console.log('Returning FOUND user ...');
         return userFound;
     } else {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
@@ -53,7 +53,7 @@ facebookAccountSchema.statics.login = async function (data) {
         });
 
         const newUser = await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');
-        console.log('Returning NEW user::: ', newUser);
+        console.log('Returning NEW user ...');
         return newUser
     }
 };
