@@ -89,7 +89,7 @@ router.get('/:id/ack', async (req, res, next) => {
 const fileTypesValidationInfo = {
     'song_file': {
         ext: /mp3|wav|flac/,
-        mime: /audio\/mpeg|mp3|wav/
+        mime: /audio\/mpeg|mp3|wav|x-wav|flac/
     },
     'album_art_image_file': {
         ext: /png|jpeg|jpg/,
