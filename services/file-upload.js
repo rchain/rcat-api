@@ -146,7 +146,7 @@ const uploadKycFilesToS3 = async (files, user) => {
 // };
 
 const uploadSongToDropBox = async (file, song) => {
-    const destination = process.env.DROPBOX_UPLOAD_PATH;
+    const destination = path.join(process.env.DROPBOX_UPLOAD_PATH, song.asset_sound.fileNameFull);
     console.log('Uploading to DROPBOX ...', destination);
     return  await dbx.filesUpload({ path: destination, contents: file.buffer, mode: 'overwrite'});
 };

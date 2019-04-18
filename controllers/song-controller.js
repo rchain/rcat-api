@@ -52,7 +52,7 @@ const createSong = async (req, res) => {
             song = await Song.createSong(req, fileSong, fileImage);
             // console.log('song CRATED!!!!', song);
         } catch (createError) {
-            console.error('ERROR CREATIN SONG!!!', createError);
+            console.error('ERROR CREATING SONG!!!', createError);
             return reject(createError);
         }
 
@@ -85,8 +85,16 @@ const createSong = async (req, res) => {
         ///////////////////////////////////////
         // GOOGLE CLOUD STORAGE & UPDATE #2
         ///////////////////////////////////////
-        const gcsResponse = await uploadAlbumArtImage(fileImage, song, req.user);
-        console.log('GOOGLE CLOUD RESPONSE', gcsResponse);
+        let gcsResponse = '{error: true}';
+        try{
+            gcsResponse = await uploadAlbumArtImage(fileImage, song, req.user);
+            console.log('GOOGLE CLOUD RESPONSE', gcsResponse);
+        }
+        catch (err) {
+            console.error('ERROR GOOGLE CLOUD!', err);
+            return reject(updateError);
+        }
+
         try {
             await Song.findByIdAndUpdate(
                 song._id,
@@ -99,7 +107,7 @@ const createSong = async (req, res) => {
             );
         } catch (updateError) {
             console.error('ERROR UPDATING#2 SONG!!!', updateError);
-            reject(updateError);
+            return reject(updateError);
         }
 
         resolve(await Song.findById(song._id).populate('genres'));
