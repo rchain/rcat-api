@@ -155,11 +155,13 @@ const songSchema = new mongoose.Schema({
         }
     },
 }, {
-        timestamps: {
-            createdAt: 'created_at',
-            updatedAt: 'updated_at',
-        },
-    });
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
+    },
+});
 
 songSchema.virtual('state_title').get(function () {
     return SongState.title(this.state)
@@ -286,7 +288,7 @@ songSchema.methods.transformCollaborators = function () {
 
 songSchema.methods.transformForAcquisition = function (user) {
 
-    const appVersionTag = '0.2.2';
+    const appVersionTag = '0.2.3';
 
     const timestasmp = + new Date();
 

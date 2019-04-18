@@ -5,15 +5,16 @@ const { uploadSongToDropBox, uploadAlbumArtImage } = require('../services/file-u
 const listAllSongs = async (conditions, req, res) => {
     console.log('TODO<low> call via redis');
     console.log('TODO<high> Call acquistion API to get data');
-    return await Song
-        .find(_.assign({}, conditions))
-        .map((s) => {
+    const filter = _.assign({}, conditions);
+    const songsFound = await Song.find(filter);
+    const songsFiltered = songsFound.map((s) => {
             return {
                 id: s._id,
                 title: s.title,
-                status: 'status'
+                status: s.state
             };
         });
+    return songsFound;
 };
 
 const createSong = async (req, res) => {
