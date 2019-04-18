@@ -288,7 +288,7 @@ songSchema.methods.transformCollaborators = function () {
 
 songSchema.methods.transformForAcquisition = function (user) {
 
-    const appVersionTag = '0.2.5';
+    const appVersionTag = '0.2.6';
 
     const timestasmp = + new Date();
 
