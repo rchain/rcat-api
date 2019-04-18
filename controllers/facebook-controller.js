@@ -52,7 +52,7 @@ const loginFacebook = async (req, res) => {
         }
     }
 
-    if(facebookId !== user.facebook_account.facebook_id) {
+    if(user.facebook_account && facebookId !== user.facebook_account.facebook_id) {
         return {
             statusCode: 400,
             error: "Bad Request",

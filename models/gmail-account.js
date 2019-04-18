@@ -50,9 +50,8 @@ gmailAccountSchema.statics.login = async function (data) {
                 counter: 0
             }
         });
-        const newUser = await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
-        console.log('Returning NEW user::: ', newUser);
-        return newUser;
+        console.log('Returning NEW Gmail user ...');
+        return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
     }
 };
 

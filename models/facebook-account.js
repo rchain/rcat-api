@@ -41,8 +41,8 @@ facebookAccountSchema.statics.login = async function (data) {
         return userFound;
     } else {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
-        let userAccount = await User.create({
-            facebook_account: facebookAccount.id ,
+        const userAccount = await User.create({
+            facebook_account: facebookAccount,
             verification: {
                 verified: false,
                 code: randomIntInc(100000, 999999),
@@ -50,9 +50,8 @@ facebookAccountSchema.statics.login = async function (data) {
             }
         });
 
-        const newUser = await User.findOne({ facebookAccount: userAccount.facebookAccount }, '-__v').populate('facebook_account', '-__v');
-        console.log('Returning NEW user ...');
-        return newUser
+        console.log('Returning NEW Facebook user ...');
+        return await User.findById(userAccount._id).populate('kyc_account facebook_account', '-__v');
     }
 };
 
