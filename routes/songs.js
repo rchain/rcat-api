@@ -88,8 +88,8 @@ router.get('/:id/ack', async (req, res, next) => {
 
 const fileTypesValidationInfo = {
     'song_file': {
-        ext: /mp3|wma|flac/,
-        mime: /audio\/mpeg|mp3/
+        ext: /mp3|wav|flac/,
+        mime: /audio\/mpeg|mp3|wav/
     },
     'album_art_image_file': {
         ext: /png|jpeg|jpg/,
@@ -105,7 +105,8 @@ let fileHandler = validateFiles(fileTypesValidationInfo).fields([
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
 
     try {
-        const requiredFiles = ['song_file', 'album_art_image_file'];
+        // const requiredFiles = ['song_file', 'album_art_image_file'];
+        const requiredFiles = ['song_file'];
         const hasAllFiles = validateRequiredFiles(requiredFiles, req.files);
         if (!hasAllFiles) {
             return res.status(400).send(`Required files are: ${requiredFiles.join(', ')}`);

@@ -1,4 +1,6 @@
 const Song = require('../models/song');
+const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const { uploadSongToDropBox, uploadAlbumArtImage } = require('../services/file-upload');
 
@@ -17,6 +19,24 @@ const listAllSongs = async (conditions, req, res) => {
     return songsFound;
 };
 
+const getSongFile = (req) => {
+    const songFieldName = Object.keys(req.files)[0];
+    return req.files[songFieldName][0];
+};
+
+const getArtImageFile = (req) => {
+    const imageFieldName = Object.keys(req.files)[1];
+    if(!imageFieldName) {
+        const buffer = fs.readFileSync(path.join(__dirname, '../assets/RSONG-default-image.jpg'));
+        return {
+            fieldname: 'album_art_image_file',
+            originalname: 'RSONG-default-image.jpg',
+            buffer: buffer,
+        };
+    }
+    return req.files[imageFieldName][0];
+};
+
 const createSong = async (req, res) => {
     return new Promise(async (resolve, reject) => {
 
@@ -25,11 +45,10 @@ const createSong = async (req, res) => {
         ///////////////////////////////////////
         let song;
         try {
-            const songFieldName = Object.keys(req.files)[0];
-            const imageFieldName = Object.keys(req.files)[1];
-            fileSong = req.files[songFieldName][0];
-            fileImage = req.files[imageFieldName][0];
-
+            fileSong = getSongFile(req);
+            fileImage = getArtImageFile(req);
+            console.log('fileSong ###########', fileSong);
+            console.log('fileImage ##########', fileImage);
             song = await Song.createSong(req, fileSong, fileImage);
             // console.log('song CRATED!!!!', song);
         } catch (createError) {
@@ -67,6 +86,7 @@ const createSong = async (req, res) => {
         // GOOGLE CLOUD STORAGE & UPDATE #2
         ///////////////////////////////////////
         const gcsResponse = await uploadAlbumArtImage(fileImage, song, req.user);
+        console.log('GOOGLE CLOUD RESPONSE', gcsResponse);
         try {
             await Song.findByIdAndUpdate(
                 song._id,

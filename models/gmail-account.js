@@ -27,14 +27,12 @@ gmailAccountSchema.statics.login = async function (data) {
     });
 
     // check if there is a record of this gmail account in database
-    let gmailAccountFound = await this.findOne({ gmail_id: data.Eea });
-    if(!gmailAccountFound || gmailAccountFound.isNew) {
-        gmailAccountFound = await this.findOne({ email: gmailAccount.email });
-    }
+    const gmailAccountFound = await this.findOne({ gmail_id: data.Eea });
 
     let userFound;
     // if there is a gmail record, find corresponding user
-    if (gmailAccountFound) {
+    if (gmailAccountFound && !gmailAccountFound.isNew) {
+        console.log('Found Gmail Account', gmailAccountFound);
         userFound = await User.findOne({ gmail_account: gmailAccountFound.id } , '-__v').populate('kyc_account gmail_account', '-__v');
     }
 

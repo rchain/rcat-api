@@ -50,9 +50,9 @@ const validateFiles = (fileTypesValidationInfo) => {
                 return cb(null, true);
             }
             if (!isMimeTypeValid) {
-                cb(`Error: File ${file.fieldname} upload only supports the following mime types: ${mimeTypesRegex}`);
+                cb(`Error: File ${file.fieldname} upload has mime ${file.mimetype} but only supported is the following mime types: ${mimeTypesRegex}`);
             } else {
-                cb(`Error: File ${file.fieldname} upload only supports the following file types: ${fileTypesRegex}`);
+                cb(`Error: File ${file.fieldname} upload has extension ${extension} but only supported is the following file types: ${fileTypesRegex}`);
             }
         }
     });
