@@ -31,7 +31,7 @@ facebookAccountSchema.statics.login = async function (data) {
     let userFound;
     // if there is a facebook record, find corresponding user
     if (facebookAccountFound && !facebookAccountFound.isNew) {
-        console.log('Found Facebook Account', gmailAccountFound);
+        console.log('Found Facebook Account', facebookAccountFound);
         userFound = await User.findOne({ facebook_account: facebookAccountFound.id } , '-__v').populate('kyc_account facebook_account', '-__v');
     }
 
