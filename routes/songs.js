@@ -23,16 +23,16 @@ const requestSchema = {
                 name: Joi.string().required(),
                 percentage_100_total_song: Joi.number().required().min(0).max(100),
                 percentage_100_publisher: Joi.number().required().min(0).max(100),
-                publisher: Joi.string(),
+                publisher: Joi.string().allow(''),
                 rev_wallet_address: Joi.string().token().allow(''), // TODO VConditional in func of (rev email)
                 rev_email: Joi.string().email().allow(''), // TODO VConditional in func of (rev wallet),
-                publisher_rights_organization: Joi.string(),
+                publisher_rights_organization: Joi.string().allow(''),
                 iswc: Joi.string().allow('')
             })
         ),
         sound_owners: Joi.array().items(Joi.object({
             name: Joi.string().required(),
-            role: Joi.string().required(),
+            role: Joi.string().allow(''),
             percentage_100: Joi.number().required().min(0).max(100),
             rev_wallet_address: Joi.string().token().allow(''),
             rev_email: Joi.string().email().allow(''),
@@ -40,7 +40,7 @@ const requestSchema = {
         })),
         collaborators: Joi.array().items(Joi.object({
             name: Joi.string().required(),
-            role: Joi.string().required(),
+            role: Joi.string().allow(''),
             percentage_100: Joi.number().required().min(0).max(100),
             rev_wallet_address: Joi.string().token().allow(''),
             rev_email: Joi.string().email().allow(''),
