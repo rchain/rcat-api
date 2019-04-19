@@ -139,11 +139,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         const postUrl = `${process.env.ACQUISITION_API_ENDPOINT_BASE_URL}/v1/ingest`;
         console.log({postUrl: postUrl});
 
-        console.log(`NOT POSTING to ${postUrl} >>>>>>> UNCOMMENT!!!!!!! >>>>>`, songForAcq);
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         console.log('Validating song payload schema before sending it to acquistion service ...');
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         const isSchemaValid = validateAcqusitionPostSchema(songForAcq);
         if(!isSchemaValid) {
             const errors = {
@@ -156,18 +152,16 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             console.log('ACQUSITION SCHEMA VALID :)');
         }
 
+        console.log(`POSTING to ${postUrl} ...`);
         return axios.post(postUrl, songForAcq)
             .then(function (response) {
-                console.log('POST /songs response', response.data);
+                console.log('POST /songs response >>>', response.data);
                 return res.send(response.data);
             })
             .catch(function (error) {
                 Sentry.captureException(error);
                 return res.status(400).send(error.Error);
             });
-
-        // return res.send(songForAcq);
-
     } catch (err) {
         Sentry.captureException(err);
         res.status(400).send(err);
