@@ -1,0 +1,59 @@
+{
+  header: {
+    application: 'artist.rsong.io',
+    version: '0.2.5',
+    api_key: '',
+    timestamp: 1555598748344
+  },
+  title: 'Copy of Copy of eeeeee',
+  sub_title: 'eeeeee',
+  user: {
+    id: '5cb883137136a90a11b9ccb9',
+    oauth_info: {
+      source: 'facebook',
+      bag: [
+        Array
+      ]
+    },
+    rsong_io_generated_id: '5cb88d99d061890e9968b1e6'
+  },
+  release_date: 2019-05-03T22
+  :
+  00: 00.000Z,
+  genres: [
+    {
+      "_id": "5cb8830bd28d3509fd95b564",
+      "name": "Classical",
+      "created_at": "2019-04-18T14:00:43.830Z",
+      "updated_at": "2019-04-18T14:00:43.830Z",
+      "__v": 0
+    }
+  ],
+  staff: [
+    {
+      type: 'artist',
+      name: 'eeeeee',
+      main: true
+    }
+  ],
+  assets: [
+    {
+      provider: 'dropbox',
+      file_type: 'audio',
+      name: undefined,
+      hashed_name: undefined,
+      uri: '/DEV_TEST/RSONG_IN/12bec7e7a30dacd15b3970cfd33a4490.mp3',
+      timestamp: '2019-04-18T14:45:46Z'
+    },
+    {
+      provider: 'gcs',
+      file_type: 'img',
+      name: 'RSONG-default-image.jpg',
+      hashed_name: '12bec7e7a30dacd15b3970cfd33a4490.jpg',
+      bucket: 'rsongassetmanagamentdev',
+      projectId: 'rsong-dev',
+      uri: '5cb883137136a90a11b9ccb9/song/12bec7e7a30dacd15b3970cfd33a4490.jpg',
+      timestamp: 1555598748344
+    }
+  ]
+}

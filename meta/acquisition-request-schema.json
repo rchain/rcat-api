@@ -1,0 +1,352 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "header",
+    "title",
+    "sub_title",
+    "user",
+    "release_date",
+    "genres",
+    "staff",
+    "assets"
+  ],
+  "properties": {
+    "header": {
+      "$id": "#/properties/header",
+      "type": "object",
+      "title": "The Header Schema",
+      "required": [
+        "application",
+        "version",
+        "api_key",
+        "timestamp"
+      ],
+      "properties": {
+        "application": {
+          "$id": "#/properties/header/properties/application",
+          "type": "string",
+          "title": "The Application Schema",
+          "default": "",
+          "examples": [
+            "artist.rsong.io"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "version": {
+          "$id": "#/properties/header/properties/version",
+          "type": "string",
+          "title": "The Version Schema",
+          "default": "",
+          "examples": [
+            "0.1.0"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "api_key": {
+          "$id": "#/properties/header/properties/api_key",
+          "type": "string",
+          "title": "The Api_key Schema",
+          "default": "",
+          "examples": [
+            ""
+          ],
+          "pattern": "^(.*)$"
+        },
+        "timestamp": {
+          "$id": "#/properties/header/properties/timestamp",
+          "type": "integer",
+          "title": "The Timestamp Schema",
+          "default": 0,
+          "examples": [
+            1554989839552
+          ]
+        }
+      }
+    },
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The Title Schema",
+      "default": "",
+      "examples": [
+        "Some title"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "sub_title": {
+      "$id": "#/properties/sub_title",
+      "type": "string",
+      "title": "The Sub_title Schema",
+      "default": "",
+      "examples": [
+        "Some subtitle"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "user": {
+      "$id": "#/properties/user",
+      "type": "object",
+      "title": "The User Schema",
+      "required": [
+        "id",
+        "oauth_info",
+        "rsong_io_generated_id"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/user/properties/id",
+          "type": "string",
+          "title": "The Id Schema",
+          "default": "",
+          "examples": [
+            "5caf3d143acc021325895b07"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "oauth_info": {
+          "$id": "#/properties/user/properties/oauth_info",
+          "type": "object",
+          "title": "The Oauth_info Schema",
+          "required": [
+            "source",
+            "bag"
+          ],
+          "properties": {
+            "source": {
+              "$id": "#/properties/user/properties/oauth_info/properties/source",
+              "type": "string",
+              "title": "The Source Schema",
+              "default": "",
+              "examples": [
+                "gmail"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "bag": {
+              "$id": "#/properties/user/properties/oauth_info/properties/bag",
+              "type": "array",
+              "title": "The Bag Schema",
+              "items": {
+                "$id": "#/properties/user/properties/oauth_info/properties/bag/items",
+                "type": "object",
+                "title": "The Items Schema",
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "key": {
+                    "$id": "#/properties/user/properties/oauth_info/properties/bag/items/properties/key",
+                    "type": "string",
+                    "title": "The Key Schema",
+                    "default": "",
+                    "examples": [
+                      "email"
+                    ],
+                    "pattern": "^(.*)$"
+                  },
+                  "value": {
+                    "$id": "#/properties/user/properties/oauth_info/properties/bag/items/properties/value",
+                    "type": "string",
+                    "title": "The Value Schema",
+                    "default": "",
+                    "examples": [
+                      "dragan.mijatovic@cramick-it.com"
+                    ],
+                    "pattern": "^(.*)$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rsong_io_generated_id": {
+          "$id": "#/properties/user/properties/rsong_io_generated_id",
+          "type": "string",
+          "title": "The Rsong_io_generated_id Schema",
+          "default": "",
+          "examples": [
+            "5caf3e803acc021325895b0a"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "release_date": {
+      "$id": "#/properties/release_date",
+      "type": "string",
+      "title": "The Release_date Schema",
+      "default": "",
+      "examples": [
+        "2019-09-24T22:00:00.000Z"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "genres": {
+      "$id": "#/properties/genres",
+      "type": "array",
+      "title": "The Genres Schema",
+      "items": {
+        "$id": "#/properties/genres/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "_id",
+          "name"
+        ],
+        "properties": {
+          "_id": {
+            "$id": "#/properties/genres/items/properties/_id",
+            "type": "string",
+            "title": "The _id Schema",
+            "default": "",
+            "examples": [
+              "5caf3d077a6c12130f69750a"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "name": {
+            "$id": "#/properties/genres/items/properties/name",
+            "type": "string",
+            "title": "The Name Schema",
+            "default": "",
+            "examples": [
+              "Moods"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    },
+    "staff": {
+      "$id": "#/properties/staff",
+      "type": "array",
+      "title": "The Staff Schema",
+      "items": {
+        "$id": "#/properties/staff/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "type",
+          "name",
+          "main"
+        ],
+        "properties": {
+          "type": {
+            "$id": "#/properties/staff/items/properties/type",
+            "type": "string",
+            "title": "The Type Schema",
+            "default": "",
+            "examples": [
+              "artist"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "name": {
+            "$id": "#/properties/staff/items/properties/name",
+            "type": "string",
+            "title": "The Name Schema",
+            "default": "",
+            "examples": [
+              "Fabian MainArtist"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "main": {
+            "$id": "#/properties/staff/items/properties/main",
+            "type": "boolean",
+            "title": "The Main Schema",
+            "default": false,
+            "examples": [
+              true
+            ]
+          }
+        }
+      }
+    },
+    "assets": {
+      "$id": "#/properties/assets",
+      "type": "array",
+      "title": "The Assets Schema",
+      "items": {
+        "$id": "#/properties/assets/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "provider",
+          "file_type",
+          "name",
+          "hashed_name",
+          "uri",
+          "timestamp"
+        ],
+        "properties": {
+          "provider": {
+            "$id": "#/properties/assets/items/properties/provider",
+            "type": "string",
+            "title": "The Provider Schema",
+            "default": "",
+            "examples": [
+              "dropbox"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "file_type": {
+            "$id": "#/properties/assets/items/properties/file_type",
+            "type": "string",
+            "title": "The File_type Schema",
+            "default": "",
+            "examples": [
+              "audio"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "name": {
+            "$id": "#/properties/assets/items/properties/name",
+            "type": "string",
+            "title": "The Name Schema",
+            "default": "",
+            "examples": [
+              "23624893_vikings-epic-musical-sound_by_tibasound_preview.mp3"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "hashed_name": {
+            "$id": "#/properties/assets/items/properties/hashed_name",
+            "type": "string",
+            "title": "The Hashed_name Schema",
+            "default": "",
+            "examples": [
+              "6891265343dc1d1960989c9897e804fb.mp3"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "uri": {
+            "$id": "#/properties/assets/items/properties/uri",
+            "type": "string",
+            "title": "The Uri Schema",
+            "default": "",
+            "examples": [
+              "/DEV_TEST/RSONG_IN/6891265343dc1d1960989c9897e804fb.mp3"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "timestamp": {
+            "$id": "#/properties/assets/items/properties/timestamp",
+            "type": "string",
+            "title": "The Timestamp Schema",
+            "default": "",
+            "examples": [
+              "2019-04-11T13:17:54Z"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    }
+  }
+}

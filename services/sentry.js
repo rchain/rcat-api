@@ -23,7 +23,9 @@ const configureUserScope = (user) => {
         Sentry.configureScope(scope => {
             scope.setTag('NODE_ENV', process.env.NODE_ENV);
             scope.setTag('user_mode', 'user');
-            scope.setUser({ id: user ? user.id : 0 });
+            if(user && user.id) {
+                scope.setUser({ id: user.id});
+            }
         });
     } catch (err) {
         console.error('SENTRY ERROR configure scope!', err);

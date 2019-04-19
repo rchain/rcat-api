@@ -290,7 +290,7 @@ songSchema.methods.transformForAcquisition = function (user) {
 
     const appVersionTag = '0.2.6';
 
-    const timestasmp = + new Date();
+    const timestamp = + new Date();
 
     const songWriters = this.transformSongWriters();
     const soundOwners = this.transformSoundOwners();
@@ -300,7 +300,7 @@ songSchema.methods.transformForAcquisition = function (user) {
         application: 'artist.rsong.io',
         version: appVersionTag,
         api_key: '',
-        timestamp: timestasmp
+        timestamp: timestamp
     };
 
     const userInfo = {
@@ -340,27 +340,29 @@ songSchema.methods.transformForAcquisition = function (user) {
         title: this.title,
         sub_title: this.subtitle,
         user: userInfo,
-        release_date: this.release_date,
-        genres: this.genres,
+        release_date: this.release_date.toString(),
+        genres: this.genres.map((g) => {
+            return {_id: g._id.toString(), name: g.name};
+        }),
         staff: staff,
         assets: [
             {
                 provider: 'dropbox',
                 file_type: 'audio',
-                name: this.originalFileName,
-                hashed_name: this.fileName,
+                name: this.originalFileName || 'N/A',
+                hashed_name: this.fileName || 'N/A',
                 uri: this.asset_sound.dropbox_data.path_display,
-                timestamp: this.asset_sound.dropbox_data.server_modified
+                timestamp: this.asset_sound.dropbox_data.server_modified.toString()
             },
             {
                 provider: 'gcs',
                 file_type: 'img',
-                name: this.asset_img_art.originalFileName,
-                hashed_name: this.asset_img_art.fileNameFull,
+                name: this.asset_img_art.originalFileName || 'N/A',
+                hashed_name: this.asset_img_art.fileNameFull || 'N/A',
                 bucket: this.asset_img_art.gcs_data.bucket,
                 projectId: this.asset_img_art.gcs_data.projectId,
                 uri: this.asset_img_art.gcs_data.fileName,
-                timestamp: timestasmp
+                timestamp: timestamp.toString()
             }
         ]
     };

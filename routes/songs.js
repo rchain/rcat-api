@@ -7,6 +7,7 @@ const Joi = require('joi');
 const validate = require('express-validation');
 const axios = require('axios');
 const { validateFiles } = require('../services/file-upload');
+const { validateAcqusitionPostSchema } = require('../services/json-schema-org');
 
 router.use(isAuthenticated);
 
@@ -136,21 +137,39 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         // return res.send(songForAcq);
 
         const postUrl = `${process.env.ACQUISITION_API_ENDPOINT_BASE_URL}/v1/ingest`;
-        // return res.send({postUrl: postUrl});
+        console.log({postUrl: postUrl});
 
         console.log(`NOT POSTING to ${postUrl} >>>>>>> UNCOMMENT!!!!!!! >>>>>`, songForAcq);
-        return res.send(songForAcq);
 
-        // return axios.post(postUrl, songForAcq)
-        //     .then(function (response) {
-        //         console.log('POST /songs response', response.data);
-        //         return res.send(response.data);
-        //     })
-        //     .catch(function (error) {
-        //         return res.status(400).send(error.Error);
-        //     });
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.log('Validating song payload schema before sending it to acquistion service ...');
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        const isSchemaValid = validateAcqusitionPostSchema(songForAcq);
+        if(!isSchemaValid) {
+            const errors = {
+                'acqusition-schema-errors': validateAcqusitionPostSchema.errors
+            };
+            console.log('ACQUSITION SCHEMA NOT VALID :(', errors);
+            Sentry.captureMessage(errors);
+            return res.status(400).send(errors);
+        } else {
+            console.log('ACQUSITION SCHEMA VALID :)');
+        }
+
+        return axios.post(postUrl, songForAcq)
+            .then(function (response) {
+                console.log('POST /songs response', response.data);
+                return res.send(response.data);
+            })
+            .catch(function (error) {
+                Sentry.captureException(error);
+                return res.status(400).send(error.Error);
+            });
+
+        // return res.send(songForAcq);
 
     } catch (err) {
+        Sentry.captureException(err);
         res.status(400).send(err);
     }
 });
