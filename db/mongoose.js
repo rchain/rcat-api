@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const {
+    Sentry
+} = require('../services/sentry');
 
 const options = {
     useNewUrlParser: true,
@@ -22,6 +25,7 @@ const connect = () => {
     db.on('error', function(error) {
         // console.error('Error in MongoDb connection: ',  error);
         console.error('Error in MongoDb connection: ');
+        Sentry.captureException(error);
         mongoose.disconnect();
     });
     db.on('connected', function() {
@@ -32,9 +36,11 @@ const connect = () => {
     });
     db.on('reconnected', function () {
         console.log('MongoDB reconnected!');
+        Sentry.captureMessage('MongoDB reconnected!');
     });
     db.on('disconnected', function() {
         console.log('MongoDB disconnected!');
+        Sentry.captureMessage('MongoDB disconnected!');
         // mongoose.connect(process.env.MONGODB_URI, {server:{auto_reconnect:true}});
         setTimeout(() => {
             mongoose.connect(process.env.MONGODB_URI, options);

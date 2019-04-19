@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const uuid = require('node-uuid')
-
+const uuid = require('node-uuid');
 const morgan = require('morgan');
+const {
+    configureNoUserScope
+} = require('./services/sentry');
 
 const app = express();
 
@@ -21,6 +23,7 @@ app.use(express.urlencoded({ extended: false, limit: '100mb' }));
 ///////////////////////////
 // Logging
 ///////////////////////////
+configureNoUserScope();
 
 // const loggerFormat = '(:user-agent) :method :url :status :res[content-length] - :response-time ms';
 const loggerFormat = 'dev';

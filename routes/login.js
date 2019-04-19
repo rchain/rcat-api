@@ -3,6 +3,10 @@ const Joi = require('joi');
 const validate = require('express-validation');
 const gmaillController = require('../controllers/gmail-controller');
 const facebookController = require('../controllers/facebook-controller');
+const {
+    Sentry,
+    configureUserScope
+} = require('../services/sentry');
 
 const requestGmailSchema = {
     body: {
@@ -24,9 +28,10 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
         if(data.statusCode) {
             return res.status(data.statusCode).send(data);
         }
-        // res.send(data);
-        setTimeout(() => {res.send(data);}, 5000);
+        configureUserScope(req.user);
+        res.send(data);
     } catch (err) {
+        Sentry.captureException(err);
         console.error('Google login ERROR', err);
         res.status(500).send(err);
     }
@@ -45,9 +50,10 @@ router.post('/facebook', validate(requestFacebookSchema), async (req, res, next)
         if(data.statusCode) {
             return res.status(data.statusCode).send(data);
         }
-        // res.send(data);
-        setTimeout(() => {res.send(data);}, 5000);
+        configureUserScope(req.user);
+        res.send(data);
     } catch (err) {
+        Sentry.captureException(err);
         console.error('Facebook login ERROR', err);
         res.status(500).send(err);
     }

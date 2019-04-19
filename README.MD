@@ -75,6 +75,12 @@ In order to stop and remove all containers execute:
 docker-compose down
 ```
 
+## Dependencies
+
+### Sentry
+
+https://sentry.io
+
 ## Usefull links
 - https://console.cloud.google.com
 - https://console.developers.google.com
