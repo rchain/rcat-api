@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 const { Types } = Schema;
 
 const userSchema = new mongoose.Schema({
+    first_name: String,
+    last_name: String,
+    email: String,
+    mobile: String,
     kyc_skip_count: {
         type: Number,
         default: 0
@@ -19,10 +23,33 @@ const userSchema = new mongoose.Schema({
         type: Types.ObjectId,
         ref: 'FacebookAccount',
     },
-    verification: {
-        verified: Boolean,
-        code: Number,
-        counter: Number
+    verification_data: {
+        code_email: {
+            type: String,
+            select: false
+        },
+        code_email_verify_count: {
+            type: Number,
+            select: false,
+            default: 0
+        },
+        code_email_verified: {
+            type: Boolean,
+            select: false
+        },
+        code_mobile: {
+            type: String,
+            select: false
+        },
+        code_mobile_verify_count: {
+            type: Number,
+            select: false,
+            default: 0
+        },
+        code_mobile_verified: {
+            type: Boolean,
+            select: false
+        }
     },
     admin: {
         type: Types.Boolean,
@@ -41,13 +68,36 @@ userSchema.virtual('require_kyc').get(function () {
     return !this.kyc_account || this.kyc_account.require_kyc;
 });
 
-userSchema.virtual('require_kyc').get(function () {
-    return !this.kyc_account || this.kyc_account.require_kyc;
-});
-
 userSchema.virtual('full_name').get(function () {
     return (this.kyc_account && this.kyc_account.full_name) || (this.gmail_account && this.gmail_account.full_name) || (this.facebook_account && this.facebook_account.full_name) || '';
 });
+
+userSchema.methods.getVerification = function() {
+    const requireEmail = !this.email || this.email.trim().length === 0;
+    const requireEmailCodeExpired = this.verification_data.code_email_verify_count > 0;
+    const requireEmailVerification = !this.verification_data.code_email_verified;
+    const requireMobile = !this.mobile || this.mobile.trim().length === 0;
+    const requireMobileCodeExpired = this.verification_data.code_mobile_verify_count > 0;
+    const requireMobileVerification = !this.verification_data.code_mobile_verified;
+    const requireKyc = !this.kyc_account || this.kyc_account.require_kyc;
+    console.log('requireEmailCodeExpired', requireEmailCodeExpired);
+    console.log('requireMobileCodeExpired', requireMobileCodeExpired);
+    return {
+        verified: !requireEmail && !requireEmailVerification && !requireMobile && !requireMobileVerification && !requireKyc,
+        requireEmail: requireEmail,
+        // requireEmailCodeExpired: requireEmailCodeExpired,
+        requireEmailVerification: requireEmailVerification,
+        requireMobile: requireMobile,
+        // requireMobileCodeExpired: requireMobileCodeExpired,
+        requireMobileVerification: requireMobileVerification,
+        requireKyc: requireKyc
+    }
+};
+
+userSchema.methods.verifyEmailCode = function(code) {
+    this.verification_data.code_email_verify_count++;
+    return this.verification_data.code_email == code;
+};
 
 userSchema.statics.getKycAccountById = async function (userId) {
     const user = await User.findById(userId, '-__v').populate('kyc_account', '-__v');

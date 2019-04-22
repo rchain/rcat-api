@@ -1,4 +1,5 @@
 const homeRouter = require('./home');
+const verificationRouter = require('./verification');
 const loginRouter = require('./login');
 const logoutRouter = require('./logout');
 const usersRouter = require('./users');
@@ -12,11 +13,12 @@ const testRouter = require('./tester');
 
 module.exports = {
     homeRouter,
+    statusRouter,
+    verificationRouter,
     loginRouter,
     logoutRouter,
     usersRouter,
     meRouter,
-    statusRouter,
     kycRouter,
     songsRouter,
     genresRouter,

@@ -3,6 +3,8 @@ const FacebookAccount = require('../models/facebook-account');
 const User = require('../models/user');
 const passport = require('passport');
 const { facebookTokenStrategy } = require('../services/facebook');
+const Verification = require('../models/vertifications-vm');
+
 passport.use(facebookTokenStrategy);
 
 // call Facebook's API to check if passed token is valid
@@ -74,8 +76,7 @@ const loginFacebook = async (req, res) => {
 
     return {
         token,
-        require_kyc: user.require_kyc,
-        require_email: !user.facebook_account.email || user.facebook_account.email.trim() === '',
+        verification: Verification.newVerified().toJson(),
         user
     };
 

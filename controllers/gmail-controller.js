@@ -3,6 +3,7 @@ const client = new OAuth2Client(process.env.GMAIL_CLIENT_ID);
 const jwt = require('jsonwebtoken');
 const GmailAccount = require('../models/gmail-account');
 const Login = require('../models/login');
+const Verification = require('../models/vertifications-vm');
 
 // call Google's API to check if passed token is valid
 const verifyGmailToken = async (token) => {
@@ -54,8 +55,7 @@ const loginGmail = async (req, res) => {
 
         return {
             token,
-            require_kyc: user.require_kyc,
-            require_email: false,
+            verification: Verification.newRequireEmail().toJson(),
             user
         };
     } else {

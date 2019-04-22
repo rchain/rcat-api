@@ -56,6 +56,7 @@ app.use(morgan(loggerFormat, {
 const {
     homeRouter,
     statusRouter,
+    verificationRouter,
     loginRouter,
     logoutRouter,
     usersRouter,
@@ -69,6 +70,7 @@ const {
 
 app.use('/', homeRouter);
 app.use('/status', statusRouter);
+app.use('/verification', verificationRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/users', usersRouter);

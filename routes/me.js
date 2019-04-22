@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
     const result = {
       id: user._id,
       full_name: user.full_name,
-      verification: user.verification,
+      verification: user.getVerification(),
       require_kyc: user.require_kyc,
       kyc: kyc,
       gmail_account: user.gmail_account,

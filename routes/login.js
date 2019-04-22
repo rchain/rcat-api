@@ -26,6 +26,7 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
     try {
         const data = await gmaillController.loginGmail(req, res);
         if(data.statusCode) {
+            console.log('data >>>>>>>>>>>>>', data);
             return res.status(data.statusCode).send(data);
         }
         configureUserScope(req.user);
