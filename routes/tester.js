@@ -14,7 +14,10 @@ router.get('/headers', function(req, res, next) {
 
 router.post('/sms', (req, res, next) => {
   console.log('req.body', req.body);
-  sendSms(req.body);
+  const {to, message} = req.body;
+  console.log('to >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', to);
+  console.log('message >>>>>>>>>>>>>>>>>>>>>>>>>>>', message);
+  sendSms(undefined, to, message);
   res.send(req.body);
 });
 

@@ -43,10 +43,13 @@ facebookAccountSchema.statics.login = async function (data) {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
         const userAccount = await User.create({
             facebook_account: facebookAccount,
-            verification: {
-                verified: false,
-                code: randomIntInc(100000, 999999),
-                counter: 0
+            verification_data: {
+                code_email: '',
+                code_email_verify_count: 0,
+                code_email_verified: false,
+                code_mobile: '',
+                code_mobile_verify_count: 0,
+                code_mobile_verified: false
             }
         });
 
