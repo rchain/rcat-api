@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const { uploadSongToDropBox, uploadAlbumArtImage } = require('../services/file-upload');
+const SongState = require('../helpers/song-state');
 
 const listAllSongs = async (conditions, req, res) => {
     console.log('TODO<low> call via redis');
@@ -71,7 +72,8 @@ const createSong = async (req, res) => {
                 song._id,
                 {
                     $set: {
-                        "asset_sound.dropbox_data": dbxResponse
+                        "asset_sound.dropbox_data": dbxResponse,
+                        "state": SongState.PROCESSING
                     }
                 }
             );

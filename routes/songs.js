@@ -8,6 +8,7 @@ const validate = require('express-validation');
 const axios = require('axios');
 const { validateFiles } = require('../services/file-upload');
 const { validateAcqusitionPostSchema } = require('../services/json-schema-org');
+const SongState = require('../helpers/song-state');
 
 router.use(isAuthenticated);
 
@@ -154,8 +155,18 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
 
         console.log(`POSTING to ${postUrl} ...`);
         return axios.post(postUrl, songForAcq)
-            .then(function (response) {
+            .then(async function (response) {
                 console.log('POST /songs response >>>', response.data);
+
+                await Song.findByIdAndUpdate(
+                    song._id,
+                    {
+                        $set: {
+                            "state": SongState.PROCESSING
+                        }
+                    }
+                );
+
                 return res.send(response.data);
             })
             .catch(function (error) {
