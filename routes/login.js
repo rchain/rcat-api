@@ -49,6 +49,8 @@ router.post('/facebook', validate(requestFacebookSchema), async (req, res, next)
     try {
         const data = await facebookController.loginFacebook(req, res);
         if(data.statusCode) {
+            console.log('facebookController.loginFacebook error response >>>', data);
+            Sentry.captureMessage(JSON.stringify(data));
             return res.status(data.statusCode).send(data);
         }
         configureUserScope(req.user);

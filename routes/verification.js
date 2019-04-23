@@ -158,10 +158,10 @@ router.post('/mobile', async (req, res, next) => {
     }
 });
 
-router.post('/mobile-verification', async (req, res, next) => {
+router.post('/mobile-code', async (req, res, next) => {
 
     try {
-        console.log('POST /verification/mobile-verification: ', req.body);
+        console.log('POST /verification/mobile-code: ', req.body);
         const user = await User.findById(req.user.id);
         validateUserHasMobile(user);
         validateUserMobileIsNotVerified(user);
