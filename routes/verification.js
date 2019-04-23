@@ -59,11 +59,15 @@ router.post('/email', async (req, res, next) => {
         console.log('req.user.id: ', req.user.id);
         console.log('req.body.email: ', req.body.email);
         const email = req.body.email;
+        const first_name = req.body.first_name;
+        const last_name = req.body.last_name;
         validateEmail(email);
         const code = randomIntInc(100000, 999999);
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'email': email,
+                'first_name': first_name,
+                'last_name': last_name,
                 'verification_data.code_email': code
             }
         });
