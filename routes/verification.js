@@ -142,7 +142,7 @@ router.post('/mobile', async (req, res, next) => {
                 'verification_data.code_mobile': code
             }
         });
-        console.log('TODO! Send user verification mobile! code:::', code);
+        await sendSmsMobileVerificationCode(user.mobile, code);
         return res.send(user.getVerification());
     } catch (err) {
         if (err instanceof VerificationDataError) {
