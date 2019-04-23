@@ -18,7 +18,7 @@ const sendSms = (to, message, from=process.env.TWILLIO_PHONE_NUMBER) => {
         body: message
     };
 
-    if(process.env.SMS_NOTIFICATIONS_SILENT === 1) {
+    if(process.env.SMS_NOTIFICATIONS_SILENT === false) {
         return new Promise((resolve, reject) => {
             console.log('SILENT sms to', messageObject);
             resolve(messageObject);

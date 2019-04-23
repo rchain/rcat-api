@@ -108,7 +108,6 @@ router.post('/email-code', async (req, res, next) => {
                 'verification_data.code_email_verify_count': 1
             }
         });
-        await sendEmailWithVerificationCode(user.email, code);
         const userUpdated = await User.findById(req.user.id);
         if(!isCodeValid) {
             return res.status(400).send({message: 'Code not valid'});

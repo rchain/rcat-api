@@ -80,7 +80,6 @@ const notifyUserAboutKycSubmitted = async (kyc, req) => {
     } else if(user.facebook_account) {
         userEmail = user.facebook_account.email;
     }
-    console.log(`Trying to send email to user ${userEmail} ...`);
     const msg = {
         to: userEmail,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
@@ -88,6 +87,12 @@ const notifyUserAboutKycSubmitted = async (kyc, req) => {
         text: emailText,
         html: emailText,
     };
+
+    console.log('Trying to notify user via email ...', {
+        to: to,
+        from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
+        subject: `You have sucesfully submited KYC`,
+    });
 
     return sgMail.send(msg);
 
@@ -102,6 +107,12 @@ const sendEmailWithVerificationCode = (to, code) => {
         text: message,
         html: message,
     };
+
+    console.log('Trying to send email ...', {
+        to: to,
+        from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
+        subject: message,
+    });
 
     return sgMail.send(msg);
 };
