@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { Types } = Schema;
+const _ = require('lodash');
 
 const userSchema = new mongoose.Schema({
     first_name: String,
@@ -105,6 +106,31 @@ userSchema.statics.getKycAccountById = async function (userId) {
         throw new Error('User not found');
     }
     return user.kyc_account;
+};
+
+const getUserData = () => {
+    return {
+            verification_data: {
+                code_email: '',
+                code_email_verify_count: 0,
+                code_email_verified: false,
+                code_mobile: '',
+                code_mobile_verify_count: 0,
+                code_mobile_verified: false
+            }
+        };
+};
+
+userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
+    const userAccount = await User.create(_.assign(getUserData(), {gmail_account: gmailAccount}));
+    console.log('Returning NEW Gmail user ...');
+    return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
+};
+
+userSchema.statics.createUserWithFacebookAccount = async function(facebookAccount) {
+    const userAccount = await User.create(_.assign(getUserData(), {facebook_account: facebookAccount}));
+    console.log('Returning NEW Gmail user ...');
+    return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
 };
 
 userSchema.statics.upsertFbUser = function(accessToken, refreshToken, profile, cb) {

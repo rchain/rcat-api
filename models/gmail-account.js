@@ -42,19 +42,9 @@ gmailAccountSchema.statics.login = async function (data) {
         return userFound;
     } else {
         gmailAccount = await this.create(gmailAccount).catch(console.error);
-        const userAccount = await User.create({
-            gmail_account: gmailAccount,
-            verification_data: {
-                code_email: '',
-                code_email_verify_count: 0,
-                code_email_verified: false,
-                code_mobile: '',
-                code_mobile_verify_count: 0,
-                code_mobile_verified: false
-            }
-        });
-        console.log('Returning NEW Gmail user ...');
-        return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
+        const user = await User.createUserWithGmailAccount(gmailAccount);
+        console.log('Returning NEW Gmail user ...', user);
+        return user;
     }
 };
 
