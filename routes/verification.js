@@ -136,12 +136,13 @@ router.post('/mobile', async (req, res, next) => {
         const mobile = req.body.mobile;
         validateMobileNumber(mobile);
         const code = randomIntInc(100000, 999999);
-        const user = await User.findByIdAndUpdate(req.user.id, {
+        await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'mobile': mobile,
                 'verification_data.code_mobile': code
             }
         });
+        const user = await User.findById(req.user.id);
         await sendSmsMobileVerificationCode(user.mobile, code);
         return res.send(user.getVerification());
     } catch (err) {
