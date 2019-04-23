@@ -31,18 +31,15 @@ facebookAccountSchema.statics.login = async function (data) {
     let userFound;
     // if there is a facebook record, find corresponding user
     if (facebookAccountFound && !facebookAccountFound.isNew) {
-        console.log('Found Facebook Account', facebookAccountFound);
         userFound = await User.findOne({ facebook_account: facebookAccountFound.id } , '-__v -verification_data').populate('kyc_account facebook_account', '-__v');
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
     if (facebookAccountFound && userFound) {
-        console.log('Returning FOUND user ...');
         return userFound;
     } else {
         facebookAccount = await this.create(facebookAccount).catch(console.error);
         const user = await User.createUserWithFacebookAccount(facebookAccount);
-        console.log('Returning NEW Facebook user ...', user);
         return user;
     }
 };

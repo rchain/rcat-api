@@ -127,14 +127,22 @@ const getUserData = () => {
 };
 
 userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
-    const userAccount = await User.create(_.assign(getUserData(), {gmail_account: gmailAccount}));
-    console.log('Returning NEW Gmail user ...');
+    const userData = _.assign(getUserData(),
+        {gmail_account: gmailAccount},
+        {
+            first_name: gmailAccount.first_name,
+            last_name: gmailAccount.last_name,
+            email: gmailAccount.email
+        }
+    );
+    const userAccount = await User.create(userData);
     return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
 };
 
 userSchema.statics.createUserWithFacebookAccount = async function(facebookAccount) {
-    const userAccount = await User.create(_.assign(getUserData(), {facebook_account: facebookAccount}));
-    console.log('Returning NEW Gmail user ...');
+    const emailData = facebookAccount.email ? { email: facebookAccount.email } : {};
+    const userData = _.assign(getUserData(), {facebook_account: facebookAccount}, emailData);
+    const userAccount = await User.create(userData);
     return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
 };
 
