@@ -38,9 +38,15 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
         };
     });
 
+    const recipients = process.env.KYC_NOTIFY_EMAIL_RECIPIENTS.split(',').map((email) => email.trim());
+    console.log('(notifyAdminAboutKycSubmited) ', {
+        to: recipients,
+        from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
+        subject: `${fullName} submited KYC`
+    });
 
     const msg = {
-        to: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS.split(',').map((email) => email.trim()),
+        to: recipients,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
         subject: `${fullName} submited KYC`,
         text: kyc.getDataInfo('\n'),
