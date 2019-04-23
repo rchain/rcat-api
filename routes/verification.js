@@ -175,7 +175,6 @@ router.post('/mobile-code', async (req, res, next) => {
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'verification_data.code_mobile': code,
-                'verification_data.code_mobile_verify_count': 0,
                 'verification_data.code_mobile_verified': isCodeValid,
             },
             $inc: {
