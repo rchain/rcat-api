@@ -65,7 +65,9 @@ const userSchema = new mongoose.Schema({
 // });
 
 userSchema.virtual('full_name').get(function () {
-    return `${this.first_name} ${this.last_name}`;
+    const fname = this.first_name || '';
+    const lname = this.last_name || '';
+    return `${fname} ${lname}`.trim();
 });
 
 userSchema.methods.isEmailVerified = function() {
