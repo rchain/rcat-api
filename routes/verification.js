@@ -55,7 +55,7 @@ router.post('/email-verification', async (req, res, next) => {
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'verification_data.code_email': code,
-                'verification_data.code_email_verified': !!code && code === this.verification_data.code_email,
+                'verification_data.code_email_verified': !!code && this.verification_data && code === this.verification_data.code_email,
             },
             $inc: {
                 'verification_data.code_email_verify_count': 1
@@ -104,7 +104,7 @@ router.post('/mobile-verification', async (req, res, next) => {
         const user = await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'verification_data.code_mobile': code,
-                'verification_data.code_mobile_verified': !!code && code === this.verification_data.code_mobile,
+                'verification_data.code_mobile_verified': !!code && this.verification_data && code === this.verification_data.code_mobile,
             },
             $inc: {
                 'verification_data.code_mobile_verify_count': 1
@@ -126,7 +126,7 @@ router.post('/email-resend', async (req, res, next) => {
     try {
         console.log('POST /verification/email-resend: ', req.body);
         const user = await User.findById(req.user.id);
-        await sendSmsEmailVerificationCode(user.email, user.verification_data,code_mobile);
+        await sendSmsEmailVerificationCode(user.email, user.verification_data.code_mobile);
         return res.send(user.getVerification());
     } catch (err) {
         console.error(err);
@@ -142,7 +142,7 @@ router.post('/mobile-resend', async (req, res, next) => {
     try {
         console.log('POST /verification/mobile-resend: ', req.body);
         const user = await User.findById(req.user.id);
-        await sendSmsMobileVerificationCode(user.mobile, user.verification_data,code_mobile);
+        await sendSmsMobileVerificationCode(user.mobile, user.verification_data.code_mobile);
         return res.send(user.getVerification());
     } catch (err) {
         console.error(err);
