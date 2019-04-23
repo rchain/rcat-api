@@ -128,11 +128,7 @@ const getUserData = () => {
 
 userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
     const userData = _.assign(getUserData(),
-        {gmail_account: gmailAccount},
-        {
-            first_name: gmailAccount.first_name,
-            last_name: gmailAccount.last_name
-        }
+        {gmail_account: gmailAccount}
     );
     const userAccount = await User.create(userData);
     return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
