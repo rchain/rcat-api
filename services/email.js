@@ -74,14 +74,9 @@ const notifyUserAboutKycSubmitted = async (kyc, req) => {
     `;
 
     const user = await User.findById(req.user.id).populate('gmail_account facebook_account');
-    let userEmail = 'NOT_AVAILABLE';
-    if(user.gmail_account) {
-        userEmail = user.gmail_account.email;
-    } else if(user.facebook_account) {
-        userEmail = user.facebook_account.email;
-    }
+
     const msg = {
-        to: userEmail,
+        to: user.email,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
         subject: `You have sucesfully submited KYC`,
         text: emailText,
@@ -89,7 +84,7 @@ const notifyUserAboutKycSubmitted = async (kyc, req) => {
     };
 
     console.log('Trying to notify user via email ...', {
-        to: to,
+        to: user.email,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
         subject: `You have sucesfully submited KYC`,
     });
