@@ -7,6 +7,10 @@ if(!process.env.SENDGRID_API_KEY) {
     throw new Error('Missing SENDGRID_API_KEY environment var');
 }
 
+if(!process.env.KYC_NOTIFY_EMAIL_RECIPIENTS) {
+    throw new Error('Missing KYC_NOTIFY_EMAIL_RECIPIENTS environment var');
+}
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const notifyAdminAboutKycSubmited = (kyc, files) => {
@@ -36,7 +40,7 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
 
 
     const msg = {
-        to: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS,
+        to: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS.split(',').map((email) => email.trim()),
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
         subject: `${fullName} submited KYC`,
         text: kyc.getDataInfo('\n'),
