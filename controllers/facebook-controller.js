@@ -3,7 +3,6 @@ const FacebookAccount = require('../models/facebook-account');
 const User = require('../models/user');
 const passport = require('passport');
 const { facebookTokenStrategy } = require('../services/facebook');
-const Verification = require('../models/vertifications-vm');
 
 passport.use(facebookTokenStrategy);
 
@@ -76,7 +75,7 @@ const loginFacebook = async (req, res) => {
 
     return {
         token,
-        verification: Verification.newVerified().toJson(),
+        verification: user.getVerification(),
         user
     };
 

@@ -1,12 +1,11 @@
 const router = require('express').Router();
-const Verification = require('../models/vertifications-vm');
 const User = require('../models/user');
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const { randomIntInc } = require('../helpers/random');
 const { sendSmsMobileVerificationCode } = require('../services/sms');
 const { sendEmailWithVerificationCode } = require('../services/email');
 const { VerificationDataError } = require('../helpers/custom-errors');
-
+const { Sentry } = require('../services/sentry');
 
 router.use(isAuthenticated);
 
@@ -48,6 +47,7 @@ router.get('/', async (req, res, next) => {
         return res.send(user.getVerification());
     } catch (err) {
         console.error('ERROR GET /verification', err);
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -76,8 +76,10 @@ router.post('/email', async (req, res, next) => {
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
+            Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -110,8 +112,10 @@ router.post('/email-verification', async (req, res, next) => {
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
+            Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -137,8 +141,10 @@ router.post('/mobile', async (req, res, next) => {
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
+            Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -175,8 +181,10 @@ router.post('/mobile-verification', async (req, res, next) => {
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
+            Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -196,8 +204,10 @@ router.post('/email-resend', async (req, res, next) => {
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
+            Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -216,8 +226,10 @@ router.post('/mobile-resend', async (req, res, next) => {
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
+            Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
+        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });

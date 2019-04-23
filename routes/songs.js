@@ -2,13 +2,13 @@ const router = require('express').Router();
 const { isAuthenticated } = require('../middlewares/auth-middleware');
 const songController = require('../controllers/song-controller');
 const Song = require('../models/song');
-const { ingest } = require('../services/acquisition');
 const Joi = require('joi');
 const validate = require('express-validation');
 const axios = require('axios');
 const { validateFiles } = require('../services/file-upload');
 const { validateAcqusitionPostSchema } = require('../services/json-schema-org');
 const SongState = require('../helpers/song-state');
+const { Sentry } = require('../services/sentry');
 
 router.use(isAuthenticated);
 
@@ -56,6 +56,7 @@ router.get('/', async (req, res, next) => {
         const songs = await songController.listAllSongs({ owner: { user_id: req.user.id } }, req, res);
         return res.send(songs);
     } catch (err) {
+        Sentry.captureException(err);
         res.status(400).send(err);
     }
 });
@@ -69,6 +70,7 @@ router.get('/:id', async (req, res, next) => {
         }
         res.send(song);
     } catch (err) {
+        Sentry.captureException(err);
         res.status(400).send(err);
     }
 });
@@ -83,6 +85,7 @@ router.get('/:id/ack', async (req, res, next) => {
 
         res.send(song.transformForAcquisition(req.user));
     } catch (err) {
+        Sentry.captureException(err);
         res.status(400).send(err);
     }
 });

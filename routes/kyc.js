@@ -6,6 +6,8 @@ const kycController = require('../controllers/kyc-controller');
 const { validateFiles } = require('../services/file-upload');
 const KycAccount = require('../models/kyc-account');
 const User = require('../models/user');
+const {Sentry} = require('../services/sentry');
+
 
 router.use(isAuthenticated);
 
@@ -29,6 +31,7 @@ router.get('/', function (req, res, next) {
         })
         .catch((err) => {
             console.log(req.user);
+            Sentry.captureException(err);
             res.status(400).send(err.toString());
         });
 });
@@ -43,6 +46,7 @@ router.post('/skip', function (req, res, next) {
         });
     } catch (err) {
         console.error(err);
+        Sentry.captureException(err);
         res.send({
             kyc_skip_count: -1
         });
@@ -98,6 +102,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             res.send(result);
         });
     } catch (err) {
+        Sentry.captureException(err);
         if(err.response && err.response.data) {
             console.error(err.response.data);
             return res.status(500).send(err.response.data);
