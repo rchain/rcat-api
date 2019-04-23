@@ -53,8 +53,7 @@ const requestSchema = {
 router.get('/', async (req, res, next) => {
     try {
         const songs = await songController.listAllSongs({ owner: { user_id: req.user.id } }, req, res);
-        res.send('Majaaaaaaa');
-        res.send(songs);
+        return res.send(songs);
     } catch (err) {
         res.status(400).send(err);
     }
