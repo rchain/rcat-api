@@ -47,8 +47,6 @@ const createSong = async (req, res) => {
         try {
             fileSong = getSongFile(req);
             fileImage = getArtImageFile(req);
-            console.log('fileSong ###########', fileSong);
-            console.log('fileImage ##########', fileImage);
             song = await Song.createSong(req, fileSong, fileImage);
             // console.log('song CRATED!!!!', song);
         } catch (createError) {

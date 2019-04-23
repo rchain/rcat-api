@@ -23,7 +23,7 @@ const requestSchema = {
             Joi.object({
                 name: Joi.string().required(),
                 percentage_100_total_song: Joi.number().required().min(0).max(100),
-                percentage_100_publisher: Joi.number().required().min(0).max(100),
+                percentage_100_publisher: Joi.number().allow('').min(0).max(100),
                 publisher: Joi.string().allow(''),
                 rev_wallet_address: Joi.string().token().allow(''), // TODO VConditional in func of (rev email)
                 rev_email: Joi.string().email().allow(''), // TODO VConditional in func of (rev wallet),
