@@ -3,6 +3,12 @@
 const sgMail = require('@sendgrid/mail');
 const User = require('../models/user');
 
+if(!process.env.SENDGRID_API_KEY) {
+    throw new Error('Missing SENDGRID_API_KEY environment var');
+}
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const notifyAdminAboutKycSubmited = (kyc, files) => {
     const fullName = kyc.full_name;
 
@@ -11,8 +17,6 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
         return 'SILENT EMAIL';
     }
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    console.log('files >>>>>>>>>>>>>>>>>>>>>>>>>>>>>', files);
     let images;
     if(files.identification_back_image) {
         images = [files.identification_front_image[0], files.identification_back_image[0], files.identification_selfie_image[0]];
@@ -30,7 +34,7 @@ const notifyAdminAboutKycSubmited = (kyc, files) => {
         };
     });
 
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
     const msg = {
         to: process.env.KYC_NOTIFY_EMAIL_RECIPIENTS,
         from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
@@ -59,7 +63,6 @@ const notifyUserAboutKycSubmitted = async (kyc, req) => {
         RSong Administration<br>
     `;
 
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     const user = await User.findById(req.user.id).populate('gmail_account facebook_account');
     let userEmail = 'NOT_AVAILABLE';
     if(user.gmail_account) {
@@ -80,8 +83,21 @@ const notifyUserAboutKycSubmitted = async (kyc, req) => {
 
 };
 
+const sendEmailWithVerificationCode = (to, code) => {
+    const message = `RSong email Verification code is ${code}`;
+    const msg = {
+        to: to,
+        from: process.env.KYC_NOTIFY_EMAIL_FROM_EMAIL,
+        subject: message,
+        text: message,
+        html: message,
+    };
+
+    return sgMail.send(msg);
+};
 
 module.exports = {
     notifyAdminAboutKycSubmited,
     notifyUserAboutKycSubmitted,
+    sendEmailWithVerificationCode
 };

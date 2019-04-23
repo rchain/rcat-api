@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { Types } = Schema;
 const _ = require('lodash');
+const { randomIntInc } = require('../helpers/random');
 
 const userSchema = new mongoose.Schema({
     first_name: String,
@@ -26,30 +27,24 @@ const userSchema = new mongoose.Schema({
     },
     verification_data: {
         code_email: {
-            type: String,
-            select: false
+            type: String
         },
         code_email_verify_count: {
             type: Number,
-            select: false,
             default: 0
         },
         code_email_verified: {
-            type: Boolean,
-            select: false
+            type: Boolean
         },
         code_mobile: {
-            type: String,
-            select: false
+            type: String
         },
         code_mobile_verify_count: {
             type: Number,
-            select: false,
             default: 0
         },
         code_mobile_verified: {
-            type: Boolean,
-            select: false
+            type: Boolean
         }
     },
     admin: {
@@ -72,6 +67,14 @@ userSchema.virtual('require_kyc').get(function () {
 userSchema.virtual('full_name').get(function () {
     return (this.kyc_account && this.kyc_account.full_name) || (this.gmail_account && this.gmail_account.full_name) || (this.facebook_account && this.facebook_account.full_name) || '';
 });
+
+userSchema.methods.isEmailVerified = function() {
+    return this.verification_data && !!this.verification_data.code_email_verified;
+};
+
+userSchema.methods.isMobileVerified = function() {
+    return this.verification_data && !!this.verification_data.code_mobile_verified;
+};
 
 userSchema.methods.getVerification = function() {
     const requireEmail = !this.email || this.email.trim().length === 0;
@@ -109,12 +112,14 @@ userSchema.statics.getKycAccountById = async function (userId) {
 };
 
 const getUserData = () => {
+    const codeEmail = randomIntInc(100000, 999999);
+    const codeMobile = randomIntInc(100000, 999999);
     return {
             verification_data: {
-                code_email: '',
+                code_email: codeEmail,
                 code_email_verify_count: 0,
                 code_email_verified: false,
-                code_mobile: '',
+                code_mobile: codeMobile,
                 code_mobile_verify_count: 0,
                 code_mobile_verified: false
             }

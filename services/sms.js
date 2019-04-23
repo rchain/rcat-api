@@ -10,15 +10,15 @@ const accountSid = process.env.TWILLIO_ACCOUNT_SID;
 const authToken = process.env.TWILLIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
-const sendSms = (from, to, message) => {
+const sendSms = (to, message, from=process.env.TWILLIO_PHONE_NUMBER) => {
 
     const messageObject = {
-        from: process.env.TWILLIO_PHONE_NUMBER,
+        from: from,
         to: to,
         body: message
     };
 
-    if(!!process.env.SMS_NOTIFICATIONS_SILENT) {
+    if(process.env.SMS_NOTIFICATIONS_SILENT === 1) {
         return new Promise((resolve, reject) => {
             console.log('SILENT sms to', messageObject);
             resolve(messageObject);
@@ -26,6 +26,7 @@ const sendSms = (from, to, message) => {
     }
 
     return new Promise((resolve, reject) => {
+        console.log('Trying to send sms ...', messageObject);
         client.messages
             .create(messageObject)
             .then(response => resolve(response))
@@ -33,35 +34,12 @@ const sendSms = (from, to, message) => {
     });
 };
 
-const sendSmsEmailVerificationCode = (to, code) => {
-    const messageObject = {
-        from: 'NO_REPLY@@localhost.com',
-        to: to,
-        subject: `Email Verification code is ${code}`,
-        body: `Email Verification code is ${code}`
-    };
-
-    return new Promise((resolve, reject) => {
-        console.log('TODO Impl sendSmsEmailVerificationCode ...',messageObject);
-        resolve(messageObject);
-    });
-};
-
 const sendSmsMobileVerificationCode = (to, code) => {
-    const messageObject = {
-        from: process.env.TWILLIO_PHONE_NUMBER,
-        to: to,
-        body: `Mobile Verification code is ${code}`
-    };
-
-    return new Promise((resolve, reject) => {
-        console.log('TODO Impl sendSmsMobileVerificationCode ...',messageObject);
-        resolve(messageObject);
-    });
+    const message = `Mobile Verification code is ${code}`;
+    return sendSms(to, message);
 };
 
 module.exports = {
     sendSms,
-    sendSmsEmailVerificationCode,
     sendSmsMobileVerificationCode
 };

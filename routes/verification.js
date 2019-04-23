@@ -5,9 +5,9 @@ const { isAuthenticated } = require('../middlewares/auth-middleware');
 const { randomIntInc } = require('../helpers/random');
 const {
     sendSms,
-    sendSmsEmailVerificationCode,
     sendSmsMobileVerificationCode
 } = require('../services/sms');
+const { sendEmailWithVerificationCode } = require('../services/email');
 
 router.use(isAuthenticated);
 
@@ -27,6 +27,8 @@ router.post('/email', async (req, res, next) => {
 
     try {
         console.log('POST /verification/email: ', req.body);
+        console.log('req.user.id: ', req.user.id);
+        console.log('req.body.email: ', req.body.email);
         const email = req.body.email;
         const code = randomIntInc(100000, 999999);
         await User.findByIdAndUpdate(req.user.id, {
@@ -51,19 +53,27 @@ router.post('/email-verification', async (req, res, next) => {
 
     try {
         console.log('POST /verification/email-verification: ', req.body);
+        const user = await User.findById(req.user.id);
+        if(user.isEmailVerified()) {
+            return res.status(400).send({
+                message: 'Already verified.'
+            });
+        }
         const code = req.body.code;
+        const isCodeValid = !!code && user.verification_data && code === user.verification_data.code_email;
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'verification_data.code_email': code,
-                'verification_data.code_email_verified': !!code && this.verification_data && code === this.verification_data.code_email,
+                'verification_data.code_email_verify_count': 0,
+                'verification_data.code_email_verified': isCodeValid,
             },
             $inc: {
                 'verification_data.code_email_verify_count': 1
             }
         });
-        await sendSmsMobileVerificationCode(code);
-        const user = await User.findById(req.user.id);
-        return res.send(user.getVerification());
+        await sendEmailWithVerificationCode(user.email, code);
+        const userUpdated = await User.findById(req.user.id);
+        return res.send(userUpdated.getVerification());
     } catch (err) {
         if(err.response && err.response.data) {
             console.error(err.response.data);
@@ -100,17 +110,31 @@ router.post('/mobile-verification', async (req, res, next) => {
 
     try {
         console.log('POST /verification/mobile-verification: ', req.body);
+        const user = await User.findById(req.user.id);
+        if(user.isMobileVerified()) {
+            return res.status(400).send({
+                message: 'Already verified.'
+            });
+        }
         const code = req.body.code;
-        const user = await User.findByIdAndUpdate(req.user.id, {
+        const isCodeValid = !!code && user.verification_data && code === user.verification_data.code_mobile;
+        console.log({
+            code: code,
+            codeInDb: user.verification_data.code_mobile,
+            isCodeValid: isCodeValid
+        });
+        await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'verification_data.code_mobile': code,
-                'verification_data.code_mobile_verified': !!code && this.verification_data && code === this.verification_data.code_mobile,
+                'verification_data.code_mobile_verify_count': 0,
+                'verification_data.code_mobile_verified': isCodeValid,
             },
             $inc: {
                 'verification_data.code_mobile_verify_count': 1
             }
         });
-        return res.send(user.getVerification());
+        const userUpdated = await User.findById(req.user.id);
+        return res.send(userUpdated.getVerification());
     } catch (err) {
         console.error(err);
         if(err.response && err.response.data) {
@@ -126,7 +150,12 @@ router.post('/email-resend', async (req, res, next) => {
     try {
         console.log('POST /verification/email-resend: ', req.body);
         const user = await User.findById(req.user.id);
-        await sendSmsEmailVerificationCode(user.email, user.verification_data.code_mobile);
+        if(!user.email) {
+            return res.status(500).send({
+                message: 'User does not have email.'
+            });
+        }
+        await sendEmailWithVerificationCode(user.email, user.verification_data.code_email);
         return res.send(user.getVerification());
     } catch (err) {
         console.error(err);
@@ -140,8 +169,13 @@ router.post('/email-resend', async (req, res, next) => {
 
 router.post('/mobile-resend', async (req, res, next) => {
     try {
-        console.log('POST /verification/mobile-resend: ', req.body);
+        console.log('POST /verification/mobile-resend: ', req.user);
         const user = await User.findById(req.user.id);
+        if(!user.mobile) {
+            return res.status(500).send({
+                message: 'User does not have mobile number.'
+            });
+        }
         await sendSmsMobileVerificationCode(user.mobile, user.verification_data.code_mobile);
         return res.send(user.getVerification());
     } catch (err) {

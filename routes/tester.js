@@ -17,7 +17,7 @@ router.post('/sms', (req, res, next) => {
   const {to, message} = req.body;
   console.log('to >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', to);
   console.log('message >>>>>>>>>>>>>>>>>>>>>>>>>>>', message);
-  sendSms(undefined, to, message);
+  sendSms(to, message);
   res.send(req.body);
 });
 
