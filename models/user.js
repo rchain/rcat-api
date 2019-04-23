@@ -131,8 +131,7 @@ userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
         {gmail_account: gmailAccount},
         {
             first_name: gmailAccount.first_name,
-            last_name: gmailAccount.last_name,
-            email: gmailAccount.email
+            last_name: gmailAccount.last_name
         }
     );
     const userAccount = await User.create(userData);
@@ -140,8 +139,7 @@ userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
 };
 
 userSchema.statics.createUserWithFacebookAccount = async function(facebookAccount) {
-    const emailData = facebookAccount.email ? { email: facebookAccount.email } : {};
-    const userData = _.assign(getUserData(), {facebook_account: facebookAccount}, emailData);
+    const userData = _.assign(getUserData(), {facebook_account: facebookAccount});
     const userAccount = await User.create(userData);
     return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
 };

@@ -84,19 +84,24 @@ router.post('/email', async (req, res, next) => {
     }
 });
 
-router.post('/email-verification', async (req, res, next) => {
+router.post('/email-code', async (req, res, next) => {
 
     try {
-        console.log('POST /verification/email-verification: ', req.body);
+        console.log('POST /verification/email-code: ', req.body);
         const user = await User.findById(req.user.id);
         validateUserHasEmail(user);
         validateUserEmailIsNotVerified(user);
         const code = req.body.code;
         const isCodeValid = !!code && user.verification_data && code === user.verification_data.code_email;
+        console.log({
+            isCodeValid: isCodeValid,
+            code: code,
+            code_db: user.verification_data.code_email
+        });
+
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
                 'verification_data.code_email': code,
-                'verification_data.code_email_verify_count': 0,
                 'verification_data.code_email_verified': isCodeValid,
             },
             $inc: {
@@ -105,8 +110,12 @@ router.post('/email-verification', async (req, res, next) => {
         });
         await sendEmailWithVerificationCode(user.email, code);
         const userUpdated = await User.findById(req.user.id);
+        if(!isCodeValid) {
+            return res.status(400).send({message: 'Code not valid'});
+        }
         return res.send(userUpdated.getVerification());
     } catch (err) {
+        console.error(err);
         if (err instanceof VerificationDataError) {
             return res.status(400).send(err.toString());
         }
