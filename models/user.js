@@ -60,12 +60,12 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-userSchema.virtual('require_kyc').get(function () {
-    return !this.kyc_account || this.kyc_account.require_kyc;
-});
+// userSchema.virtual('require_kyc').get(function () {
+//     return !this.kyc_account || this.kyc_account.require_kyc;
+// });
 
 userSchema.virtual('full_name').get(function () {
-    return (this.kyc_account && this.kyc_account.full_name) || (this.gmail_account && this.gmail_account.full_name) || (this.facebook_account && this.facebook_account.full_name) || '';
+    return `${this.first_name} ${this.last_name}`;
 });
 
 userSchema.methods.isEmailVerified = function() {
@@ -129,13 +129,13 @@ const getUserData = () => {
 userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
     const userAccount = await User.create(_.assign(getUserData(), {gmail_account: gmailAccount}));
     console.log('Returning NEW Gmail user ...');
-    return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
+    return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
 };
 
 userSchema.statics.createUserWithFacebookAccount = async function(facebookAccount) {
     const userAccount = await User.create(_.assign(getUserData(), {facebook_account: facebookAccount}));
     console.log('Returning NEW Gmail user ...');
-    return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v');
+    return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
 };
 
 userSchema.statics.upsertFbUser = function(accessToken, refreshToken, profile, cb) {
