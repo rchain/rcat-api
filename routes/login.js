@@ -31,6 +31,7 @@ router.post('/gmail', validate(requestGmailSchema), async (req, res, next) => {
         configureUserScope(req.user);
         res.send(data);
     } catch (err) {
+        console.error(err);
         Sentry.captureException(err);
         console.error('Google login ERROR', err);
         res.status(500).send(err);
@@ -53,6 +54,7 @@ router.post('/facebook', validate(requestFacebookSchema), async (req, res, next)
         configureUserScope(req.user);
         res.send(data);
     } catch (err) {
+        console.error(err);
         Sentry.captureException(err);
         console.error('Facebook login ERROR', err);
         res.status(500).send(err);

@@ -208,6 +208,7 @@ router.post('/email-resend', async (req, res, next) => {
         await sendEmailWithVerificationCode(user.email, user.verification_data.code_email);
         return res.send(user.getVerification());
     } catch (err) {
+        console.error(err);
         if (err instanceof VerificationDataError) {
             return res.status(400).send(err.toString());
         }

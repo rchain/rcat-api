@@ -32,7 +32,7 @@ gmailAccountSchema.statics.login = async function (data) {
     let userFound;
     // if there is a gmail record, find corresponding user
     if (gmailAccountFound && !gmailAccountFound.isNew) {
-        userFound = await User.findOne({ gmail_account: gmailAccountFound.id } , '-__v -verification_data').populate('kyc_account gmail_account', '-__v');
+        userFound = await User.findOne({ gmail_account: gmailAccountFound.id } , '-__v').populate('kyc_account gmail_account', '-__v');
     }
 
     // if there is a user - return it, otherwise - create new gmail and user
