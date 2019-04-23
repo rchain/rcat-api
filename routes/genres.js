@@ -15,14 +15,14 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
-    try {
-        const data = await genreController.storeGenre(req, res);
-        res.send(data);
-    } catch (err) {
-        Sentry.captureException(err);
-        res.status(500).send(err);
-    }
-});
+// router.post('/', async (req, res, next) => {
+//     try {
+//         const data = await genreController.storeGenre(req, res);
+//         res.send(data);
+//     } catch (err) {
+//         Sentry.captureException(err);
+//         res.status(500).send(err);
+//     }
+// });
 
 module.exports = router;

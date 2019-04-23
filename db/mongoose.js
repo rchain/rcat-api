@@ -22,11 +22,11 @@ const connect = () => {
         console.log('connecting to MongoDB...');
     });
 
-    db.on('error', function(error) {
+    db.on('error', async function(error) {
         // console.error('Error in MongoDb connection: ',  error);
         console.error('Error in MongoDb connection: ');
         Sentry.captureException(error);
-        mongoose.disconnect();
+        await mongoose.disconnect();
     });
     db.on('connected', function() {
         console.log('MongoDB connected!');
