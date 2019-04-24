@@ -1,9 +1,5 @@
 const Sentry = require('@sentry/node');
 
-if(!process.env.SENTRY_DSN) {
-    throw new Error('Missing SENTRY_DSN environment var');
-}
-
 Sentry.init({ dsn: process.env.SENTRY_DSN });
 
 const configureNoUserScope = () => {
