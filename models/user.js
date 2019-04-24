@@ -60,9 +60,11 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-// userSchema.virtual('require_kyc').get(function () {
-//     return !this.kyc_account || this.kyc_account.require_kyc;
-// });
+userSchema.methods.toJSON = function() {
+    let obj = this.toObject();
+    delete obj.verification_data;
+    return obj;
+};
 
 userSchema.virtual('full_name').get(function () {
     const fname = this.first_name || '';
