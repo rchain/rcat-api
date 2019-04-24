@@ -47,6 +47,7 @@ const requestFacebookSchema = {
 
 router.post('/facebook', validate(requestFacebookSchema), async (req, res, next) => {
     try {
+        console.log('Facebook login >>>>> req.body >>>>>', req.body);
         if(req.body.force_error) {
             return res.status(400).send({"statusCode":400,"error":"Bad Request","message":"Token mismatch"});
         }
