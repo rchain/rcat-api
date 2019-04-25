@@ -105,7 +105,6 @@ router.post('/email-code', async (req, res, next) => {
 
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
-                'verification_data.code_email': code,
                 'verification_data.code_email_verified': isCodeValid,
             },
             $inc: {
@@ -149,6 +148,8 @@ router.post('/mobile', async (req, res, next) => {
         await sendSmsMobileVerificationCode(user.mobile, code);
         return res.send(user.getVerification());
     } catch (err) {
+        console.log(err);
+        Sentry.captureException(err);
         if (err instanceof VerificationDataError) {
             return res.status(400).send(err.toString());
         }
@@ -157,7 +158,6 @@ router.post('/mobile', async (req, res, next) => {
             Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
-        Sentry.captureException(err);
         res.status(500).send(err);
     }
 });
@@ -178,13 +178,15 @@ router.post('/mobile-code', async (req, res, next) => {
         });
         await User.findByIdAndUpdate(req.user.id, {
             $set: {
-                'verification_data.code_mobile': code,
                 'verification_data.code_mobile_verified': isCodeValid,
             },
             $inc: {
                 'verification_data.code_mobile_verify_count': 1
             }
         });
+        if(!isCodeValid) {
+            return res.status(400).send({message: 'Code not valid'});
+        }
         const userUpdated = await User.findById(req.user.id);
         return res.send(userUpdated.getVerification());
     } catch (err) {
