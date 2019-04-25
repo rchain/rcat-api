@@ -218,7 +218,6 @@ router.post('/email-resend', async (req, res, next) => {
             return res.status(400).send(err.toString());
         }
         if(err.response && err.response.data) {
-            console.error(err.response.data);
             Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
@@ -236,11 +235,11 @@ router.post('/mobile-resend', async (req, res, next) => {
         await sendSmsMobileVerificationCode(user.mobile, user.verification_data.code_mobile);
         return res.send(user.getVerification());
     } catch (err) {
+        console.error(err);
         if (err instanceof VerificationDataError) {
             return res.status(400).send(err.toString());
         }
         if(err.response && err.response.data) {
-            console.error(err.response.data);
             Sentry.captureException(err);
             return res.status(500).send(err.response.data);
         }
