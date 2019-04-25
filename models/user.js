@@ -115,6 +115,18 @@ userSchema.methods.createDigitalId = async function () {
     if(!!this.digital_id && this.digital_id.trim().length > 10) {
         throw new Error('User already has digital id!');
     }
+    if(!this.first_name) {
+        throw new Error('Can not create digital id. Missing user first name.');
+    }
+    if(!this.last_name) {
+        throw new Error('Can not create digital id. Missing user last name.');
+    }
+    if(!this.email) {
+        throw new Error('Can not create digital id. Missing user email.');
+    }
+    if(!this.mobile) {
+        throw new Error('Can not create digital id. Missing user mobile.');
+    }
     const digitalIdData = `${this.first_name}${this.last_name}${this.email}${this.mobile}`;
     const digitalId = crypto.createHash('md5').update(digitalIdData).digest("hex");
 
