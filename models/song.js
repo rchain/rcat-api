@@ -229,6 +229,7 @@ songSchema.methods.transformSongWriters = function () {
             id: this.song_writers[i]._id,
             name: this.song_writers[i].name,
             publisher: this.song_writers[i].publisher,
+            main: false,
             percentages: [
                 {
                     "type": "total_song",
@@ -252,6 +253,7 @@ songSchema.methods.transformSoundOwners = function () {
             id: this.sound_owners[i]._id,
             name: this.sound_owners[i].name,
             role: this.sound_owners[i].role,
+            main: false,
             percentages: [
                 {
                     "type": "total",
@@ -273,6 +275,7 @@ songSchema.methods.transformCollaborators = function () {
             id: this.collaborators[i]._id,
             name: this.collaborators[i].name,
             role: this.collaborators[i].role,
+            main: false,
             percentages: [
                 {
                     "type": "total",
@@ -334,6 +337,10 @@ songSchema.methods.transformForAcquisition = function (user) {
         ...soundOwners,
         ...collaborators
     ];
+
+    console.log('');
+    console.log('staff::::::', staff);
+    console.log('');
 
     const data = {
         header: header,

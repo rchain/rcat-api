@@ -156,7 +156,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             console.log('ACQUSITION SCHEMA VALID :)');
         }
 
-        console.log(`POSTING to ${postUrl} ...`);
+        console.log(`POSTING to ${postUrl} ...`, songForAcq);
         return axios.post(postUrl, songForAcq)
             .then(async function (response) {
                 console.log('POST /songs response >>>', response.data);
