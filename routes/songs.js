@@ -10,6 +10,10 @@ const { validateAcqusitionPostSchema } = require('../services/json-schema-org');
 const SongState = require('../helpers/song-state');
 const { Sentry } = require('../services/sentry');
 
+
+const ev = require('express-validation');
+
+
 router.use(isAuthenticated);
 
 
@@ -107,7 +111,11 @@ let fileHandler = validateFiles(fileTypesValidationInfo).fields([
     { name: 'album_art_image_file', maxCount: 1 }
 ]);
 
+const validateSongMiddleware = () => {};
+
+
 router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) => {
+// router.post('/', async (req, res, next) => {
 
     try {
         // const requiredFiles = ['song_file', 'album_art_image_file'];
@@ -138,10 +146,10 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
         // return res.send(song);
 
         const songForAcq = song.transformForAcquisition(req.user);
+        console.log('Payload for Acquistion', songForAcq);
         // return res.send(songForAcq);
 
         const postUrl = `${process.env.ACQUISITION_API_ENDPOINT_BASE_URL}/v1/ingest`;
-        console.log({postUrl: postUrl});
 
         console.log('Validating song payload schema before sending it to acquistion service ...');
         const isSchemaValid = validateAcqusitionPostSchema(songForAcq);
@@ -149,17 +157,21 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
             const errors = {
                 'acqusition-schema-errors': validateAcqusitionPostSchema.errors
             };
-            console.log('ACQUSITION SCHEMA NOT VALID :(', errors);
+            console.log('ACQUSITION SCHEMA NOT VALID', errors);
             Sentry.captureMessage(errors);
-            return res.status(400).send(errors);
-        } else {
-            console.log('ACQUSITION SCHEMA VALID :)');
+            let response = errors;
+            if(validateAcqusitionPostSchema.errors && validateAcqusitionPostSchema.errors.length > 0) {
+                response = {
+                    message: 'Data payload not valid for acquistion schema spec.'
+                };
+            }
+            return res.status(400).send(response);
         }
 
-        console.log(`POSTING to ${postUrl} ...`, songForAcq);
+        console.log(`POSTING to ${postUrl} ...`);
         return axios.post(postUrl, songForAcq)
             .then(async function (response) {
-                console.log('POST /songs response >>>', response.data);
+                console.log('POST /songs response', response.data);
 
                 await Song.findByIdAndUpdate(
                     song._id,
