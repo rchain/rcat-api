@@ -6,11 +6,18 @@ const { sendSmsMobileVerificationCode } = require('../services/sms');
 const { sendEmailWithVerificationCode } = require('../services/email');
 const { VerificationDataError } = require('../helpers/custom-errors');
 const { Sentry } = require('../services/sentry');
+const Joi = require('joi');
 
 router.use(isAuthenticated);
 
 const validateEmail= (email) => {
-    console.log('TODO! Impl Email Validation ...');
+    const result = Joi.validate(email, Joi.string().email().required());
+    if(result.error){
+        if(result.error.details && result.error.details.length > 0) {
+            throw new VerificationDataError(result.error.details[0].message);
+        }
+        throw new VerificationDataError('Email not valid.');
+    }
 };
 
 const validateMobileNumber= (mobile) => {
@@ -76,7 +83,9 @@ router.post('/email', async (req, res, next) => {
         return res.send(user.getVerification());
     } catch (err) {
         if (err instanceof VerificationDataError) {
-            return res.status(400).send(err.toString());
+            return res.status(400).send({
+                message: err.toString()
+            });
         }
         if(err.response && err.response.data) {
             console.error(err.response.data);
