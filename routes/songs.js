@@ -178,6 +178,7 @@ router.post('/', [fileHandler, validate(requestSchema)], async (req, res, next) 
                 return res.status(400).send(error.Error);
             });
     } catch (err) {
+        console.error(error);
         Sentry.captureException(err);
         res.status(400).send(err);
     }
