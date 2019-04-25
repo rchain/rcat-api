@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { Types } = Schema;
 const _ = require('lodash');
+const crypto = require('crypto');
 const { randomIntInc } = require('../helpers/random');
 
 const userSchema = new mongoose.Schema({
+    digital_id: String,
     first_name: String,
     last_name: String,
     email: String,
@@ -107,6 +109,22 @@ userSchema.methods.verifyEmailCode = function(code) {
     return this.verification_data.code_email == code;
 };
 
+
+userSchema.methods.createDigitalId = async function () {
+    console.log('Creating digital id ...');
+    if(!!this.digital_id && this.digital_id.trim().length > 10) {
+        throw new Error('User already has digital id!');
+    }
+    const digitalIdData = `${this.first_name}${this.last_name}${this.email}${this.mobile}`;
+    const digitalId = crypto.createHash('md5').update(digitalIdData).digest("hex");
+
+    return await User.findByIdAndUpdate(this._id, {
+        $set: {
+            'digital_id': digitalId
+        }
+    });
+};
+
 userSchema.statics.getKycAccountById = async function (userId) {
     const user = await User.findById(userId, '-__v').populate('kyc_account', '-__v');
     if(user == null) {
@@ -115,7 +133,8 @@ userSchema.statics.getKycAccountById = async function (userId) {
     return user.kyc_account;
 };
 
-const getUserData = () => {
+const getUserData = (user) => {
+
     const codeEmail = randomIntInc(100000, 999999);
     const codeMobile = randomIntInc(100000, 999999);
     return {
@@ -131,7 +150,7 @@ const getUserData = () => {
 };
 
 userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
-    const userData = _.assign(getUserData(),
+    const userData = _.assign(getUserData(this),
         {gmail_account: gmailAccount}
     );
     const userAccount = await User.create(userData);
@@ -139,7 +158,7 @@ userSchema.statics.createUserWithGmailAccount = async function(gmailAccount) {
 };
 
 userSchema.statics.createUserWithFacebookAccount = async function(facebookAccount) {
-    const userData = _.assign(getUserData(), {facebook_account: facebookAccount});
+    const userData = _.assign(getUserData(this), {facebook_account: facebookAccount});
     const userAccount = await User.create(userData);
     return await User.findById(userAccount._id).populate('kyc_account gmail_account', '-__v -verification_data');
 };
@@ -151,13 +170,21 @@ userSchema.statics.upsertFbUser = function(accessToken, refreshToken, profile, c
     }, function(err, user) {
         // no user was found, lets create a new one
         if (!user) {
-            var newUser = new that({
+            const userData = _.assign(getUserData(this), {
                 email: profile.emails[0].value,
                 facebookProvider: {
                     id: profile.id,
                     token: accessToken
                 }
             });
+            var newUser = new that(userData);
+            // var newUser = new that({
+            //     email: profile.emails[0].value,
+            //     facebookProvider: {
+            //         id: profile.id,
+            //         token: accessToken
+            //     }
+            // });
 
             newUser.save(function(error, savedUser) {
                 if (error) {

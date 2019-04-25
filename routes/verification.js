@@ -197,7 +197,11 @@ router.post('/mobile-code', async (req, res, next) => {
             return res.status(400).send({message: 'Code not valid'});
         }
         const userUpdated = await User.findById(req.user.id);
-        return res.send(userUpdated.getVerification());
+        const verification = userUpdated.getVerification();
+        if(!verification.requireEmailVerification && !verification.requireMobileVerification) {
+            await userUpdated.createDigitalId();
+        }
+        return res.send(verification);
     } catch (err) {
         if (err instanceof VerificationDataError) {
             return res.status(400).send(err.toString());

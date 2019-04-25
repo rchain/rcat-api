@@ -16,6 +16,7 @@ router.get('/', async (req, res, next) => {
         const kyc = _.assign(user.kyc_account || {state: 'NOT_SUBMITED'}, {skip_count: user.kyc_skip_count});
         const result = {
             id: user._id,
+            digital_id: user.digital_id,
             full_name: user.full_name,
             verification: user.getVerification(),
             require_kyc: user.require_kyc,
