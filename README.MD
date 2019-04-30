@@ -10,7 +10,36 @@ npm install
 cp env.example .env
 ```
 
-And then fill `.env` file with data.
+And then fill `.env` file with data. Check subsection `Setup environment vars` for more details.
+
+
+## Setup environment vars
+Open `.env`  file and setup following vars:
+- `HTTPS`
+- `PORT`
+- `NODE_ENV`
+- `MONGODB_URI`
+- `GMAIL_CLIENT_ID`
+- `FACEBOOK_APP_ID`
+- `FACEBOOK_APP_SECRET`
+- `GCS_BUCKET_NAME`
+- `GCS_PROJECT_ID`
+- `JWT_SECRET`
+- `JWT_DURATION_HOURS`
+- `SENDGRID_API_KEY`
+- `SMS_NOTIFICATIONS_SILENT`
+- `EMAIL_NOTIFICATIONS_SILENT`
+- `KYC_NOTIFY_EMAIL_FROM_NAME`
+- `KYC_NOTIFY_EMAIL_FROM_EMAIL`
+- `KYC_NOTIFY_EMAIL_RECIPIENTS`
+- `DOCKER_MONGO_DATA_DIR`
+- `DROPBOX_ACCESS_TOKEN`
+- `DROPBOX_UPLOAD_PATH`
+- `TWILLIO_ACCOUNT_SID`
+- `TWILLIO_AUTH_TOKEN`
+- `TWILLIO_PHONE_NUMBER`
+- `SENTRY_DSN`
+- `ACQUISITION_API_ENDPOINT_BASE_URL`
 
 ## Run from source
 
@@ -31,14 +60,6 @@ Run the following command to seed database:
 ./node_modules/.bin/md-seed run
 ```
 Add `-d` optionally to drop database before seeding.
-
-## Google Cloud
-
-In order to connect with google cloud need to setup following 2 vars in `.env` file:
-- GCS_BUCKET_NAME
-- GCS_PROJECT_ID
-
-and also required to donwload google cloud json credentials into root ewith name `env.gcs.json`.
 
 ## Docker 
 In order to run the application and mongodb using docker-compose first create the .env file. Be sure to change the .env to point to dockerized mongo instance by setting:
@@ -118,17 +139,20 @@ and then execute:
 Mongodb will use `DOCKER_MONGO_DATA_DIR` from `env` file for data dir. If you want to reset all database, stop containers and delete dir `DOCKER_MONGO_DATA_DIR`.
 
 ## Dependencies
+- Acquistion API
+- Dropbox for uploading songs: https://www.dropbox.com
+- Google Cloud Storage bucket for upload images: https://console.cloud.google.com/storage/browser
+- Facebook apps: https://developers.facebook.com/apps
+- Google apps: https://console.developers.google.com/apis/credentials
+- Twilio for SMS messaging: https://www.twilio.com
+- Sendgrid for transactional emails: https://sendgrid.com
+- Sentry for logging errors: https://sentry.io
 
-### Sentry
 
-https://sentry.io
+#### Google Cloud
 
-## Usefull links
-- https://console.cloud.google.com
-- https://console.developers.google.com
-- https://myaccount.google.com/permissions?pli=1
-- https://developers.facebook.com/apps
-- https://framp.me/joi-tester/
-- http://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
-- https://medium.com/@rocksinghajay/login-with-facebook-and-google-in-reactjs-990d818d5dab
-- https://medium.com/@iwozzy/easily-host-images-with-node-and-google-cloud-storage-29fb14e2cdb8
+In order to connect with google cloud need to setup following 2 vars in `.env` file:
+- GCS_BUCKET_NAME
+- GCS_PROJECT_ID
+
+and also required to donwload google cloud json credentials into root ewith name `env.gcs.json`.
