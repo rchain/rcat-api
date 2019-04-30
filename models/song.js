@@ -291,7 +291,7 @@ songSchema.methods.transformCollaborators = function () {
 
 songSchema.methods.transformForAcquisition = function (user) {
 
-    const appVersionTag = '0.2.6';
+    const appVersionTag = '0.4.1';
 
     const timestamp = + new Date();
 
@@ -337,10 +337,6 @@ songSchema.methods.transformForAcquisition = function (user) {
         ...soundOwners,
         ...collaborators
     ];
-
-    console.log('');
-    console.log('staff::::::', staff);
-    console.log('');
 
     const data = {
         header: header,
