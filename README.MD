@@ -140,13 +140,13 @@ Mongodb will use `DOCKER_MONGO_DATA_DIR` from `env` file for data dir. If you wa
 
 ## Dependencies
 - Acquistion API
-- Dropbox for uploading songs: https://www.dropbox.com
-- Google Cloud Storage bucket for upload images: https://console.cloud.google.com/storage/browser
-- Facebook apps: https://developers.facebook.com/apps
-- Google apps: https://console.developers.google.com/apis/credentials
-- Twilio for SMS messaging: https://www.twilio.com
-- Sendgrid for transactional emails: https://sendgrid.com
-- Sentry for logging errors: https://sentry.io
+- Dropbox for uploading songs: https://www.dropbox.com. `REQUIRE CREDENTIALS/TOKENS`.
+- Google Cloud Storage bucket for upload images: https://console.cloud.google.com/storage/browser `REQUIRE CREDENTIALS/TOKENS`.
+- Facebook apps: https://developers.facebook.com/apps `REQUIRE CREDENTIALS/TOKENS`.
+- Google apps: https://console.developers.google.com/apis/credentials `REQUIRE CREDENTIALS/TOKENS`.
+- Twilio for SMS messaging: https://www.twilio.com `REQUIRE CREDENTIALS/TOKENS`. `PAYABLE SERVICE`.
+- Sendgrid for transactional emails: https://sendgrid.com `REQUIRE CREDENTIALS/TOKENS`. `PAYABLE SERVICE`.
+- Sentry for logging errors: https://sentry.io  `REQUIRE CREDENTIALS/TOKENS`. `PAYABLE SERVICE`. `OPTIONAL`
 
 
 #### Google Cloud
