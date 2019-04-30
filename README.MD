@@ -53,6 +53,16 @@ After that run following commands:
 docker-compose build
 docker-compose up
 ```
+and you api should be running on port specified in env file with name `PORT`. 
+In order to confirm you API is up and running open in the browser `BASE_URL/status` and if all ok you should see following response:
+``` 
+{
+status: "ok"
+}
+```
+`BASE_URL` is variable inside your relevant environment file.
+
+After you started app for the first time you should seed up db. For more details check subsection `Seed mongodb once containers are up`
 
 In order to just build the application image run the following command:
 
@@ -74,6 +84,38 @@ In order to stop and remove all containers execute:
 ```
 docker-compose down
 ```
+
+In order to list all running containers execute:
+```
+docker ps
+```
+
+In order to enter into, for example, app container execute:
+```
+docker-compose exec app bash
+```
+
+If you are inside app container you can check logs with following command:
+```
+pm2 logs
+```
+
+
+#### Seed mongodb once containers are up
+
+In order to seed db first go inside app container:
+```
+docker-compose exec app bash
+```
+
+and then execute:
+```
+./node_modules/.bin/md-seed run
+```
+
+#### Reset docker db
+
+Mongodb will use `DOCKER_MONGO_DATA_DIR` from `env` file for data dir. If you want to reset all database, stop containers and delete dir `DOCKER_MONGO_DATA_DIR`.
 
 ## Dependencies
 
