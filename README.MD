@@ -15,10 +15,10 @@ And then fill `.env` file with data. Check subsection `Setup environment vars` f
 
 ## Setup environment vars
 Open `.env`  file and setup following vars:
-- `HTTPS`
-- `PORT`
-- `NODE_ENV`
-- `MONGODB_URI`
+- `HTTPS`: true|false
+- `PORT` App port
+- `NODE_ENV`: development|production
+- `MONGODB_URI`: URI to conect to mongodb
 - `GMAIL_CLIENT_ID`
 - `FACEBOOK_APP_ID`
 - `FACEBOOK_APP_SECRET`
