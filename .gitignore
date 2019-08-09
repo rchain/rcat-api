@@ -70,3 +70,4 @@ app.log
 env.json
 env.gcs.json
 .env.*
+env.gcs.ned.json

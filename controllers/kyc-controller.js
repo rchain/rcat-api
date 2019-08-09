@@ -38,6 +38,8 @@ const submitKycData = async (req, res) => {
                 values.forEach(val => {
                     files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
                 });
+
+                console.log('START =============== KycAccount.save() .....');
                 const kyc = await KycAccount.save(req.user, data, files);
 
 

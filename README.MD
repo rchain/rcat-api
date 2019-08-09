@@ -1,5 +1,4 @@
 # RSong Assets Management API
-Asset management middleware powered by https://www.fastify.io/.  
 
 ## Install
 
@@ -148,11 +147,10 @@ Mongodb will use `DOCKER_MONGO_DATA_DIR` from `env` file for data dir. If you wa
 - Sendgrid for transactional emails: https://sendgrid.com `REQUIRE CREDENTIALS/TOKENS`. `PAYABLE SERVICE`.
 - Sentry for logging errors: https://sentry.io  `REQUIRE CREDENTIALS/TOKENS`. `PAYABLE SERVICE`. `OPTIONAL`
 
-
 #### Google Cloud
 
 In order to connect with google cloud need to setup following 2 vars in `.env` file:
 - GCS_BUCKET_NAME
 - GCS_PROJECT_ID
 
-and also required to donwload google cloud json credentials into root ewith name `env.gcs.json`.
+and also required to download google cloud json credentials into root with name `env.gcs.json`.

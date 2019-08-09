@@ -50,6 +50,7 @@ kycAccountSchema.virtual('full_name').get(function () {
 });
 
 kycAccountSchema.statics.save = async function (userData, data, files) {
+    console.log('>>>>>>> kycAccountSchema.statics.save .......');
     let kycAccount = new KycAccount({
         country_of_residence: data.country_of_residence,
         first_name: data.first_name,
