@@ -56,6 +56,7 @@ const submitKycData = async (req, res) => {
                     return reject(err);
                 }
 
+                console.log("======>>>>>>>>>  KycAccount.findByIdAndUpdate ......");
                 const kycUpdated = await KycAccount.findByIdAndUpdate(
                     kyc._id,
                     {
