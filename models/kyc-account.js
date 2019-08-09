@@ -66,9 +66,11 @@ kycAccountSchema.statics.save = async function (userData, data, files) {
         state: KycState.NEW
     });
 
+    console.log('>>>>>>> User.findById .......');
     let user = await User.findById(userData.id, '-__v').populate('kyc_account gmail_account', '-__v');
 
     // if there is a user - return it, otherwise - create new gmail and user
+    console.log('>>>>>>> this.create .......');
     kycAccount = await this.create(kycAccount).catch(console.error);
     await user.updateOne({
         kyc_account: kycAccount.id
