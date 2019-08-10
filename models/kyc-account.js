@@ -49,7 +49,7 @@ kycAccountSchema.virtual('full_name').get(function () {
     return `${this.first_name} ${this.last_name}`.trim();
 });
 
-kycAccountSchema.statics.save = async function (userData, data, files) {
+kycAccountSchema.statics.saveIt = async function (userData, data, files) {
     console.log('>>>>>>> kycAccountSchema.statics.save .......');
     let kycAccount = new KycAccount({
         country_of_residence: data.country_of_residence,

@@ -39,8 +39,18 @@ const submitKycData = async (req, res) => {
                     files[Object.keys(val)[0]] = val[Object.keys(val)[0]];
                 });
 
+                // console.log('req.user:::', req.user);
+                // console.log('data:::', data);
+                // console.log('files:::', files);
+
                 console.log('START =============== KycAccount.save() .....');
-                const kyc = await KycAccount.save(req.user, data, files);
+                let kyc;
+                try{
+                    kyc = await KycAccount.saveIt(req.user, data, files);
+                } catch (err) {
+                    console.error('KycAccount.saveIt::::: ', err);
+                    return reject(err);
+                }
 
 
                 try {
@@ -67,7 +77,7 @@ const submitKycData = async (req, res) => {
                 );
                 resolve(kycUpdated);
             } catch (err) {
-                console.error('ERROR[uploadKycFilesToS3]', err);
+                console.error('ERROR[submitKycData]', err);
                 reject(err);
             }
         });
