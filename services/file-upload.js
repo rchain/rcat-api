@@ -5,23 +5,23 @@ const path = require('path');
 const fetch = require('isomorphic-fetch'); // or another library of choice.
 const Dropbox = require('dropbox').Dropbox;
 
-if(!process.env.DROPBOX_ACCESS_TOKEN) {
+if (!process.env.DROPBOX_ACCESS_TOKEN) {
     throw new Error('Missing DROPBOX_ACCESS_TOKEN environment var');
 }
-if(!process.env.DROPBOX_UPLOAD_PATH) {
+if (!process.env.DROPBOX_UPLOAD_PATH) {
     throw new Error('Missing DROPBOX_UPLOAD_PATH environment var');
 }
-if(!process.env.GCS_BUCKET_NAME) {
+if (!process.env.GCS_BUCKET_NAME) {
     throw new Error('Missing GCS_BUCKET_NAME environment var');
 }
-if(!process.env.GCS_PROJECT_ID) {
+if (!process.env.GCS_PROJECT_ID) {
     throw new Error('Missing GCS_PROJECT_ID environment var');
 }
 
 const gcsConf = require('../env.gcs');
 const {Storage} = require('@google-cloud/storage');
 
-const config = { accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch: fetch };
+const config = {accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch: fetch};
 const dbx = new Dropbox(config);
 
 const s3 = new aws.S3({
@@ -100,7 +100,7 @@ const uploadKycFilesToGcs = async (files, user) => {
 const uploadKycFilesToS3 = async (files, user) => {
     let promises = [];
     let fieldNames = Object.keys(files);
-    const cacheControl = `max-age=${60*60*24}`;
+    const cacheControl = `max-age=${60 * 60 * 24}`;
     fieldNames.forEach((field, index) => {
         promises[index] =
             new Promise((resolve, reject) => {
@@ -146,9 +146,9 @@ const uploadKycFilesToS3 = async (files, user) => {
 // };
 
 const uploadSongToDropBox = async (file, song) => {
-    const destination = path.join(process.env.DROPBOX_UPLOAD_PATH, song.asset_sound.fileNameFull);
+    const destination = process.env.DROPBOX_UPLOAD_PATH + song.asset_sound.fileNameFull;
     console.log('Uploading to DROPBOX ...', destination);
-    return  await dbx.filesUpload({ path: destination, contents: file.buffer, mode: 'overwrite'});
+    return await dbx.filesUpload({path: destination, contents: file.buffer, mode: 'overwrite'});
 };
 
 const getGcsStorageOptions = () => {
@@ -161,10 +161,12 @@ const getGcsStorageOptions = () => {
     };
 };
 
-const getGcsMetaCacheControl = () => { `max-age=${60*60*24}` };
+const getGcsMetaCacheControl = () => {
+    `max-age=${60 * 60 * 24}`
+};
 
 // https://console.cloud.google.com/cloudshell/editor
-const uploadAlbumArtImage = async(file, song, user) => {
+const uploadAlbumArtImage = async (file, song, user) => {
 
     const storage = new Storage(getGcsStorageOptions());
     const BUCKET_NAME = process.env.GCS_BUCKET_NAME;
