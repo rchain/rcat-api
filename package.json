@@ -38,7 +38,7 @@
     "multer-s3": "^2.9.0",
     "node-cache": "^4.2.1",
     "node-uuid": "^1.4.8",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.19.4",
     "passport": "^0.4.0",
     "passport-facebook-token": "^3.3.0",
     "path": "^0.12.7",
