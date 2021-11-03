@@ -43,7 +43,7 @@
     "passport-facebook-token": "^3.3.0",
     "path": "^0.12.7",
     "twilio": "^3.33.3",
-    "validator": "^10.11.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
