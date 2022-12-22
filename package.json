@@ -26,7 +26,7 @@
     "googleapis": "^39.2.0",
     "isomorphic-fetch": "^2.2.1",
     "joi": "^14.3.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "mongodb": "^3.6.3",
